@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_fenv.h"
-
 
 int p101_feclearexcept(const struct p101_env *env, struct p101_error *err, int excepts)
 {
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = feclearexcept(excepts);
 
     // TODO - handle this properly
@@ -40,7 +38,7 @@ int p101_fegetenv(const struct p101_env *env, struct p101_error *err, fenv_t *en
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = fegetenv(envp);
 
     // TODO - handle this properly
@@ -57,7 +55,7 @@ int p101_fegetexceptflag(const struct p101_env *env, struct p101_error *err, fex
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = fegetexceptflag(flagp, excepts);
 
     // TODO - handle this properly
@@ -74,7 +72,7 @@ int p101_fegetround(const struct p101_env *env, struct p101_error *err)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = fegetround();
 
     // TODO - handle this properly
@@ -91,7 +89,7 @@ int p101_feholdexcept(const struct p101_env *env, struct p101_error *err, fenv_t
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = feholdexcept(envp);
 
     // TODO - handle this properly
@@ -108,7 +106,7 @@ int p101_feraiseexcept(const struct p101_env *env, struct p101_error *err, int e
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = feraiseexcept(excepts);
 
     // TODO - handle this properly
@@ -125,7 +123,7 @@ int p101_fesetenv(const struct p101_env *env, struct p101_error *err, const fenv
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = fesetenv(envp);
 
     // TODO - handle this properly
@@ -142,7 +140,7 @@ int p101_fesetexceptflag(const struct p101_env *env, struct p101_error *err, con
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = fesetexceptflag(flagp, excepts);
 
     // TODO - handle this properly
@@ -159,7 +157,7 @@ int p101_fesetround(const struct p101_env *env, struct p101_error *err, int roun
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = fesetround(round);
 
     // TODO - handle this properly
@@ -176,7 +174,7 @@ int p101_fetestexcept(const struct p101_env *env, int excepts)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = fetestexcept(excepts);
 
     return ret_val;
@@ -187,7 +185,7 @@ int p101_feupdateenv(const struct p101_env *env, struct p101_error *err, const f
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = feupdateenv(envp);
 
     // TODO - handle this properly

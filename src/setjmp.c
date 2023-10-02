@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_setjmp.h"
-
 
 void p101_longjmp(const struct p101_env *env, jmp_buf buf, int val)
 {
@@ -30,7 +28,7 @@ int p101_setjmp(const struct p101_env *env, jmp_buf buf)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = setjmp(buf);
 
     return ret_val;

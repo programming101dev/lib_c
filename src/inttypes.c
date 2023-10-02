@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_inttypes.h"
-
 
 intmax_t p101_imaxabs(const struct p101_env *env, intmax_t j)
 {
@@ -31,7 +29,8 @@ intmax_t p101_imaxabs(const struct p101_env *env, intmax_t j)
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waggregate-return"
-imaxdiv_t p101_imaxdiv(const struct p101_env *env,intmax_t numer, intmax_t denom)
+
+imaxdiv_t p101_imaxdiv(const struct p101_env *env, intmax_t numer, intmax_t denom)
 {
     imaxdiv_t value;
 
@@ -41,13 +40,10 @@ imaxdiv_t p101_imaxdiv(const struct p101_env *env,intmax_t numer, intmax_t denom
 
     return value;
 }
+
 #pragma GCC diagnostic pop
 
-intmax_t p101_strtoimax(const struct p101_env *env,
-                      struct p101_error *err,
-                      const char * restrict nptr,
-                      char ** restrict endptr,
-                      int base)
+intmax_t p101_strtoimax(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base)
 {
     intmax_t value;
 
@@ -66,11 +62,7 @@ intmax_t p101_strtoimax(const struct p101_env *env,
     return value;
 }
 
-uintmax_t p101_strtoumax(const struct p101_env *env,
-                       struct p101_error           *err,
-                       const char * restrict nptr,
-                       char ** restrict endptr,
-                       int base)
+uintmax_t p101_strtoumax(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base)
 {
     uintmax_t value;
 
@@ -89,7 +81,7 @@ uintmax_t p101_strtoumax(const struct p101_env *env,
     return value;
 }
 
-intmax_t p101_wcstoimax(const struct p101_env *env, struct p101_error *err,const wchar_t *restrict nptr, wchar_t **restrict endptr, int base)
+intmax_t p101_wcstoimax(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict nptr, wchar_t **restrict endptr, int base)
 {
     intmax_t value;
 
@@ -108,7 +100,7 @@ intmax_t p101_wcstoimax(const struct p101_env *env, struct p101_error *err,const
     return value;
 }
 
-uintmax_t p101_wcstoumax(const struct p101_env *env, struct p101_error *err,const wchar_t *restrict nptr, wchar_t **restrict endptr, int base)
+uintmax_t p101_wcstoumax(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict nptr, wchar_t **restrict endptr, int base)
 {
     uintmax_t value;
 

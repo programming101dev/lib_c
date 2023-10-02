@@ -1,7 +1,6 @@
 #ifndef LIBP101_C_P101_LOCALE_H
 #define LIBP101_C_P101_LOCALE_H
 
-
 /*
  * Copyright 2022-2022 D'Arcy Smith.
  *
@@ -18,36 +17,32 @@
  * limitations under the License.
  */
 
-
 #include <p101_env/env.h>
 
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /**
+     *
+     * @param env
+     * @return
+     */
+    struct lconv *p101_localeconv(const struct p101_env *env);
 
-/**
- *
- * @param env
- * @return
- */
-struct lconv *p101_localeconv(const struct p101_env *env);
-
-/**
- *
- * @param env
- * @param err
- * @param category
- * @param locale
- * @return
- */
-char *p101_setlocale(const struct p101_env *env, struct p101_error *err, int category, const char *locale);
-
+    /**
+     *
+     * @param env
+     * @param err
+     * @param category
+     * @param locale
+     * @return
+     */
+    char *p101_setlocale(const struct p101_env *env, struct p101_error *err, int category, const char *locale);
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif // LIBP101_C_P101_LOCALE_H
+#endif    // LIBP101_C_P101_LOCALE_H

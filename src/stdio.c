@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_stdio.h"
-
 
 void p101_clearerr(const struct p101_env *env, FILE *stream)
 {
@@ -97,7 +95,7 @@ int p101_fgetc(const struct p101_env *env, struct p101_error *err, FILE *stream)
     return ret_val;
 }
 
-int p101_fgetpos(const struct p101_env *env, struct p101_error *err, FILE * restrict stream, fpos_t * restrict pos)
+int p101_fgetpos(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, fpos_t *restrict pos)
 {
     int ret_val;
 
@@ -113,7 +111,7 @@ int p101_fgetpos(const struct p101_env *env, struct p101_error *err, FILE * rest
     return ret_val;
 }
 
-char *p101_fgets(const struct p101_env *env, struct p101_error *err, char * restrict s, int n, FILE * restrict stream)
+char *p101_fgets(const struct p101_env *env, struct p101_error *err, char *restrict s, int n, FILE *restrict stream)
 {
     char *ret_val;
 
@@ -136,10 +134,7 @@ char *p101_fgets(const struct p101_env *env, struct p101_error *err, char * rest
     return ret_val;
 }
 
-FILE *p101_fopen(const struct p101_env *env,
-               struct p101_error           *err,
-               const char * restrict pathname,
-               const char * restrict mode)
+FILE *p101_fopen(const struct p101_env *env, struct p101_error *err, const char *restrict pathname, const char *restrict mode)
 {
     FILE *ret_val;
 
@@ -171,7 +166,7 @@ int p101_fputc(const struct p101_env *env, struct p101_error *err, int c, FILE *
     return ret_val;
 }
 
-int p101_fputs(const struct p101_env *env, struct p101_error *err, const char * restrict s, FILE * restrict stream)
+int p101_fputs(const struct p101_env *env, struct p101_error *err, const char *restrict s, FILE *restrict stream)
 {
     int ret_val;
 
@@ -187,12 +182,7 @@ int p101_fputs(const struct p101_env *env, struct p101_error *err, const char * 
     return ret_val;
 }
 
-size_t p101_fread(const struct p101_env *env,
-                struct p101_error           *err,
-                void * restrict ptr,
-                size_t size,
-                size_t nitems,
-                FILE * restrict stream)
+size_t p101_fread(const struct p101_env *env, struct p101_error *err, void *restrict ptr, size_t size, size_t nitems, FILE *restrict stream)
 {
     size_t  ret_val;
     errno_t actual_error;
@@ -210,11 +200,7 @@ size_t p101_fread(const struct p101_env *env,
     return ret_val;
 }
 
-FILE *p101_freopen(const struct p101_env *env,
-                 struct p101_error           *err,
-                 const char * restrict pathname,
-                 const char * restrict mode,
-                 FILE * restrict stream)
+FILE *p101_freopen(const struct p101_env *env, struct p101_error *err, const char *restrict pathname, const char *restrict mode, FILE *restrict stream)
 {
     FILE *ret_val;
 
@@ -278,12 +264,7 @@ long p101_ftell(const struct p101_env *env, struct p101_error *err, FILE *stream
     return ret_val;
 }
 
-size_t p101_fwrite(const struct p101_env *env,
-                 struct p101_error           *err,
-                 const void * restrict ptr,
-                 size_t size,
-                 size_t nitems,
-                 FILE * restrict stream)
+size_t p101_fwrite(const struct p101_env *env, struct p101_error *err, const void *restrict ptr, size_t size, size_t nitems, FILE *restrict stream)
 {
     size_t  ret_val;
     errno_t actual_error;
@@ -424,38 +405,7 @@ int p101_rename(const struct p101_env *env, struct p101_error *err, const char *
     return ret_val;
 }
 
-void p101_rewind(const struct p101_env *env, struct p101_error *err, FILE *stream)
-{
-    P101_TRACE(env);
-    errno = 0;
-
-    rewind(stream);
-
-    if(errno != 0)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-}
-
-void p101_setbuf(const struct p101_env *env, struct p101_error *err, FILE * restrict stream, char * restrict buf)
-{
-    P101_TRACE(env);
-    errno = 0;
-
-    setbuf(stream, buf);
-
-    if(errno != 0)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
-}
-
-int p101_setvbuf(const struct p101_env *env,
-               struct p101_error           *err,
-               FILE * restrict stream,
-               char * restrict buf,
-               int    type,
-               size_t size)
+int p101_setvbuf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, char *restrict buf, int type, size_t size)
 {
     int ret_val;
 
@@ -503,11 +453,11 @@ int p101_vfprintf(const struct p101_env *env, struct p101_error *err, FILE *rest
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
+    #pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
 #endif
     ret_val = vfprintf(stream, format, ap);
 #pragma GCC diagnostic pop
@@ -526,11 +476,11 @@ int p101_vfscanf(const struct p101_env *env, struct p101_error *err, FILE *restr
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
+    #pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
 #endif
     ret_val = vfscanf(stream, format, ap);
 #pragma GCC diagnostic pop
@@ -549,11 +499,11 @@ int p101_vprintf(const struct p101_env *env, struct p101_error *err, const char 
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
+    #pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
 #endif
     ret_val = vprintf(format, ap);
 #pragma GCC diagnostic pop
@@ -572,11 +522,11 @@ int p101_vscanf(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
+    #pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
 #endif
     ret_val = vscanf(format, ap);
 #pragma GCC diagnostic pop
@@ -595,11 +545,11 @@ int p101_vsnprintf(const struct p101_env *env, struct p101_error *err, char *res
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
+    #pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
 #endif
     ret_val = vsnprintf(s, n, format, ap);
 #pragma GCC diagnostic pop
@@ -618,11 +568,11 @@ int p101_vsscanf(const struct p101_env *env, struct p101_error *err, const char 
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
+    #pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
 #endif
     ret_val = vsscanf(s, format, ap);
 #pragma GCC diagnostic pop

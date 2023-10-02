@@ -1,7 +1,6 @@
 #ifndef LIBP101_C_P101_TIME_H
 #define LIBP101_C_P101_TIME_H
 
-
 /*
  * Copyright 2021-2022 D'Arcy Smith.
  *
@@ -18,85 +17,81 @@
  * limitations under the License.
  */
 
-
 #include <p101_env/env.h>
 #include <time.h>
 
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /**
+     *
+     * @param env
+     * @param err
+     * @return
+     */
+    clock_t p101_clock(const struct p101_env *env, struct p101_error *err);
 
-/**
- *
- * @param env
- * @param err
- * @return
- */
-clock_t p101_clock(const struct p101_env *env, struct p101_error *err);
+    /**
+     *
+     * @param env
+     * @param time1
+     * @param time0
+     * @return
+     */
+    double p101_difftime(const struct p101_env *env, time_t time1, time_t time0);
 
-/**
- *
- * @param env
- * @param time1
- * @param time0
- * @return
- */
-double p101_difftime(const struct p101_env *env, time_t time1, time_t time0);
+    /**
+     *
+     * @param env
+     * @param err
+     * @param clock
+     * @return
+     */
+    struct tm *p101_gmtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
 
-/**
- *
- * @param env
- * @param err
- * @param clock
- * @return
- */
-struct tm *p101_gmtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
+    /**
+     *
+     * @param env
+     * @param err
+     * @param clock
+     * @return
+     */
+    struct tm *p101_localtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
 
-/**
- *
- * @param env
- * @param err
- * @param clock
- * @return
- */
-struct tm *p101_localtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
+    /**
+     *
+     * @param env
+     * @param err
+     * @param tm
+     * @return
+     */
+    time_t p101_mktime(const struct p101_env *env, struct p101_error *err, struct tm *tm);
 
-/**
- *
- * @param env
- * @param err
- * @param tm
- * @return
- */
-time_t p101_mktime(const struct p101_env *env, struct p101_error *err, struct tm *tm);
+    /**
+     *
+     * @param env
+     * @param err
+     * @param buf
+     * @param maxsize
+     * @param format
+     * @param timeptr
+     * @return
+     */
+    size_t p101_strftime(const struct p101_env *env, struct p101_error *err, char *restrict buf, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr);
 
-/**
- *
- * @param env
- * @param err
- * @param buf
- * @param maxsize
- * @param format
- * @param timeptr
- * @return
- */
-size_t p101_strftime(const struct p101_env *env, struct p101_error *err, char * restrict buf, size_t maxsize, const char * restrict format, const struct tm * restrict timeptr);
-
-/**
- *
- * @param env
- * @param err
- * @param tloc
- * @return
- */
-time_t p101_time(const struct p101_env *env, struct p101_error *err, time_t *tloc);
-
+    /**
+     *
+     * @param env
+     * @param err
+     * @param tloc
+     * @return
+     */
+    time_t p101_time(const struct p101_env *env, struct p101_error *err, time_t *tloc);
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif // LIBP101_C_P101_TIME_H
+#endif    // LIBP101_C_P101_TIME_H

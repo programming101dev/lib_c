@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_signal.h"
 #include <signal.h>
-
 
 int p101_raise(const struct p101_env *env, struct p101_error *err, int sig)
 {

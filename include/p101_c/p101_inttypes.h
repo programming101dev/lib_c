@@ -1,7 +1,6 @@
 #ifndef LIBP101_C_P101_INTTYPES_H
 #define LIBP101_C_P101_INTTYPES_H
 
-
 /*
  * Copyright 2021-2022 D'Arcy Smith.
  *
@@ -18,85 +17,77 @@
  * limitations under the License.
  */
 
-
-#include <p101_env/env.h>
 #include <inttypes.h>
-
+#include <p101_env/env.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /**
+     *
+     * @param env
+     * @param j
+     * @return
+     */
+    intmax_t p101_imaxabs(const struct p101_env *env, intmax_t j);
 
-/**
- *
- * @param env
- * @param j
- * @return
- */
-intmax_t p101_imaxabs(const struct p101_env *env, intmax_t j);
+    /**
+     *
+     * @param env
+     * @param numer
+     * @param denom
+     * @return
+     */
+    imaxdiv_t p101_imaxdiv(const struct p101_env *env, intmax_t numer, intmax_t denom);
 
-/**
- *
- * @param env
- * @param numer
- * @param denom
- * @return
- */
-imaxdiv_t p101_imaxdiv(const struct p101_env *env,intmax_t numer, intmax_t denom);
+    /**
+     *
+     * @param env
+     * @param err
+     * @param nptr
+     * @param endptr
+     * @param base
+     * @return
+     */
+    intmax_t p101_strtoimax(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base);
 
-/**
- *
- * @param env
- * @param err
- * @param nptr
- * @param endptr
- * @param base
- * @return
- */
-intmax_t p101_strtoimax(const struct p101_env *env, struct p101_error *err,
-                      const char *restrict nptr, char **restrict endptr,
-                      int base);
+    /**
+     *
+     * @param env
+     * @param err
+     * @param nptr
+     * @param endptr
+     * @param base
+     * @return
+     */
+    uintmax_t p101_strtoumax(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base);
 
-/**
- *
- * @param env
- * @param err
- * @param nptr
- * @param endptr
- * @param base
- * @return
- */
-uintmax_t p101_strtoumax(const struct p101_env *env, struct p101_error *err,
-                       const char *restrict nptr, char **restrict endptr,
-                       int base);
+    /**
+     *
+     * @param env
+     * @param err
+     * @param nptr
+     * @param endptr
+     * @param base
+     * @return
+     */
+    intmax_t p101_wcstoimax(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict nptr, wchar_t **restrict endptr, int base);
 
-/**
- *
- * @param env
- * @param err
- * @param nptr
- * @param endptr
- * @param base
- * @return
- */
-intmax_t p101_wcstoimax(const struct p101_env *env, struct p101_error *err,const wchar_t *restrict nptr, wchar_t **restrict endptr, int base);
-
-/**
- *
- * @param env
- * @param err
- * @param nptr
- * @param endptr
- * @param base
- * @return
- */
-uintmax_t p101_wcstoumax(const struct p101_env *env, struct p101_error *err,const wchar_t *restrict nptr, wchar_t **restrict endptr, int base);
-
+    /**
+     *
+     * @param env
+     * @param err
+     * @param nptr
+     * @param endptr
+     * @param base
+     * @return
+     */
+    uintmax_t p101_wcstoumax(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict nptr, wchar_t **restrict endptr, int base);
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif // LIBP101_C_P101_INTTYPES_H
+#endif    // LIBP101_C_P101_INTTYPES_H

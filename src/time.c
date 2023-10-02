@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_time.h"
-
 
 clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
 {
@@ -94,12 +92,12 @@ time_t p101_mktime(const struct p101_env *env, struct p101_error *err, struct tm
     return ret_val;
 }
 
-size_t p101_strftime(const struct p101_env *env, struct p101_error *err, char * restrict buf, size_t maxsize, const char * restrict format, const struct tm * restrict timeptr)
+size_t p101_strftime(const struct p101_env *env, struct p101_error *err, char *restrict buf, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr)
 {
     size_t ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
     ret_val = strftime(buf, maxsize, format, timeptr);

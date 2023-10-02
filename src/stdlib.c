@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_stdlib.h"
-
 
 void p101__Exit(const struct p101_env *env, int status)
 {
@@ -37,7 +35,7 @@ int p101_abs(const struct p101_env *env, __attribute__((unused)) struct p101_err
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 
     // TODO: handle if INT_MIN not working
     ret_val = abs(i);
@@ -50,7 +48,7 @@ int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
+    errno = 0;
 
     ret_val = atexit(func);
 
@@ -62,12 +60,7 @@ int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)
     return ret_val;
 }
 
-void *p101_bsearch(const struct p101_env *env,
-                 const void                *key,
-                 const void                *base,
-                 size_t                     nel,
-                 size_t                     width,
-                 int (*compar)(const void *, const void *))
+void *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width, int (*compar)(const void *, const void *))
 {
     void *ret_val;
 
@@ -96,6 +89,7 @@ void *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nel
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waggregate-return"
+
 div_t p101_div(const struct p101_env *env, int numer, int denom)
 {
     div_t ret_val;
@@ -106,6 +100,7 @@ div_t p101_div(const struct p101_env *env, int numer, int denom)
 
     return ret_val;
 }
+
 #pragma GCC diagnostic pop
 
 _Noreturn void p101_exit(const struct p101_env *env, int status)
@@ -148,6 +143,7 @@ long p101_labs(const struct p101_env *env, __attribute__((unused)) struct p101_e
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waggregate-return"
+
 ldiv_t p101_ldiv(const struct p101_env *env, long numer, long denom)
 {
     ldiv_t ret_val;
@@ -158,6 +154,7 @@ ldiv_t p101_ldiv(const struct p101_env *env, long numer, long denom)
 
     return ret_val;
 }
+
 #pragma GCC diagnostic pop
 
 long long p101_llabs(const struct p101_env *env, __attribute__((unused)) struct p101_error *err, long long i)
@@ -175,6 +172,7 @@ long long p101_llabs(const struct p101_env *env, __attribute__((unused)) struct 
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waggregate-return"
+
 lldiv_t p101_lldiv(const struct p101_env *env, long long numer, long long denom)
 {
     lldiv_t ret_val;
@@ -185,6 +183,7 @@ lldiv_t p101_lldiv(const struct p101_env *env, long long numer, long long denom)
 
     return ret_val;
 }
+
 #pragma GCC diagnostic pop
 
 void *p101_malloc(const struct p101_env *env, struct p101_error *err, size_t size)
@@ -219,11 +218,7 @@ int p101_mblen(const struct p101_env *env, struct p101_error *err, const char *s
     return ret_val;
 }
 
-size_t p101_mbstowcs(const struct p101_env *env,
-                   struct p101_error *err,
-                   wchar_t * restrict pwcs,
-                   const char * restrict s,
-                   size_t n)
+size_t p101_mbstowcs(const struct p101_env *env, struct p101_error *err, wchar_t *restrict pwcs, const char *restrict s, size_t n)
 {
     size_t ret_val;
 
@@ -239,11 +234,7 @@ size_t p101_mbstowcs(const struct p101_env *env,
     return ret_val;
 }
 
-int p101_mbtowc(const struct p101_env *env,
-              struct p101_error *err,
-              wchar_t * restrict pwc,
-              const char * restrict s,
-              size_t n)
+int p101_mbtowc(const struct p101_env *env, struct p101_error *err, wchar_t *restrict pwc, const char *restrict s, size_t n)
 {
     int ret_val;
 
@@ -259,11 +250,7 @@ int p101_mbtowc(const struct p101_env *env,
     return ret_val;
 }
 
-void p101_qsort(const struct p101_env *env,
-              void                      *base,
-              size_t                     nel,
-              size_t                     width,
-              int (*compar)(const void *, const void *))
+void p101_qsort(const struct p101_env *env, void *base, size_t nel, size_t width, int (*compar)(const void *, const void *))
 {
     P101_TRACE(env);
     errno = 0;
@@ -286,8 +273,7 @@ void *p101_realloc(const struct p101_env *env, struct p101_error *err, void *ptr
     return memory;
 }
 
-double
-p101_strtod(const struct p101_env *env, struct p101_error *err, const char * restrict nptr, char ** restrict endptr)
+double p101_strtod(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr)
 {
     double ret_val;
 
@@ -303,10 +289,7 @@ p101_strtod(const struct p101_env *env, struct p101_error *err, const char * res
     return ret_val;
 }
 
-float p101_strtof(const struct p101_env *env,
-                struct p101_error           *err,
-                const char * restrict nptr,
-                char ** restrict endptr)
+float p101_strtof(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr)
 {
     float ret_val;
 
@@ -322,11 +305,7 @@ float p101_strtof(const struct p101_env *env,
     return ret_val;
 }
 
-long p101_strtol(const struct p101_env *env,
-               struct p101_error           *err,
-               const char * restrict nptr,
-               char ** restrict endptr,
-               int base)
+long p101_strtol(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base)
 {
     long ret_val;
 
@@ -342,8 +321,7 @@ long p101_strtol(const struct p101_env *env,
     return ret_val;
 }
 
-long double
-p101_strtold(const struct p101_env *env, struct p101_error *err, const char * restrict nptr, char ** restrict endptr)
+long double p101_strtold(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr)
 {
     long double ret_val;
 
@@ -359,11 +337,7 @@ p101_strtold(const struct p101_env *env, struct p101_error *err, const char * re
     return ret_val;
 }
 
-long long p101_strtoll(const struct p101_env *env,
-                     struct p101_error           *err,
-                     const char * restrict nptr,
-                     char ** restrict endptr,
-                     int base)
+long long p101_strtoll(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base)
 {
     long long ret_val;
 
@@ -379,11 +353,7 @@ long long p101_strtoll(const struct p101_env *env,
     return ret_val;
 }
 
-unsigned long p101_strtoul(const struct p101_env *env,
-                         struct p101_error           *err,
-                         const char * restrict str,
-                         char ** restrict endptr,
-                         int base)
+unsigned long p101_strtoul(const struct p101_env *env, struct p101_error *err, const char *restrict str, char **restrict endptr, int base)
 {
     unsigned long ret_val;
 
@@ -399,11 +369,7 @@ unsigned long p101_strtoul(const struct p101_env *env,
     return ret_val;
 }
 
-unsigned long long p101_strtoull(const struct p101_env *env,
-                               struct p101_error           *err,
-                               const char * restrict str,
-                               char ** restrict endptr,
-                               int base)
+unsigned long long p101_strtoull(const struct p101_env *env, struct p101_error *err, const char *restrict str, char **restrict endptr, int base)
 {
     unsigned long long ret_val;
 
@@ -425,7 +391,7 @@ int p101_system(const struct p101_env *env, struct p101_error *err, const char *
 
     P101_TRACE(env);
     errno   = 0;
-    ret_val = system(command);  // NOLINT(cert-env33-c)
+    ret_val = system(command);    // NOLINT(cert-env33-c)
 
     if(errno != 0)
     {
@@ -435,11 +401,7 @@ int p101_system(const struct p101_env *env, struct p101_error *err, const char *
     return ret_val;
 }
 
-size_t p101_wcstombs(const struct p101_env *env,
-                   struct p101_error           *err,
-                   char * restrict s,
-                   const wchar_t * restrict pwcs,
-                   size_t n)
+size_t p101_wcstombs(const struct p101_env *env, struct p101_error *err, char *restrict s, const wchar_t *restrict pwcs, size_t n)
 {
     size_t ret_val;
 

@@ -1,7 +1,6 @@
 #ifndef LIBP101_C_P101_SIGNAL_H
 #define LIBP101_C_P101_SIGNAL_H
 
-
 /*
  * Copyright 2021-2022 D'Arcy Smith.
  *
@@ -18,38 +17,34 @@
  * limitations under the License.
  */
 
-
 #include <p101_env/env.h>
 
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /**
+     *
+     * @param env
+     * @param err
+     * @param sig
+     * @return
+     */
+    int p101_raise(const struct p101_env *env, struct p101_error *err, int sig);
 
-/**
- *
- * @param env
- * @param err
- * @param sig
- * @return
- */
-int p101_raise(const struct p101_env *env, struct p101_error *err, int sig);
-
-/**
- *
- * @param env
- * @param err
- * @param sig
- * @param func
- * @return
- */
-void (*p101_signal(const struct p101_env *env, struct p101_error *err, int sig, void (*func)(int)))(int);
-
+    /**
+     *
+     * @param env
+     * @param err
+     * @param sig
+     * @param func
+     * @return
+     */
+    void (*p101_signal(const struct p101_env *env, struct p101_error *err, int sig, void (*func)(int)))(int);
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif // LLIBP101_C_P101_SIGNAL_H
+#endif    // LLIBP101_C_P101_SIGNAL_H

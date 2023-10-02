@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_ctype.h"
 #include <ctype.h>
-
 
 int p101_isalnum(const struct p101_env *env, int c)
 {
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = isalnum(c);
 
     return ret_val;
@@ -35,7 +33,7 @@ int p101_isalpha(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = isalpha(c);
 
     return ret_val;
@@ -46,7 +44,7 @@ int p101_isblank(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = isblank(c);
 
     return ret_val;
@@ -57,7 +55,7 @@ int p101_iscntrl(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = iscntrl(c);
 
     return ret_val;
@@ -68,7 +66,7 @@ int p101_isdigit(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = isdigit(c);
 
     return ret_val;
@@ -79,7 +77,7 @@ int p101_isgraph(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = isgraph(c);
 
     return ret_val;
@@ -90,7 +88,7 @@ int p101_islower(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = islower(c);
 
     return ret_val;
@@ -101,7 +99,7 @@ int p101_isprint(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = isprint(c);
 
     return ret_val;
@@ -112,7 +110,7 @@ int p101_ispunct(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = ispunct(c);
 
     return ret_val;
@@ -123,7 +121,7 @@ int p101_isspace(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = isspace(c);
 
     return ret_val;
@@ -134,7 +132,7 @@ int p101_isupper(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = isupper(c);
 
     return ret_val;
@@ -145,7 +143,7 @@ int p101_isxdigit(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = isxdigit(c);
 
     return ret_val;
@@ -156,7 +154,7 @@ int p101_tolower(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = tolower(c);
 
     return ret_val;
@@ -167,7 +165,7 @@ int p101_toupper(const struct p101_env *env, int c)
     int ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = toupper(c);
 
     return ret_val;

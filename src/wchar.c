@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_wchar.h"
-
 
 wint_t p101_btowc(const struct p101_env *env, int c)
 {
@@ -416,7 +414,7 @@ size_t p101_wcrtomb(const struct p101_env *env, struct p101_error *err, char *re
     errno   = 0;
     ret_val = wcrtomb(s, wc, ps);
 
-    if(ret_val ==(size_t)-1)
+    if(ret_val == (size_t)-1)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }

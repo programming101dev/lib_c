@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-
 #include "p101_c/p101_locale.h"
 #include <locale.h>
-
 
 struct lconv *p101_localeconv(const struct p101_env *env)
 {
     struct lconv *ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = localeconv();
 
     return ret_val;
@@ -35,7 +33,7 @@ char *p101_setlocale(const struct p101_env *env, struct p101_error *err, int cat
     char *ret_val;
 
     P101_TRACE(env);
-    errno = 0;
+    errno   = 0;
     ret_val = setlocale(category, locale);
 
     // TODO - handle this properly
