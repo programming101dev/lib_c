@@ -49,6 +49,10 @@ set(HEADER_LIST
 # Build the shared library
 add_library(p101_c SHARED ${SOURCES})
 
+# Enable UBSan checks
+target_compile_options(p101_c PRIVATE -fsanitize=undefined)
+target_link_libraries(p101_c PRIVATE -fsanitize=undefined)
+
 # Include directories (if needed)
 target_include_directories(p101_c PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
