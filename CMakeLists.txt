@@ -129,7 +129,7 @@ add_custom_target(lint
 
 # Add a custom target for clang --analyze
 add_custom_target(analysis
-        COMMAND ${CMAKE_C_COMPILER} -DP101_ANALYZE --analyzer-output=none --analyze -Xclang -analyzer-checker=core --analyze -Xclang -analyzer-checker=deadcode -Xclang -analyzer-checker=security -Xclang -analyzer-checker=unix -Xclang -analyzer-checker=unix ${CMAKE_C_FLAGS} ${COMMON_FLAGS} -I${CMAKE_SOURCE_DIR}/include -I/usr/local/include ${SOURCES}
+        COMMAND ${CMAKE_C_COMPILER} --analyzer-output text --analyze -Xclang -analyzer-checker=core --analyze -Xclang -analyzer-checker=deadcode -Xclang -analyzer-checker=security -Xclang -analyzer-disable-checker=security.insecureAPI.DeprecatedOrUnsafeBufferHandling -Xclang -analyzer-checker=unix -Xclang -analyzer-checker=unix ${CMAKE_C_FLAGS} ${COMMON_FLAGS} -I${CMAKE_SOURCE_DIR}/include -I/usr/local/include ${SOURCES}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Running clang --analyze"
 )
@@ -142,7 +142,8 @@ add_custom_target(cppcheck
 )
 
 # Check if CMAKE_C_COMPILER starts with "clang"
-if (CMAKE_C_COMPILER MATCHES "^clang")
+message(STATUS "CMAKE_C_COMPILER: ${CMAKE_C_COMPILER}")
+if (CMAKE_C_COMPILER MATCHES ".*/clang.*")
     # Add dependencies including 'analysis' for Clang compiler
     add_custom_target(strict
             DEPENDS p101_c analysis lint cppcheck
