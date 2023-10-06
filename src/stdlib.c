@@ -43,7 +43,7 @@ int p101_abs(const struct p101_env *env, __attribute__((unused)) struct p101_err
     return ret_val;
 }
 
-int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)(void))    // cppcheck-suppress constParameterPointer
+int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)(void))
 {
     int ret_val;
 
@@ -60,8 +60,7 @@ int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)
     return ret_val;
 }
 
-void *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width,
-                   int (*compar)(const void *, const void *))    // cppcheck-suppress constParameterPointer
+void *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width, int (*compar)(const void *, const void *))
 {
     void *ret_val;
 
