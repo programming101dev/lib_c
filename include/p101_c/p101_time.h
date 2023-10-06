@@ -46,24 +46,6 @@ extern "C"
      *
      * @param env
      * @param err
-     * @param clock
-     * @return
-     */
-    struct tm *p101_gmtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param clock
-     * @return
-     */
-    struct tm *p101_localtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
-
-    /**
-     *
-     * @param env
-     * @param err
      * @param tm
      * @return
      */
@@ -93,5 +75,9 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
+
+// unsafe
+// struct tm *p101_gmtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
+// struct tm *p101_localtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
 
 #endif    // LIBP101_C_P101_TIME_H

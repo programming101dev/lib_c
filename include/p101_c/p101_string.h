@@ -214,15 +214,6 @@ extern "C"
     /**
      *
      * @param env
-     * @param s
-     * @param sep
-     * @return
-     */
-    char *p101_strtok(const struct p101_env *env, char *restrict s, const char *restrict sep);
-
-    /**
-     *
-     * @param env
      * @param err
      * @param s1
      * @param s2
@@ -234,5 +225,8 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
+
+// unsafe
+// char *p101_strtok(const struct p101_env *env, char *restrict s, const char *restrict sep);
 
 #endif    // LIBP101_C_P101_STRING_H

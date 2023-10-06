@@ -44,6 +44,7 @@ double p101_difftime(const struct p101_env *env, time_t time1, time_t time0)
     return ret_val;
 }
 
+/*
 struct tm *p101_gmtime(const struct p101_env *env, struct p101_error *err, const time_t *clock)
 {
     struct tm *ret_val;
@@ -59,7 +60,9 @@ struct tm *p101_gmtime(const struct p101_env *env, struct p101_error *err, const
 
     return ret_val;
 }
+*/
 
+/*
 struct tm *p101_localtime(const struct p101_env *env, struct p101_error *err, const time_t *clock)
 {
     struct tm *ret_val;
@@ -75,6 +78,7 @@ struct tm *p101_localtime(const struct p101_env *env, struct p101_error *err, co
 
     return ret_val;
 }
+*/
 
 time_t p101_mktime(const struct p101_env *env, struct p101_error *err, struct tm *tm)
 {

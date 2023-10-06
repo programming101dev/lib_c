@@ -254,6 +254,7 @@ char *p101_strstr(const struct p101_env *env, const char *s1, const char *s2)
     return ret_val;
 }
 
+/*
 char *p101_strtok(const struct p101_env *env, char *restrict s, const char *restrict sep)
 {
     char *ret_val;
@@ -264,6 +265,7 @@ char *p101_strtok(const struct p101_env *env, char *restrict s, const char *rest
 
     return ret_val;
 }
+*/
 
 size_t p101_strxfrm(const struct p101_env *env, struct p101_error *err, char *restrict s1, const char *restrict s2, size_t n)
 {
