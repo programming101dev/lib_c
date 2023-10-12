@@ -77,15 +77,6 @@ extern "C"
     /**
      *
      * @param env
-     * @param s1
-     * @param s2
-     * @return
-     */
-    char *p101_strcat(const struct p101_env *env, char *restrict s1, const char *restrict s2);
-
-    /**
-     *
-     * @param env
      * @param s
      * @param c
      * @return
@@ -109,15 +100,6 @@ extern "C"
      * @return
      */
     int p101_strcoll(const struct p101_env *env, const char *s1, const char *s2);
-
-    /**
-     *
-     * @param env
-     * @param s1
-     * @param s2
-     * @return
-     */
-    char *p101_strcpy(const struct p101_env *env, char *restrict s1, const char *restrict s2);
 
     /**
      *
@@ -228,5 +210,7 @@ extern "C"
 
 // unsafe
 // char *p101_strtok(const struct p101_env *env, char *restrict s, const char *restrict sep);
+// char *p101_strcat(const struct p101_env *env, char *restrict s1, const char *restrict s2);
+// char *p101_strcpy(const struct p101_env *env, char *restrict s1, const char *restrict s2);
 
 #endif    // LIBP101_C_P101_STRING_H

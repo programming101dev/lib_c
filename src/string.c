@@ -73,17 +73,6 @@ void *p101_memset(const struct p101_env *env, void *s, int c, size_t n)
     return ret_val;
 }
 
-char *p101_strcat(const struct p101_env *env, char *restrict s1, const char *restrict s2)
-{
-    char *ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = strcat(s1, s2);
-
-    return ret_val;
-}
-
 char *p101_strchr(const struct p101_env *env, const char *s, int c)
 {
     char *ret_val;
@@ -113,17 +102,6 @@ int p101_strcoll(const struct p101_env *env, const char *s1, const char *s2)
     P101_TRACE(env);
     errno   = 0;
     ret_val = strcoll(s1, s2);
-
-    return ret_val;
-}
-
-char *p101_strcpy(const struct p101_env *env, char *restrict s1, const char *restrict s2)
-{
-    char *ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = strcpy(s1, s2);
 
     return ret_val;
 }
@@ -159,8 +137,9 @@ char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errn
 
     if(p101_error_has_no_error(err))
     {
-        p101_strcpy(env, copy, ret_val);
-        ret_val = copy;
+        p101_strncpy(env, copy, ret_val, len);
+        copy[len] = '\0';
+        ret_val   = copy;
     }
 
     return ret_val;
@@ -253,19 +232,6 @@ char *p101_strstr(const struct p101_env *env, const char *s1, const char *s2)
 
     return ret_val;
 }
-
-/*
-char *p101_strtok(const struct p101_env *env, char *restrict s, const char *restrict sep)
-{
-    char *ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = strtok(s, sep);
-
-    return ret_val;
-}
-*/
 
 size_t p101_strxfrm(const struct p101_env *env, struct p101_error *err, char *restrict s1, const char *restrict s2, size_t n)
 {
