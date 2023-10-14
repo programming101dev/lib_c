@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(p101_c
-        VERSION 0.0.1
-        DESCRIPTION ""
-        LANGUAGES C)
+    VERSION 0.0.1
+    DESCRIPTION ""
+    LANGUAGES C)
 
 message(STATUS "Compiler being used: ${CMAKE_C_COMPILER}")
 
@@ -12,38 +12,38 @@ set(CMAKE_C_EXTENSIONS OFF)
 
 # Source files for the library
 set(SOURCES
-        ${CMAKE_SOURCE_DIR}/src/complex.c
-        ${CMAKE_SOURCE_DIR}/src/ctype.c
-        ${CMAKE_SOURCE_DIR}/src/fenv.c
-        ${CMAKE_SOURCE_DIR}/src/inttypes.c
-        ${CMAKE_SOURCE_DIR}/src/locale.c
-        ${CMAKE_SOURCE_DIR}/src/math.c
-        ${CMAKE_SOURCE_DIR}/src/setjmp.c
-        ${CMAKE_SOURCE_DIR}/src/signal.c
-        ${CMAKE_SOURCE_DIR}/src/stdio.c
-        ${CMAKE_SOURCE_DIR}/src/stdlib.c
-        ${CMAKE_SOURCE_DIR}/src/string.c
-        ${CMAKE_SOURCE_DIR}/src/time.c
-        ${CMAKE_SOURCE_DIR}/src/wchar.c
-        ${CMAKE_SOURCE_DIR}/src/wctype.c
+    ${CMAKE_SOURCE_DIR}/src/complex.c
+    ${CMAKE_SOURCE_DIR}/src/ctype.c
+    ${CMAKE_SOURCE_DIR}/src/fenv.c
+    ${CMAKE_SOURCE_DIR}/src/inttypes.c
+    ${CMAKE_SOURCE_DIR}/src/locale.c
+    ${CMAKE_SOURCE_DIR}/src/math.c
+    ${CMAKE_SOURCE_DIR}/src/setjmp.c
+    ${CMAKE_SOURCE_DIR}/src/signal.c
+    ${CMAKE_SOURCE_DIR}/src/stdio.c
+    ${CMAKE_SOURCE_DIR}/src/stdlib.c
+    ${CMAKE_SOURCE_DIR}/src/string.c
+    ${CMAKE_SOURCE_DIR}/src/time.c
+    ${CMAKE_SOURCE_DIR}/src/wchar.c
+    ${CMAKE_SOURCE_DIR}/src/wctype.c
 )
 
 # Define the list of header files to install
 set(HEADER_LIST
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_complex.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_ctype.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_fenv.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_inttypes.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_locale.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_math.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_setjmp.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_signal.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_stdio.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_stdlib.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_string.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_time.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_wchar.h
-        ${CMAKE_SOURCE_DIR}/include/p101_c/p101_wctype.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_complex.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_ctype.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_fenv.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_inttypes.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_locale.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_math.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_setjmp.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_signal.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_stdio.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_stdlib.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_string.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_time.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_wchar.h
+    ${CMAKE_SOURCE_DIR}/include/p101_c/p101_wctype.h
 )
 
 # Build the shared library
@@ -108,13 +108,9 @@ target_compile_options(p101_c PRIVATE
     ${SANITIZER_FLAGS_LIST}
 )
 
-# Get compiler flags for the target
-# get_target_property(COMPILE_OPTIONS p101_c COMPILE_OPTIONS)
-# string(REPLACE ";" " " COMPILE_OPTIONS_STR "${COMPILE_OPTIONS}")
-
-find_program(CLANG_FORMAT NAMES "clang-format" REQUIRED)
-find_program(CLANG_TIDY NAMES "clang-tidy" REQUIRED)
-find_program(CPPCHECK NAMES "cppcheck" REQUIRED)
+find_program(CLANG_FORMAT NAMES ${CLANG_FORMAT_NAME} REQUIRED)
+find_program(CLANG_TIDY NAMES ${CLANG_TIDY_NAME} REQUIRED)
+find_program(CPPCHECK NAMES ${CPPCHECK_NAME} REQUIRED)
 
 # Format source files using clang-format
 add_custom_target(format
@@ -142,28 +138,28 @@ message(STATUS "CMAKE_C_COMPILER: ${CMAKE_C_COMPILER}")
 if (CMAKE_C_COMPILER MATCHES ".*/clang.*")
     # Add a custom target for clang --analyze
     add_custom_target(analysis
-            COMMAND ${CMAKE_C_COMPILER} --analyze --analyzer-output text -Xclang -analyzer-checker=core --analyze -Xclang -analyzer-checker=deadcode -Xclang -analyzer-checker=security -Xclang -analyzer-disable-checker=security.insecureAPI.DeprecatedOrUnsafeBufferHandling -Xclang -analyzer-checker=unix -Xclang -analyzer-checker=unix ${CMAKE_C_FLAGS} ${STANDARD_FLAGS} -I${CMAKE_SOURCE_DIR}/include -I/usr/local/include ${SOURCES} ${HEADER_LIST}
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMENT "Running clang --analyze"
+        COMMAND ${CMAKE_C_COMPILER} --analyze --analyzer-output text -Xclang -analyzer-checker=core --analyze -Xclang -analyzer-checker=deadcode -Xclang -analyzer-checker=security -Xclang -analyzer-disable-checker=security.insecureAPI.DeprecatedOrUnsafeBufferHandling -Xclang -analyzer-checker=unix -Xclang -analyzer-checker=unix ${CMAKE_C_FLAGS} ${STANDARD_FLAGS} -I${CMAKE_SOURCE_DIR}/include -I/usr/local/include ${SOURCES} ${HEADER_LIST}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running clang --analyze"
     )
 
     # Add a custom command to delete .gch files after the analysis
     add_custom_command(
-            TARGET analysis POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_SOURCE_DIR}/include/p101_c/*.gch
-            COMMENT "Removing .gch files"
+        TARGET analysis POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_SOURCE_DIR}/include/p101_c/*.gch
+        COMMENT "Removing .gch files"
     )
 
     # Add dependencies including 'analysis' for Clang compiler
     add_custom_target(strict
-            DEPENDS p101_c analysis lint cppcheck
-            COMMENT "Running code analysis tools"
+        DEPENDS p101_c analysis lint cppcheck
+        COMMENT "Running code analysis tools"
     )
 else()
     # Add dependencies without 'analysis' for other compilers
     add_custom_target(strict
-            DEPENDS p101_c lint cppcheck
-            COMMENT "Running code analysis tools"
+        DEPENDS p101_c lint cppcheck
+        COMMENT "Running code analysis tools"
     )
 endif()
 
@@ -178,17 +174,17 @@ set(INSTALL_LIB_DIR lib${LIBSUFFIX} CACHE PATH "Installation directory for libra
 mark_as_advanced(INSTALL_LIB_DIR)
 
 set_target_properties(p101_c PROPERTIES
-        VERSION ${PROJECT_VERSION}
-        SOVERSION ${PROJECT_VERSION_MAJOR})
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR})
 
 # Install the library target
 install(TARGETS p101_c
-        LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-        COMPONENT library
-        NAMELINK_COMPONENT development
+    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
+    COMPONENT library
+    NAMELINK_COMPONENT development
 )
 
 # Install header files
 install(FILES ${HEADER_LIST}
-        DESTINATION include/p101_c
+    DESTINATION include/p101_c
 )
