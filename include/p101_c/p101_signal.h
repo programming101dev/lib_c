@@ -24,23 +24,7 @@ extern "C"
 {
 #endif
 
-    /**
-     *
-     * @param env
-     * @param err
-     * @param sig
-     * @return
-     */
     int p101_raise(const struct p101_env *env, struct p101_error *err, int sig);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param sig
-     * @param func
-     * @return
-     */
     void (*p101_signal(const struct p101_env *env, struct p101_error *err, int sig, void (*func)(int)))(int);
 
 #ifdef __cplusplus

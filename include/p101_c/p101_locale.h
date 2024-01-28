@@ -24,22 +24,8 @@ extern "C"
 {
 #endif
 
-    /**
-     *
-     * @param env
-     * @return
-     */
     struct lconv *p101_localeconv(const struct p101_env *env);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param category
-     * @param locale
-     * @return
-     */
-    char *p101_setlocale(const struct p101_env *env, struct p101_error *err, int category, const char *locale);
+    char         *p101_setlocale(const struct p101_env *env, struct p101_error *err, int category, const char *locale);
 
 #ifdef __cplusplus
 }

@@ -25,21 +25,8 @@ extern "C"
 {
 #endif
 
-    /**
-     *
-     * @param env
-     * @param buf
-     * @param val
-     */
     _Noreturn void p101_longjmp(const struct p101_env *env, jmp_buf buf, int val);
-
-    /**
-     *
-     * @param env
-     * @param buf
-     * @return
-     */
-    int p101_setjmp(const struct p101_env *env, jmp_buf buf);
+    int            p101_setjmp(const struct p101_env *env, jmp_buf buf);
 
 #ifdef __cplusplus
 }

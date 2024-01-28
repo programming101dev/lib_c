@@ -135,11 +135,14 @@ char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errn
     len  = p101_strlen(env, ret_val);
     copy = (char *)p101_malloc(env, err, len + 1);
 
-    if(p101_error_has_no_error(err))
+    if(copy != NULL && p101_error_has_no_error(err))
     {
         p101_strncpy(env, copy, ret_val, len);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
         copy[len] = '\0';
-        ret_val   = copy;
+#pragma clang diagnostic pop
+        ret_val = copy;
     }
 
     return ret_val;

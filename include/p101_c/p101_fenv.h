@@ -25,103 +25,16 @@ extern "C"
 {
 #endif
 
-    /**
-     *
-     * @param env
-     * @param err
-     * @param excepts
-     * @return
-     */
     int p101_feclearexcept(const struct p101_env *env, struct p101_error *err, int excepts);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param envp
-     * @return
-     */
     int p101_fegetenv(const struct p101_env *env, struct p101_error *err, fenv_t *envp);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param flagp
-     * @param excepts
-     * @return
-     */
     int p101_fegetexceptflag(const struct p101_env *env, struct p101_error *err, fexcept_t *flagp, int excepts);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @return
-     */
     int p101_fegetround(const struct p101_env *env, struct p101_error *err);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param envp
-     * @return
-     */
     int p101_feholdexcept(const struct p101_env *env, struct p101_error *err, fenv_t *envp);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param excepts
-     * @return
-     */
     int p101_feraiseexcept(const struct p101_env *env, struct p101_error *err, int excepts);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param envp
-     * @return
-     */
     int p101_fesetenv(const struct p101_env *env, struct p101_error *err, const fenv_t *envp);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param flagp
-     * @param excepts
-     * @return
-     */
     int p101_fesetexceptflag(const struct p101_env *env, struct p101_error *err, const fexcept_t *flagp, int excepts);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param round
-     * @return
-     */
     int p101_fesetround(const struct p101_env *env, struct p101_error *err, int round);
-
-    /**
-     *
-     * @param env
-     * @param excepts
-     * @return
-     */
     int p101_fetestexcept(const struct p101_env *env, int excepts);
-
-    /**
-     *
-     * @param env
-     * @param err
-     * @param envp
-     * @return
-     */
     int p101_feupdateenv(const struct p101_env *env, struct p101_error *err, const fenv_t *envp);
 
 #ifdef __cplusplus
