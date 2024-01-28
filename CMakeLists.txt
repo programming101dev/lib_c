@@ -96,6 +96,12 @@ target_link_libraries(p101_c PRIVATE ${SANITIZER_FLAGS_STRING})
 target_link_libraries(p101_c PRIVATE p101_error)
 target_link_libraries(p101_c PRIVATE p101_env)
 
+find_library(MATH_LIBRARY m)
+
+if(MATH_LIBRARY)
+    target_link_libraries(p101_c PRIVATE ${MATH_LIBRARY})
+endif()
+
 # Common compiler flags
 set(STANDARD_FLAGS
     -Werror
