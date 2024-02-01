@@ -9,6 +9,7 @@ Welcome to the `lib c` repository. This guide will help you set up and run the p
 3. [Running the `generate-cmakelists.sh` Script](#running-the-generate-cmakelistssh-script)
 4. [Running the `change-compiler.sh` Script](#running-the-change-compilersh-script)
 5. [Running the `build.sh` Script](#running-the-buildsh-script)
+6. [Running the `install.sh` Script](#running-the-installsh-script)
 
 ## **Cloning the Repository**
 
@@ -68,8 +69,18 @@ cat supported_c_compilers
 
 ## **Running the build.sh Script**
 
-To build the program run:
+To build the library run:
 
 ```bash
 ./build.sh
 ```
+
+## **Running the install.sh Script**
+
+To install the library run:
+
+```bash
+./install.sh
+```
+
+You may need to run it via sudo, or give the user account access to the install directories.
