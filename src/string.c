@@ -139,7 +139,7 @@ char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errn
     {
         p101_strncpy(env, copy, ret_val, len);
         copy[len] = '\0';
-        ret_val = copy;
+        ret_val   = copy;
     }
 
     return ret_val;
