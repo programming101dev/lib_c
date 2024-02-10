@@ -46,7 +46,7 @@ imaxdiv_t p101_imaxdiv(const struct p101_env *env, intmax_t numer, intmax_t deno
 intmax_t p101_strtoimax(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base)
 {
     intmax_t value;
-    char *temp_endptr;
+    char    *temp_endptr;
 
     P101_TRACE(env);
     errno = 0;
@@ -57,12 +57,12 @@ intmax_t p101_strtoimax(const struct p101_env *env, struct p101_error *err, cons
         // Error condition: no digits found
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
-    else if (value == INTMAX_MIN && errno == ERANGE)
+    else if(value == INTMAX_MIN && errno == ERANGE)
     {
         // Error condition: underflow
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
-    else if (value == INTMAX_MAX && errno == ERANGE)
+    else if(value == INTMAX_MAX && errno == ERANGE)
     {
         // Error condition: overflow
         P101_ERROR_RAISE_ERRNO(err, errno);
@@ -75,7 +75,6 @@ intmax_t p101_strtoimax(const struct p101_env *env, struct p101_error *err, cons
 
     return value;
 }
-
 
 uintmax_t p101_strtoumax(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base)
 {
