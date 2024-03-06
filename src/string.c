@@ -138,8 +138,11 @@ char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errn
     if(copy != NULL && p101_error_has_no_error(err))
     {
         p101_strncpy(env, copy, ret_val, len);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
         copy[len] = '\0';
-        ret_val   = copy;
+#pragma GCC diagnostic pop
+        ret_val = copy;
     }
 
     return ret_val;
