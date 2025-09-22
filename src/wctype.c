@@ -205,7 +205,7 @@ wctrans_t p101_wctrans(const struct p101_env *env, struct p101_error *err, const
     errno   = 0;
     ret_val = wctrans(charclass);
 
-    if(ret_val == 0)
+    if(ret_val == (wctrans_t)0)
     {
         if(errno != 0)
         {
