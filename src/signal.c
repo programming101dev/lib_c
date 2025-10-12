@@ -25,7 +25,7 @@ int p101_raise(const struct p101_env *env, struct p101_error *err, int sig)
     errno   = 0;
     ret_val = raise(sig);
 
-    if(ret_val == -1)
+    if(ret_val == -1)    // cppcheck-suppress unreachableCode
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
