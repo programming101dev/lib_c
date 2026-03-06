@@ -391,7 +391,7 @@ int p101_system(const struct p101_env *env, struct p101_error *err, const char *
 
     P101_TRACE(env);
     errno   = 0;
-    ret_val = system(command);    // NOLINT(cert-env33-c)
+    ret_val = system(command);    // NOLINT(cert-env33-c, bugprone-command-processor)
 
     if(errno != 0)
     {
