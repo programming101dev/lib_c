@@ -433,9 +433,9 @@ wchar_t *p101_wcscat(const struct p101_env *env, wchar_t *restrict ws1, const wc
     return ret_val;
 }
 
-wchar_t *p101_wcschr(const struct p101_env *env, const wchar_t *ws, wchar_t wc)
+const wchar_t *p101_wcschr(const struct p101_env *env, const wchar_t *ws, wchar_t wc)
 {
-    wchar_t *ret_val;
+    const wchar_t *ret_val;
 
     P101_TRACE(env);
     errno   = 0;
@@ -548,9 +548,9 @@ wchar_t *p101_wcsncpy(const struct p101_env *env, wchar_t *restrict ws1, const w
     return ret_val;
 }
 
-wchar_t *p101_wcspbrk(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2)
+const wchar_t *p101_wcspbrk(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2)
 {
-    wchar_t *ret_val;
+    const wchar_t *ret_val;
 
     P101_TRACE(env);
     errno   = 0;
@@ -559,9 +559,9 @@ wchar_t *p101_wcspbrk(const struct p101_env *env, const wchar_t *ws1, const wcha
     return ret_val;
 }
 
-wchar_t *p101_wcsrchr(const struct p101_env *env, const wchar_t *ws, wchar_t wc)
+const wchar_t *p101_wcsrchr(const struct p101_env *env, const wchar_t *ws, wchar_t wc)
 {
-    wchar_t *ret_val;
+    const wchar_t *ret_val;
 
     P101_TRACE(env);
     errno   = 0;
@@ -597,9 +597,9 @@ size_t p101_wcsspn(const struct p101_env *env, const wchar_t *ws1, const wchar_t
     return ret_val;
 }
 
-wchar_t *p101_wcsstr(const struct p101_env *env, const wchar_t *restrict ws1, const wchar_t *restrict ws2)
+const wchar_t *p101_wcsstr(const struct p101_env *env, const wchar_t *restrict ws1, const wchar_t *restrict ws2)
 {
-    wchar_t *ret_val;
+    const wchar_t *ret_val;
 
     P101_TRACE(env);
     errno   = 0;
@@ -758,9 +758,9 @@ int p101_wctob(const struct p101_env *env, wint_t c)
     return ret_val;
 }
 
-wchar_t *p101_wmemchr(const struct p101_env *env, const wchar_t *ws, wchar_t wc, size_t n)
+const wchar_t *p101_wmemchr(const struct p101_env *env, const wchar_t *ws, wchar_t wc, size_t n)
 {
-    wchar_t *ret_val;
+    const wchar_t *ret_val;
 
     P101_TRACE(env);
     errno   = 0;

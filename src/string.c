@@ -18,9 +18,9 @@
 #include "p101_c/p101_string.h"
 #include <string.h>
 
-void *p101_memchr(const struct p101_env *env, const void *s, int c, size_t n)
+const void *p101_memchr(const struct p101_env *env, const void *s, int c, size_t n)
 {
-    void *ret_val;
+    const void *ret_val;
 
     P101_TRACE(env);
     errno   = 0;
@@ -73,9 +73,9 @@ void *p101_memset(const struct p101_env *env, void *s, int c, size_t n)
     return ret_val;
 }
 
-char *p101_strchr(const struct p101_env *env, const char *s, int c)
+const char *p101_strchr(const struct p101_env *env, const char *s, int c)
 {
-    char *ret_val;
+    const char *ret_val;
 
     P101_TRACE(env);
     errno   = 0;
@@ -192,9 +192,9 @@ char *p101_strncpy(const struct p101_env *env, char *restrict s1, const char *re
     return ret_val;
 }
 
-char *p101_strpbrk(const struct p101_env *env, const char *s1, const char *s2)
+const char *p101_strpbrk(const struct p101_env *env, const char *s1, const char *s2)
 {
-    char *ret_val;
+    const char *ret_val;
 
     P101_TRACE(env);
     errno   = 0;
@@ -203,9 +203,9 @@ char *p101_strpbrk(const struct p101_env *env, const char *s1, const char *s2)
     return ret_val;
 }
 
-char *p101_strrchr(const struct p101_env *env, const char *s, int c)
+const char *p101_strrchr(const struct p101_env *env, const char *s, int c)
 {
-    char *ret_val;
+    const char *ret_val;
 
     P101_TRACE(env);
     errno   = 0;
@@ -225,9 +225,9 @@ size_t p101_strspn(const struct p101_env *env, const char *s1, const char *s2)
     return ret_val;
 }
 
-char *p101_strstr(const struct p101_env *env, const char *s1, const char *s2)
+const char *p101_strstr(const struct p101_env *env, const char *s1, const char *s2)
 {
-    char *ret_val;
+    const char *ret_val;
 
     P101_TRACE(env);
     errno   = 0;

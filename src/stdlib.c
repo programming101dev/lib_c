@@ -60,9 +60,9 @@ int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)
     return ret_val;
 }
 
-void *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width, int (*compar)(const void *, const void *))
+const void *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width, int (*compar)(const void *, const void *))
 {
-    void *ret_val;
+    const void *ret_val;
 
     P101_TRACE(env);
     errno   = 0;
