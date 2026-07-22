@@ -132,10 +132,15 @@ char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errn
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
+    if(p101_error_has_error(err))
+    {
+        return ret_val;
+    }
+
     len  = p101_strlen(env, ret_val);
     copy = (char *)p101_malloc(env, err, len + 1);
 
-    if(copy != NULL && p101_error_has_no_error(err))
+    if(copy != NULL)
     {
         p101_strncpy(env, copy, ret_val, len);
         // #pragma GCC diagnostic push

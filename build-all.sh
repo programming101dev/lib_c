@@ -3,6 +3,23 @@
 # Exit the script if any command fails
 set -e
 
+# --- opt-in coverage / profiling (P101) ---------------------------------
+# Pull the long flags out before the normal option parser and export them.
+# The shared CMakeLists reads P101_COVERAGE / P101_PROFILE at configure time
+# and instruments the compile + link. Absent => nothing changes. If a parent
+# (e.g. update.sh / build-all.sh) already exported them, they are inherited.
+_p101_argv=()
+for _p101_a in "$@"; do
+  case "$_p101_a" in
+    --coverage) export P101_COVERAGE=1 ;;
+    --profile)  export P101_PROFILE=1 ;;
+    *)          _p101_argv+=("$_p101_a") ;;
+  esac
+done
+if ((${#_p101_argv[@]})); then set -- "${_p101_argv[@]}"; else set --; fi
+unset _p101_argv _p101_a
+# ------------------------------------------------------------------------
+
 c_compiler=""
 clang_format_name="clang-format"
 clang_tidy_name="clang-tidy"
@@ -17,6 +34,9 @@ usage()
     echo "  -k cppcheck       Specify the cppcheck name (e.g. cppcheck)"
     exit 1
 }
+
+# --help / -h -> usage, exit 0 (P101 uniform CLI help)
+case " $* " in *" --help "*|*" -h "*) ( usage ) || true; exit 0 ;; esac
 
 # Parse command-line options using getopt
 while getopts ":f:t:k:" opt; do

@@ -29,7 +29,7 @@ extern "C"
     _Noreturn void     p101_abort(const struct p101_env *env);
     int                p101_abs(const struct p101_env *env, struct p101_error *err, int i);
     int                p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)(void));
-    const void              *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
+    const void        *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
     void              *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nelem, size_t elsize);
     div_t              p101_div(const struct p101_env *env, int numer, int denom);
     _Noreturn void     p101_exit(const struct p101_env *env, int status);

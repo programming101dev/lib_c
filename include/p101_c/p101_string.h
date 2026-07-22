@@ -24,25 +24,25 @@ extern "C"
 {
 #endif
 
-    const void  *p101_memchr(const struct p101_env *env, const void *s, int c, size_t n);
-    int    p101_memcmp(const struct p101_env *env, const void *s1, const void *s2, size_t n);
-    void  *p101_memcpy(const struct p101_env *env, void *restrict s1, const void *restrict s2, size_t n);
-    void  *p101_memmove(const struct p101_env *env, void *s1, const void *s2, size_t n);
-    void  *p101_memset(const struct p101_env *env, void *s, int c, size_t n);
-    const char  *p101_strchr(const struct p101_env *env, const char *s, int c);
-    int    p101_strcmp(const struct p101_env *env, const char *s1, const char *s2);
-    int    p101_strcoll(const struct p101_env *env, const char *s1, const char *s2);
-    size_t p101_strcspn(const struct p101_env *env, const char *s1, const char *s2);
-    char  *p101_strerror(const struct p101_env *env, struct p101_error *err, int errnum);
-    size_t p101_strlen(const struct p101_env *env, const char *s);
-    char  *p101_strncat(const struct p101_env *env, char *restrict s1, const char *restrict s2, size_t n);
-    int    p101_strncmp(const struct p101_env *env, const char *s1, const char *s2, size_t n);
-    char  *p101_strncpy(const struct p101_env *env, char *restrict s1, const char *restrict s2, size_t n);
-    const char  *p101_strpbrk(const struct p101_env *env, const char *s1, const char *s2);
-    const char  *p101_strrchr(const struct p101_env *env, const char *s, int c);
-    size_t p101_strspn(const struct p101_env *env, const char *s1, const char *s2);
-    const char  *p101_strstr(const struct p101_env *env, const char *s1, const char *s2);
-    size_t p101_strxfrm(const struct p101_env *env, struct p101_error *err, char *restrict s1, const char *restrict s2, size_t n);
+    const void *p101_memchr(const struct p101_env *env, const void *s, int c, size_t n);
+    int         p101_memcmp(const struct p101_env *env, const void *s1, const void *s2, size_t n);
+    void       *p101_memcpy(const struct p101_env *env, void *restrict s1, const void *restrict s2, size_t n);
+    void       *p101_memmove(const struct p101_env *env, void *s1, const void *s2, size_t n);
+    void       *p101_memset(const struct p101_env *env, void *s, int c, size_t n);
+    const char *p101_strchr(const struct p101_env *env, const char *s, int c);
+    int         p101_strcmp(const struct p101_env *env, const char *s1, const char *s2);
+    int         p101_strcoll(const struct p101_env *env, const char *s1, const char *s2);
+    size_t      p101_strcspn(const struct p101_env *env, const char *s1, const char *s2);
+    char       *p101_strerror(const struct p101_env *env, struct p101_error *err, int errnum);
+    size_t      p101_strlen(const struct p101_env *env, const char *s);
+    char       *p101_strncat(const struct p101_env *env, char *restrict s1, const char *restrict s2, size_t n);
+    int         p101_strncmp(const struct p101_env *env, const char *s1, const char *s2, size_t n);
+    char       *p101_strncpy(const struct p101_env *env, char *restrict s1, const char *restrict s2, size_t n);
+    const char *p101_strpbrk(const struct p101_env *env, const char *s1, const char *s2);
+    const char *p101_strrchr(const struct p101_env *env, const char *s, int c);
+    size_t      p101_strspn(const struct p101_env *env, const char *s1, const char *s2);
+    const char *p101_strstr(const struct p101_env *env, const char *s1, const char *s2);
+    size_t      p101_strxfrm(const struct p101_env *env, struct p101_error *err, char *restrict s1, const char *restrict s2, size_t n);
 
 #ifdef __cplusplus
 }
