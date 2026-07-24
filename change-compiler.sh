@@ -42,13 +42,15 @@ extra_cmake_args=()   # additional -Dfoo=bar etc.
 # ----------------- usage -----------------
 usage() {
   cat <<'USAGE' >&2
-Usage: change-compiler.sh -c <cc> [-f <clang-format>] [-t <clang-tidy>] [-k <cppcheck>] [-s <sanitizers>] [-b <build-dir>] [-G <generator>] [-R] [-- -D...]
+Usage: change-compiler.sh -c <cc> [-f <clang-format>] [-t <clang-tidy>] [-k <cppcheck>] [-s <sanitizers>] [-b <build-dir>] [-G <generator>] [-R] [--coverage] [--profile] [-- -D...]
   -c <cc>           C compiler (e.g. gcc, gcc-15, clang, /usr/bin/clang-18)
   -f <name>         clang-format executable (default: clang-format)
   -t <name>         clang-tidy executable   (default: clang-tidy)
   -k <name>         cppcheck executable     (default: cppcheck)
   -s <list>         comma list of sanitizers (e.g. address,undefined)
                     If omitted, reads sanitizers.txt (if present), else none.
+  --coverage        instrument this build for code coverage (gcov)
+  --profile         instrument this build for profiling (gprof)
   -b <dir>          build directory (default: build-<compiler>)
   -G <gen>          CMake generator (e.g. Ninja, "Unix Makefiles")
   -R                reuse existing build dir (do NOT delete it)
