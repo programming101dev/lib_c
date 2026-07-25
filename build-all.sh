@@ -28,10 +28,12 @@ cppcheck_name="cppcheck"
 # Function to display script usage
 usage()
 {
-    echo "Usage: $0 [-f <clang-format>] [-t <clang-tidy>] [-k <cppcheck>]"
+    echo "Usage: $0 [-f <clang-format>] [-t <clang-tidy>] [-k <cppcheck>] [--coverage] [--profile]"
     echo "  -f clang-format   Specify the clang-format name (e.g. clang-tidy or clang-tidy-17)"
     echo "  -t clang-tidy     Specify the clang-tidy name (e.g. clang-tidy or clang-tidy-17)"
     echo "  -k cppcheck       Specify the cppcheck name (e.g. cppcheck)"
+    echo "  --coverage        Instrument every build for code coverage (gcov)"
+    echo "  --profile         Instrument every build for profiling (gprof)"
     exit 1
 }
 
