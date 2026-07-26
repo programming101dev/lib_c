@@ -211,7 +211,10 @@ wctrans_t p101_wctrans(const struct p101_env *env, struct p101_error *err, const
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        // TODO: otherwise?
+        else
+        {
+            P101_ERROR_RAISE_ERRNO(err, EINVAL);
+        }
     }
 
     return ret_val;
@@ -227,8 +230,14 @@ wctype_t p101_wctype(const struct p101_env *env, struct p101_error *err, const c
 
     if(ret_val == 0)
     {
-        // TODO: message and code
-        P101_ERROR_RAISE_SYSTEM(err, "", -1);
+        if(errno != 0)
+        {
+            P101_ERROR_RAISE_ERRNO(err, errno);
+        }
+        else
+        {
+            P101_ERROR_RAISE_ERRNO(err, EINVAL);
+        }
     }
 
     return ret_val;

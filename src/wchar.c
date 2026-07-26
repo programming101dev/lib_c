@@ -16,6 +16,22 @@
 
 #include "p101_c/p101_wchar.h"
 
+static int wchar_io_error_code(void);
+
+static int wchar_io_error_code(void)
+{
+    int err_code;
+
+    err_code = errno;
+
+    if(err_code == 0)
+    {
+        err_code = EIO;
+    }
+
+    return err_code;
+}
+
 wint_t p101_btowc(const struct p101_env *env, int c)
 {
     wint_t ret_val;
@@ -43,8 +59,7 @@ wint_t p101_fgetwc(const struct p101_env *env, struct p101_error *err, FILE *str
         }
         else if(ferror(stream))
         {
-            // TODO - how to handle?
-            P101_ERROR_RAISE_SYSTEM(err, "", 0);
+            P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
     }
 
@@ -67,8 +82,7 @@ wchar_t *p101_fgetws(const struct p101_env *env, struct p101_error *err, wchar_t
         }
         else if(ferror(stream))
         {
-            // TODO - how to handle?
-            P101_ERROR_RAISE_SYSTEM(err, "", 0);
+            P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
     }
 
@@ -91,8 +105,7 @@ wint_t p101_fputwc(const struct p101_env *env, struct p101_error *err, wchar_t w
         }
         else if(ferror(stream))
         {
-            // TODO - how to handle?
-            P101_ERROR_RAISE_SYSTEM(err, "", 0);
+            P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
     }
 
@@ -115,8 +128,7 @@ int p101_fputws(const struct p101_env *env, struct p101_error *err, const wchar_
         }
         else if(ferror(stream))
         {
-            // TODO - how to handle?
-            P101_ERROR_RAISE_SYSTEM(err, "", 0);
+            P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
     }
 
@@ -131,7 +143,6 @@ int p101_fwide(const struct p101_env *env, struct p101_error *err, FILE *stream,
     errno   = 0;
     ret_val = fwide(stream, mode);
 
-    // TODO: this is with POSIX, what about just straight C?
     if(errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
@@ -156,8 +167,7 @@ wint_t p101_getwc(const struct p101_env *env, struct p101_error *err, FILE *stre
         }
         else if(ferror(stream))
         {
-            // TODO - how to handle?
-            P101_ERROR_RAISE_SYSTEM(err, "", 0);
+            P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
     }
 
@@ -180,8 +190,7 @@ wint_t p101_getwchar(const struct p101_env *env, struct p101_error *err)
         }
         else if(ferror(stdin))
         {
-            // TODO - how to handle?
-            P101_ERROR_RAISE_SYSTEM(err, "", 0);
+            P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
     }
 
@@ -263,8 +272,7 @@ wint_t p101_putwc(const struct p101_env *env, struct p101_error *err, wchar_t wc
         }
         else if(ferror(stream))
         {
-            // TODO - how to handle?
-            P101_ERROR_RAISE_SYSTEM(err, "", 0);
+            P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
     }
 
@@ -287,8 +295,7 @@ wint_t p101_putwchar(const struct p101_env *env, struct p101_error *err, wchar_t
         }
         else if(ferror(stdout))
         {
-            // TODO - how to handle?
-            P101_ERROR_RAISE_SYSTEM(err, "", 0);
+            P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
     }
 
@@ -309,7 +316,10 @@ wint_t p101_ungetwc(const struct p101_env *env, struct p101_error *err, wint_t w
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        // TODO - how to handle?
+        else
+        {
+            P101_ERROR_RAISE_ERRNO(err, EIO);
+        }
     }
 
     return ret_val;

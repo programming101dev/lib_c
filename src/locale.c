@@ -36,10 +36,16 @@ char *p101_setlocale(const struct p101_env *env, struct p101_error *err, int cat
     errno   = 0;
     ret_val = setlocale(category, locale);
 
-    // TODO - handle this properly
     if(ret_val == NULL)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        if(errno != 0)
+        {
+            P101_ERROR_RAISE_ERRNO(err, errno);
+        }
+        else
+        {
+            P101_ERROR_RAISE_ERRNO(err, EINVAL);
+        }
     }
 
     return ret_val;

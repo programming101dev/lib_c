@@ -20,6 +20,14 @@
 #include <p101_env/env.h>
 #include <time.h>
 
+#ifndef P101_ATTR_STRFTIME
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_STRFTIME(format_index) __attribute__((format(strftime, format_index, 0)))
+    #else
+        #define P101_ATTR_STRFTIME(format_index)
+    #endif
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -28,7 +36,7 @@ extern "C"
     clock_t p101_clock(const struct p101_env *env, struct p101_error *err);
     double  p101_difftime(const struct p101_env *env, time_t time1, time_t time0);
     time_t  p101_mktime(const struct p101_env *env, struct p101_error *err, struct tm *tm);
-    size_t  p101_strftime(const struct p101_env *env, struct p101_error *err, char *restrict buf, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr);
+    size_t  p101_strftime(const struct p101_env *env, struct p101_error *err, char *restrict buf, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr) P101_ATTR_STRFTIME(5);
     time_t  p101_time(const struct p101_env *env, struct p101_error *err, time_t *tloc);
 
 #ifdef __cplusplus

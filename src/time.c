@@ -26,8 +26,14 @@ clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
 
     if(ret_val == (clock_t)-1)
     {
-        // TODO: what is a sensible message/code?
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        if(errno != 0)
+        {
+            P101_ERROR_RAISE_ERRNO(err, errno);
+        }
+        else
+        {
+            P101_ERROR_RAISE_ERRNO(err, ENOTSUP);
+        }
     }
 
     return ret_val;
@@ -109,8 +115,14 @@ size_t p101_strftime(const struct p101_env *env, struct p101_error *err, char *r
 
     if(ret_val == 0)
     {
-        // TODO: what is a sensible message/code?
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        if(errno != 0)
+        {
+            P101_ERROR_RAISE_ERRNO(err, errno);
+        }
+        else
+        {
+            P101_ERROR_RAISE_ERRNO(err, ERANGE);
+        }
     }
 
     return ret_val;

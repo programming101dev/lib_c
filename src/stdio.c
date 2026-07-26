@@ -16,6 +16,18 @@
 
 #include "p101_c/p101_stdio.h"
 
+static int stdio_error_code(int err_code);
+
+static int stdio_error_code(int err_code)
+{
+    if(err_code == 0)
+    {
+        err_code = EIO;
+    }
+
+    return err_code;
+}
+
 void p101_clearerr(const struct p101_env *env, FILE *stream)
 {
     P101_TRACE(env);
@@ -127,7 +139,7 @@ char *p101_fgets(const struct p101_env *env, struct p101_error *err, char *restr
 
         if(p101_ferror(env, stream))
         {
-            P101_ERROR_RAISE_ERRNO(err, temp_errno);
+            P101_ERROR_RAISE_ERRNO(err, stdio_error_code(temp_errno));
         }
     }
 
@@ -448,6 +460,84 @@ int p101_ungetc(const struct p101_env *env, int c, FILE *stream)
     return ret_val;
 }
 
+int p101_fprintf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, ...)
+{
+    va_list ap;
+    int     ret_val;
+
+    P101_TRACE(env);
+    va_start(ap, format);
+    ret_val = p101_vfprintf(env, err, stream, format, ap);
+    va_end(ap);
+
+    return ret_val;
+}
+
+int p101_fscanf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, ...)
+{
+    va_list ap;
+    int     ret_val;
+
+    P101_TRACE(env);
+    va_start(ap, format);
+    ret_val = p101_vfscanf(env, err, stream, format, ap);
+    va_end(ap);
+
+    return ret_val;
+}
+
+int p101_printf(const struct p101_env *env, struct p101_error *err, const char *restrict format, ...)
+{
+    va_list ap;
+    int     ret_val;
+
+    P101_TRACE(env);
+    va_start(ap, format);
+    ret_val = p101_vprintf(env, err, format, ap);
+    va_end(ap);
+
+    return ret_val;
+}
+
+int p101_scanf(const struct p101_env *env, struct p101_error *err, const char *restrict format, ...)
+{
+    va_list ap;
+    int     ret_val;
+
+    P101_TRACE(env);
+    va_start(ap, format);
+    ret_val = p101_vscanf(env, err, format, ap);
+    va_end(ap);
+
+    return ret_val;
+}
+
+int p101_snprintf(const struct p101_env *env, struct p101_error *err, char *restrict s, size_t n, const char *restrict format, ...)
+{
+    va_list ap;
+    int     ret_val;
+
+    P101_TRACE(env);
+    va_start(ap, format);
+    ret_val = p101_vsnprintf(env, err, s, n, format, ap);
+    va_end(ap);
+
+    return ret_val;
+}
+
+int p101_sscanf(const struct p101_env *env, struct p101_error *err, const char *restrict s, const char *restrict format, ...)
+{
+    va_list ap;
+    int     ret_val;
+
+    P101_TRACE(env);
+    va_start(ap, format);
+    ret_val = p101_vsscanf(env, err, s, format, ap);
+    va_end(ap);
+
+    return ret_val;
+}
+
 int p101_vfprintf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, va_list ap)
 {
     int ret_val;
@@ -462,10 +552,9 @@ int p101_vfprintf(const struct p101_env *env, struct p101_error *err, FILE *rest
     ret_val = vfprintf(stream, format, ap);
 #pragma GCC diagnostic pop
 
-    // TODO there is the error indicator of the stream too maybe?
     if(ret_val == EOF)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
     return ret_val;
@@ -485,10 +574,12 @@ int p101_vfscanf(const struct p101_env *env, struct p101_error *err, FILE *restr
     ret_val = vfscanf(stream, format, ap);
 #pragma GCC diagnostic pop
 
-    // TODO there is the error indicator of the stream too maybe?
     if(ret_val == EOF)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        if(p101_ferror(env, stream))
+        {
+            P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
+        }
     }
 
     return ret_val;
@@ -508,10 +599,9 @@ int p101_vprintf(const struct p101_env *env, struct p101_error *err, const char 
     ret_val = vprintf(format, ap);
 #pragma GCC diagnostic pop
 
-    // TODO there is the error indicator of the stream too maybe?
     if(ret_val == EOF)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
     return ret_val;
@@ -531,10 +621,12 @@ int p101_vscanf(const struct p101_env *env, struct p101_error *err, const char *
     ret_val = vscanf(format, ap);
 #pragma GCC diagnostic pop
 
-    // TODO there is the error indicator of the stream too maybe?
     if(ret_val == EOF)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        if(p101_ferror(env, stdin))
+        {
+            P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
+        }
     }
 
     return ret_val;
@@ -554,10 +646,9 @@ int p101_vsnprintf(const struct p101_env *env, struct p101_error *err, char *res
     ret_val = vsnprintf(s, n, format, ap);
 #pragma GCC diagnostic pop
 
-    // TODO there is the error indicator of the stream too maybe?
     if(ret_val == EOF)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
     return ret_val;
@@ -577,10 +668,12 @@ int p101_vsscanf(const struct p101_env *env, struct p101_error *err, const char 
     ret_val = vsscanf(s, format, ap);
 #pragma GCC diagnostic pop
 
-    // TODO there is the error indicator of the stream too maybe?
     if(ret_val == EOF)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        if(errno != 0)
+        {
+            P101_ERROR_RAISE_ERRNO(err, errno);
+        }
     }
 
     return ret_val;

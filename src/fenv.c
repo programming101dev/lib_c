@@ -16,6 +16,22 @@
 
 #include "p101_c/p101_fenv.h"
 
+static int fenv_error_code(void);
+
+static int fenv_error_code(void)
+{
+    int err_code;
+
+    err_code = errno;
+
+    if(err_code == 0)
+    {
+        err_code = EINVAL;
+    }
+
+    return err_code;
+}
+
 int p101_feclearexcept(const struct p101_env *env, struct p101_error *err, int excepts)
 {
     int ret_val;
@@ -24,10 +40,9 @@ int p101_feclearexcept(const struct p101_env *env, struct p101_error *err, int e
     errno   = 0;
     ret_val = feclearexcept(excepts);
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;
@@ -41,10 +56,9 @@ int p101_fegetenv(const struct p101_env *env, struct p101_error *err, fenv_t *en
     errno   = 0;
     ret_val = fegetenv(envp);
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;
@@ -58,10 +72,9 @@ int p101_fegetexceptflag(const struct p101_env *env, struct p101_error *err, fex
     errno   = 0;
     ret_val = fegetexceptflag(flagp, excepts);
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;
@@ -75,10 +88,9 @@ int p101_fegetround(const struct p101_env *env, struct p101_error *err)
     errno   = 0;
     ret_val = fegetround();
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;
@@ -92,10 +104,9 @@ int p101_feholdexcept(const struct p101_env *env, struct p101_error *err, fenv_t
     errno   = 0;
     ret_val = feholdexcept(envp);
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;
@@ -109,10 +120,9 @@ int p101_feraiseexcept(const struct p101_env *env, struct p101_error *err, int e
     errno   = 0;
     ret_val = feraiseexcept(excepts);
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;
@@ -126,10 +136,9 @@ int p101_fesetenv(const struct p101_env *env, struct p101_error *err, const fenv
     errno   = 0;
     ret_val = fesetenv(envp);
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;
@@ -143,10 +152,9 @@ int p101_fesetexceptflag(const struct p101_env *env, struct p101_error *err, con
     errno   = 0;
     ret_val = fesetexceptflag(flagp, excepts);
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;
@@ -160,10 +168,9 @@ int p101_fesetround(const struct p101_env *env, struct p101_error *err, int roun
     errno   = 0;
     ret_val = fesetround(round);
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;
@@ -188,10 +195,9 @@ int p101_feupdateenv(const struct p101_env *env, struct p101_error *err, const f
     errno   = 0;
     ret_val = feupdateenv(envp);
 
-    // TODO - handle this properly
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_SYSTEM(err, "", 0);
+        P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
     return ret_val;

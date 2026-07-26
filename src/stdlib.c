@@ -15,30 +15,52 @@
  */
 
 #include "p101_c/p101_stdlib.h"
+#include <limits.h>
+#include <stdint.h>
 
-void p101__Exit(const struct p101_env *env, int status)
+static const void *p101_pointer_value_for_log(uintptr_t ptr_value);
+
+static const void *p101_pointer_value_for_log(uintptr_t ptr_value)
+{
+#ifdef __clang_analyzer__
+    (void)ptr_value;
+
+    return NULL;
+#else
+    return (const void *)ptr_value;    // NOLINT(clang-analyzer-unix.Malloc,performance-no-int-to-ptr)
+#endif
+}
+
+P101_ATTR_NORETURN void p101_exit_immediately(const struct p101_env *env, int status)
 {
     P101_TRACE(env);
     errno = 0;
     _Exit(status);
 }
 
-_Noreturn void p101_abort(const struct p101_env *env)
+P101_ATTR_NORETURN void p101_abort(const struct p101_env *env)
 {
     P101_TRACE(env);
     errno = 0;
     abort();
 }
 
-int p101_abs(const struct p101_env *env, __attribute__((unused)) struct p101_error *err, int i)
+int p101_abs(const struct p101_env *env, struct p101_error *err, int i)
 {
     int ret_val;
 
     P101_TRACE(env);
     errno = 0;
 
-    // TODO: handle if INT_MIN not working
-    ret_val = abs(i);
+    if(i == INT_MIN)
+    {
+        P101_ERROR_RAISE_ERRNO(err, ERANGE);
+        ret_val = i;
+    }
+    else
+    {
+        ret_val = abs(i);
+    }
 
     return ret_val;
 }
@@ -83,6 +105,19 @@ void *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nel
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+    else
+    {
+        size_t requested_size;
+
+        requested_size = SIZE_MAX;
+
+        if(elsize == 0 || nelem <= (SIZE_MAX / elsize))
+        {
+            requested_size = nelem * elsize;
+        }
+
+        P101_TRACK_ALLOC(env, memory, requested_size);
+    }
 
     return memory;
 }
@@ -103,7 +138,7 @@ div_t p101_div(const struct p101_env *env, int numer, int denom)
 
 #pragma GCC diagnostic pop
 
-_Noreturn void p101_exit(const struct p101_env *env, int status)
+P101_ATTR_NORETURN void p101_exit(const struct p101_env *env, int status)
 {
     P101_TRACE(env);
     errno = 0;
@@ -114,6 +149,7 @@ void p101_free(const struct p101_env *env, void *ptr)
 {
     P101_TRACE(env);
     errno = 0;
+    P101_TRACK_FREE(env, ptr);
     free(ptr);
 }
 
@@ -128,15 +164,22 @@ char *p101_getenv(const struct p101_env *env, const char *name)
     return ret_val;
 }
 
-long p101_labs(const struct p101_env *env, __attribute__((unused)) struct p101_error *err, long i)
+long p101_labs(const struct p101_env *env, struct p101_error *err, long i)
 {
     long ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
-    ret_val = labs(i);
+    errno = 0;
 
-    // TODO: handle the case that i can't be handled
+    if(i == LONG_MIN)
+    {
+        P101_ERROR_RAISE_ERRNO(err, ERANGE);
+        ret_val = i;
+    }
+    else
+    {
+        ret_val = labs(i);
+    }
 
     return ret_val;
 }
@@ -157,15 +200,22 @@ ldiv_t p101_ldiv(const struct p101_env *env, long numer, long denom)
 
 #pragma GCC diagnostic pop
 
-long long p101_llabs(const struct p101_env *env, __attribute__((unused)) struct p101_error *err, long long i)
+long long p101_llabs(const struct p101_env *env, struct p101_error *err, long long i)
 {
     long long ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
-    ret_val = llabs(i);
+    errno = 0;
 
-    // TODO: handle if i cannot be represented
+    if(i == LLONG_MIN)
+    {
+        P101_ERROR_RAISE_ERRNO(err, ERANGE);
+        ret_val = i;
+    }
+    else
+    {
+        ret_val = llabs(i);
+    }
 
     return ret_val;
 }
@@ -197,6 +247,10 @@ void *p101_malloc(const struct p101_env *env, struct p101_error *err, size_t siz
     if(memory == NULL)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_TRACK_ALLOC(env, memory, size);
     }
 
     return memory;
@@ -259,15 +313,21 @@ void p101_qsort(const struct p101_env *env, void *base, size_t nel, size_t width
 
 void *p101_realloc(const struct p101_env *env, struct p101_error *err, void *ptr, size_t size)
 {
-    void *memory;
+    void     *memory;
+    uintptr_t old_ptr_value;
 
     P101_TRACE(env);
-    errno  = 0;
-    memory = realloc(ptr, size);
+    errno         = 0;
+    old_ptr_value = (uintptr_t)ptr;
+    memory        = realloc(ptr, size);
 
     if(memory == NULL)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+    else
+    {
+        P101_TRACK_REALLOC(env, p101_pointer_value_for_log(old_ptr_value), memory, size);
     }
 
     return memory;

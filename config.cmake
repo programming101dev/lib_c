@@ -12,10 +12,17 @@ set(CMAKE_C_EXTENSIONS OFF)
 set(STANDARD_FLAGS
         -D_POSIX_C_SOURCE=200809L
         -D_XOPEN_SOURCE=700
-        #-D_GNU_SOURCE
-        #-D_DARWIN_C_SOURCE
-        #-D__BSD_VISIBLE
         -Werror
+)
+
+set(DARWIN_STANDARD_FLAGS
+        -D_DARWIN_C_SOURCE
+)
+
+set(LINUX_STANDARD_FLAGS
+)
+
+set(BSD_STANDARD_FLAGS
 )
 
 # Define library targets
@@ -32,6 +39,7 @@ set(p101_c_SOURCES
         src/setjmp.c
         src/signal.c
         src/stdio.c
+        src/stdatomic.c
         src/stdlib.c
         src/string.c
         src/time.c
@@ -50,6 +58,7 @@ set(p101_c_HEADERS
         include/p101_c/p101_setjmp.h
         include/p101_c/p101_signal.h
         include/p101_c/p101_stdio.h
+        include/p101_c/p101_stdatomic.h
         include/p101_c/p101_stdlib.h
         include/p101_c/p101_string.h
         include/p101_c/p101_time.h

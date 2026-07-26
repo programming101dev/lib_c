@@ -21,6 +21,30 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#ifndef P101_ATTR_PRINTF
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_PRINTF(format_index, first_arg) __attribute__((format(printf, format_index, first_arg)))
+    #else
+        #define P101_ATTR_PRINTF(format_index, first_arg)
+    #endif
+#endif
+
+#ifndef P101_ATTR_SCANF
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_SCANF(format_index, first_arg) __attribute__((format(scanf, format_index, first_arg)))
+    #else
+        #define P101_ATTR_SCANF(format_index, first_arg)
+    #endif
+#endif
+
+#ifndef P101_ATTR_WARN_UNUSED_RESULT
+    #if defined(__GNUC__) || defined(__clang__)
+        #define P101_ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+    #else
+        #define P101_ATTR_WARN_UNUSED_RESULT
+    #endif
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -34,11 +58,13 @@ extern "C"
     int    p101_fgetc(const struct p101_env *env, struct p101_error *err, FILE *stream);
     int    p101_fgetpos(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, fpos_t *restrict pos);
     char  *p101_fgets(const struct p101_env *env, struct p101_error *err, char *restrict s, int n, FILE *restrict stream);
-    FILE  *p101_fopen(const struct p101_env *env, struct p101_error *err, const char *restrict pathname, const char *restrict mode);
+    FILE  *p101_fopen(const struct p101_env *env, struct p101_error *err, const char *restrict pathname, const char *restrict mode) P101_ATTR_WARN_UNUSED_RESULT;
+    int    p101_fprintf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, ...) P101_ATTR_PRINTF(4, 5);
     int    p101_fputc(const struct p101_env *env, struct p101_error *err, int c, FILE *stream);
     int    p101_fputs(const struct p101_env *env, struct p101_error *err, const char *restrict s, FILE *restrict stream);
     size_t p101_fread(const struct p101_env *env, struct p101_error *err, void *restrict ptr, size_t size, size_t nitems, FILE *restrict stream);
-    FILE  *p101_freopen(const struct p101_env *env, struct p101_error *err, const char *restrict pathname, const char *restrict mode, FILE *restrict stream);
+    FILE  *p101_freopen(const struct p101_env *env, struct p101_error *err, const char *restrict pathname, const char *restrict mode, FILE *restrict stream) P101_ATTR_WARN_UNUSED_RESULT;
+    int    p101_fscanf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, ...) P101_ATTR_SCANF(4, 5);
     int    p101_fseek(const struct p101_env *env, struct p101_error *err, FILE *stream, long offset, int whence);
     int    p101_fsetpos(const struct p101_env *env, struct p101_error *err, FILE *stream, const fpos_t *pos);
     long   p101_ftell(const struct p101_env *env, struct p101_error *err, FILE *stream);
@@ -46,20 +72,24 @@ extern "C"
     int    p101_getc(const struct p101_env *env, struct p101_error *err, FILE *stream);
     int    p101_getchar(const struct p101_env *env, struct p101_error *err);
     void   p101_perror(const struct p101_env *env, const char *s);
+    int    p101_printf(const struct p101_env *env, struct p101_error *err, const char *restrict format, ...) P101_ATTR_PRINTF(3, 4);
     int    p101_putc(const struct p101_env *env, struct p101_error *err, int c, FILE *stream);
     int    p101_putchar(const struct p101_env *env, struct p101_error *err, int c);
     int    p101_puts(const struct p101_env *env, struct p101_error *err, const char *s);
     int    p101_remove(const struct p101_env *env, struct p101_error *err, const char *path);
     int    p101_rename(const struct p101_env *env, struct p101_error *err, const char *old_name, const char *new_name);
+    int    p101_scanf(const struct p101_env *env, struct p101_error *err, const char *restrict format, ...) P101_ATTR_SCANF(3, 4);
     int    p101_setvbuf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, char *restrict buf, int type, size_t size);
-    FILE  *p101_tmpfile(const struct p101_env *env, struct p101_error *err);
+    int    p101_snprintf(const struct p101_env *env, struct p101_error *err, char *restrict s, size_t n, const char *restrict format, ...) P101_ATTR_PRINTF(5, 6);
+    int    p101_sscanf(const struct p101_env *env, struct p101_error *err, const char *restrict s, const char *restrict format, ...) P101_ATTR_SCANF(4, 5);
+    FILE  *p101_tmpfile(const struct p101_env *env, struct p101_error *err) P101_ATTR_WARN_UNUSED_RESULT;
     int    p101_ungetc(const struct p101_env *env, int c, FILE *stream);
-    int    p101_vfprintf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, va_list ap);
-    int    p101_vfscanf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, va_list ap);
-    int    p101_vprintf(const struct p101_env *env, struct p101_error *err, const char *restrict format, va_list ap);
-    int    p101_vscanf(const struct p101_env *env, struct p101_error *err, const char *restrict format, va_list ap);
-    int    p101_vsnprintf(const struct p101_env *env, struct p101_error *err, char *restrict s, size_t n, const char *restrict format, va_list ap);
-    int    p101_vsscanf(const struct p101_env *env, struct p101_error *err, const char *restrict s, const char *restrict format, va_list ap);
+    int    p101_vfprintf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, va_list ap) P101_ATTR_PRINTF(4, 0);
+    int    p101_vfscanf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, va_list ap) P101_ATTR_SCANF(4, 0);
+    int    p101_vprintf(const struct p101_env *env, struct p101_error *err, const char *restrict format, va_list ap) P101_ATTR_PRINTF(3, 0);
+    int    p101_vscanf(const struct p101_env *env, struct p101_error *err, const char *restrict format, va_list ap) P101_ATTR_SCANF(3, 0);
+    int    p101_vsnprintf(const struct p101_env *env, struct p101_error *err, char *restrict s, size_t n, const char *restrict format, va_list ap) P101_ATTR_PRINTF(5, 0);
+    int    p101_vsscanf(const struct p101_env *env, struct p101_error *err, const char *restrict s, const char *restrict format, va_list ap) P101_ATTR_SCANF(4, 0);
 
 #ifdef __cplusplus
 }
