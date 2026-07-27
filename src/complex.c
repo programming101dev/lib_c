@@ -55,7 +55,7 @@ double complex p101_cacos(const struct p101_env *env, double complex z)
 
     P101_TRACE(env);
     errno   = 0;
-    ret_val = cacos(z);
+    ret_val = cacosh(z);
 
     return ret_val;
 }
