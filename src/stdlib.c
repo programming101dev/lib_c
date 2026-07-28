@@ -101,7 +101,7 @@ void *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nel
     errno  = 0;
     memory = calloc(nelem, elsize);
 
-    if(memory == NULL)
+    if(memory == NULL && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
