@@ -244,7 +244,7 @@ void *p101_malloc(const struct p101_env *env, struct p101_error *err, size_t siz
     errno  = 0;
     memory = malloc(size);
 
-    if(memory == NULL)
+    if(memory == NULL && errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
