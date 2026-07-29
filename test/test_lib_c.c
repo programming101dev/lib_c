@@ -218,6 +218,12 @@ static void test_validation_and_ownership(struct p101_env *env, struct p101_erro
     EXPECT(p101_error_has_no_error(err));
     p101_free(env, message);
 
+    P101_ERROR_RAISE_ERRNO(err, EBUSY);
+    message = p101_strerror(env, err, ENOENT);
+    EXPECT(message == NULL);
+    EXPECT(counts.allocations == counts.frees);
+    p101_error_reset(err);
+
     memory = p101_malloc(env, err, 16);
     EXPECT(memory != NULL);
     EXPECT(p101_realloc(env, err, memory, 0) == NULL);

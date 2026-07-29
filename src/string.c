@@ -162,6 +162,7 @@ char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errn
 
     if(copy == NULL || p101_error_has_error(err))
     {
+        p101_free(env, copy);
         P101_TRACE_EXIT(env);
 
         return NULL;
