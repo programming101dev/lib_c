@@ -157,19 +157,17 @@ char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errn
         return NULL;
     }
 
-    len  = strlen(ret_val);
-    copy = (char *)malloc(len + 1);
+    len  = p101_strlen(env, ret_val);
+    copy = (char *)p101_malloc(env, err, len + 1U);
 
-    if(copy == NULL)
+    if(copy == NULL || p101_error_has_error(err))
     {
-        P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? ENOMEM : errno);
         P101_TRACE_EXIT(env);
 
         return NULL;
     }
 
-    memcpy(copy, ret_val, len + 1);
-    P101_TRACK_ALLOC(env, copy, len + 1);
+    p101_memcpy(env, copy, ret_val, len + 1U);
 
     P101_TRACE_EXIT(env);
 

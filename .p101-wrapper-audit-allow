@@ -1,0 +1,19 @@
+# Exact native boundaries used to implement public wrappers. Rules are
+# path:function:callee; `*` means every implementation helper in that file.
+src/complex.c:*:feclearexcept
+src/complex.c:*:feraiseexcept
+src/complex.c:*:fetestexcept
+src/math.c:*:feclearexcept
+src/math.c:*:feraiseexcept
+src/math.c:*:fetestexcept
+src/stdio.c:*:ferror
+src/stdio.c:*:fileno
+src/stdio.c:*:vfprintf
+src/stdio.c:*:vfscanf
+src/stdio.c:*:vsnprintf
+src/stdio.c:*:vsscanf
+src/wchar.c:*:ferror
+src/wchar.c:*:vfwprintf
+src/wchar.c:*:vfwscanf
+src/wchar.c:*:vswprintf
+src/wchar.c:*:vswscanf

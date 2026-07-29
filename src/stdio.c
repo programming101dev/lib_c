@@ -129,8 +129,9 @@ int p101_fclose(const struct p101_env *env, struct p101_error *err, FILE *stream
 
     P101_TRACE(env);
     P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
-    fd      = fileno(stream);
-    errno   = 0;
+    fd    = fileno(stream);
+    errno = 0;
+    P101_TRACK_POINTER_RESOURCE_RELEASE(env, "stdio-stream", stream, NULL);
     ret_val = fclose(stream);
 
     if(ret_val != 0)
@@ -141,7 +142,6 @@ int p101_fclose(const struct p101_env *env, struct p101_error *err, FILE *stream
     {
         P101_TRACK_CLOSE(env, fd);
     }
-
     P101_TRACE_EXIT(env);
 
     return ret_val;
@@ -273,6 +273,7 @@ FILE *p101_fopen(const struct p101_env *env, struct p101_error *err, const char 
     {
         int fd;
 
+        P101_TRACK_POINTER_RESOURCE_ACQUIRE(env, "stdio-stream", ret_val, 0U, pathname);
         fd = fileno(ret_val);
         if(fd >= 0)
         {
@@ -351,8 +352,9 @@ FILE *p101_freopen(const struct p101_env *env, struct p101_error *err, const cha
 
     P101_TRACE(env);
     P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
-    old_fd  = fileno(stream);
-    errno   = 0;
+    old_fd = fileno(stream);
+    errno  = 0;
+    P101_TRACK_POINTER_RESOURCE_RELEASE(env, "stdio-stream", stream, "freopen");
     ret_val = freopen(pathname, mode, stream);
 
     if(old_fd >= 0)
@@ -368,6 +370,7 @@ FILE *p101_freopen(const struct p101_env *env, struct p101_error *err, const cha
     {
         int new_fd;
 
+        P101_TRACK_POINTER_RESOURCE_ACQUIRE(env, "stdio-stream", ret_val, 0U, pathname);
         new_fd = fileno(ret_val);
         if(new_fd >= 0)
         {
@@ -391,7 +394,6 @@ int p101_fseek(const struct p101_env *env, struct p101_error *err, FILE *stream,
 
     if(ret_val != 0)
     {
-        P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
     P101_TRACE_EXIT(env);
@@ -642,6 +644,7 @@ FILE *p101_tmpfile(const struct p101_env *env, struct p101_error *err)
     {
         int fd;
 
+        P101_TRACK_POINTER_RESOURCE_ACQUIRE(env, "stdio-stream", ret_val, 0U, "tmpfile");
         fd = fileno(ret_val);
         if(fd >= 0)
         {

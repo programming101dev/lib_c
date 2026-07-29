@@ -260,8 +260,12 @@ static void test_faults_and_balanced_trace(struct p101_env *env, struct p101_err
     counts.exits  = 0;
     message       = p101_strerror(env, err, ENOENT);
     EXPECT(message != NULL);
-    EXPECT(counts.enters == 1);
-    EXPECT(counts.exits == 1);
+    /*
+     * p101_strerror composes the strlen, malloc, and memcpy wrappers, so the
+     * observer sees the outer call plus those three nested calls.
+     */
+    EXPECT(counts.enters == 4);
+    EXPECT(counts.exits == 4);
     p101_free(env, message);
     counts.enters = 0;
     counts.exits  = 0;
