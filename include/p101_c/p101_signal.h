@@ -18,6 +18,7 @@
  */
 
 #include <p101_env/env.h>
+#include <signal.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -31,4 +32,4 @@ extern "C"
 }
 #endif
 
-#endif    // LLIBP101_C_P101_SIGNAL_H
+#endif    // LIBP101_C_P101_SIGNAL_H

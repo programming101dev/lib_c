@@ -18,15 +18,8 @@
  */
 
 #include <p101_env/env.h>
+#include <p101_error/attributes.h>
 #include <time.h>
-
-#ifndef P101_ATTR_STRFTIME
-    #if defined(__GNUC__) || defined(__clang__)
-        #define P101_ATTR_STRFTIME(format_index) __attribute__((format(strftime, format_index, 0)))
-    #else
-        #define P101_ATTR_STRFTIME(format_index)
-    #endif
-#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -38,13 +31,10 @@ extern "C"
     time_t  p101_mktime(const struct p101_env *env, struct p101_error *err, struct tm *tm);
     size_t  p101_strftime(const struct p101_env *env, struct p101_error *err, char *restrict buf, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr) P101_ATTR_STRFTIME(5);
     time_t  p101_time(const struct p101_env *env, struct p101_error *err, time_t *tloc);
+    int     p101_timespec_get(const struct p101_env *env, struct p101_error *err, struct timespec *ts, int base);
 
 #ifdef __cplusplus
 }
 #endif
-
-// unsafe
-// struct tm *p101_gmtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
-// struct tm *p101_localtime(const struct p101_env *env, struct p101_error *err, const time_t *clock);
 
 #endif    // LIBP101_C_P101_TIME_H

@@ -25,10 +25,28 @@ extern "C"
 {
 #endif
 
+    void         p101_atomic_flag_clear(const struct p101_env *env, volatile atomic_flag *object);
+    void         p101_atomic_flag_clear_explicit(const struct p101_env *env, volatile atomic_flag *object, memory_order order);
+    bool         p101_atomic_flag_test_and_set(const struct p101_env *env, volatile atomic_flag *object);
+    bool         p101_atomic_flag_test_and_set_explicit(const struct p101_env *env, volatile atomic_flag *object, memory_order order);
+    void         p101_atomic_signal_fence(const struct p101_env *env, memory_order order);
+    void         p101_atomic_thread_fence(const struct p101_env *env, memory_order order);
+    bool         p101_atomic_uint_compare_exchange_strong(const struct p101_env *env, volatile atomic_uint *object, unsigned int *expected, unsigned int desired);
+    bool         p101_atomic_uint_compare_exchange_strong_explicit(const struct p101_env *env, volatile atomic_uint *object, unsigned int *expected, unsigned int desired, memory_order success, memory_order failure);
+    bool         p101_atomic_uint_compare_exchange_weak(const struct p101_env *env, volatile atomic_uint *object, unsigned int *expected, unsigned int desired);
+    bool         p101_atomic_uint_compare_exchange_weak_explicit(const struct p101_env *env, volatile atomic_uint *object, unsigned int *expected, unsigned int desired, memory_order success, memory_order failure);
+    unsigned int p101_atomic_uint_exchange(const struct p101_env *env, volatile atomic_uint *object, unsigned int desired);
+    unsigned int p101_atomic_uint_exchange_explicit(const struct p101_env *env, volatile atomic_uint *object, unsigned int desired, memory_order order);
     unsigned int p101_atomic_uint_fetch_add(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand);
     unsigned int p101_atomic_uint_fetch_add_explicit(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand, memory_order order);
+    unsigned int p101_atomic_uint_fetch_and(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand);
+    unsigned int p101_atomic_uint_fetch_and_explicit(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand, memory_order order);
+    unsigned int p101_atomic_uint_fetch_or(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand);
+    unsigned int p101_atomic_uint_fetch_or_explicit(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand, memory_order order);
     unsigned int p101_atomic_uint_fetch_sub(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand);
     unsigned int p101_atomic_uint_fetch_sub_explicit(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand, memory_order order);
+    unsigned int p101_atomic_uint_fetch_xor(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand);
+    unsigned int p101_atomic_uint_fetch_xor_explicit(const struct p101_env *env, volatile atomic_uint *object, unsigned int operand, memory_order order);
     unsigned int p101_atomic_uint_load(const struct p101_env *env, const volatile atomic_uint *object);
     unsigned int p101_atomic_uint_load_explicit(const struct p101_env *env, const volatile atomic_uint *object, memory_order order);
     void         p101_atomic_uint_store(const struct p101_env *env, volatile atomic_uint *object, unsigned int desired);

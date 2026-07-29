@@ -33,6 +33,8 @@ extern "C"
     wint_t             p101_fputwc(const struct p101_env *env, struct p101_error *err, wchar_t wc, FILE *stream);
     int                p101_fputws(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict ws, FILE *restrict stream);
     int                p101_fwide(const struct p101_env *env, struct p101_error *err, FILE *stream, int mode);
+    int                p101_fwprintf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const wchar_t *restrict format, ...);
+    int                p101_fwscanf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const wchar_t *restrict format, ...);
     wint_t             p101_getwc(const struct p101_env *env, struct p101_error *err, FILE *stream);
     wint_t             p101_getwchar(const struct p101_env *env, struct p101_error *err);
     size_t             p101_mbrlen(const struct p101_env *env, struct p101_error *err, const char *restrict s, size_t n, mbstate_t *restrict ps);
@@ -42,20 +44,20 @@ extern "C"
     wint_t             p101_putwc(const struct p101_env *env, struct p101_error *err, wchar_t wc, FILE *stream);
     wint_t             p101_putwchar(const struct p101_env *env, struct p101_error *err, wchar_t wc);
     wint_t             p101_ungetwc(const struct p101_env *env, struct p101_error *err, wint_t wc, FILE *stream);
-    int                p101_vfwprintf(const struct p101_env *env, FILE *restrict stream, const wchar_t *restrict format, va_list arg);
+    int                p101_swprintf(const struct p101_env *env, struct p101_error *err, wchar_t *restrict ws, size_t n, const wchar_t *restrict format, ...);
+    int                p101_swscanf(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict ws, const wchar_t *restrict format, ...);
+    int                p101_vfwprintf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const wchar_t *restrict format, va_list arg);
     int                p101_vfwscanf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const wchar_t *restrict format, va_list arg);
     int                p101_vswprintf(const struct p101_env *env, struct p101_error *err, wchar_t *restrict ws, size_t n, const wchar_t *restrict format, va_list arg);
     int                p101_vswscanf(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict ws, const wchar_t *restrict format, va_list arg);
     int                p101_vwprintf(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict format, va_list arg);
     int                p101_vwscanf(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict format, va_list arg);
     size_t             p101_wcrtomb(const struct p101_env *env, struct p101_error *err, char *restrict s, wchar_t wc, mbstate_t *restrict ps);
-    wchar_t           *p101_wcscat(const struct p101_env *env, wchar_t *restrict ws1, const wchar_t *restrict ws2);
     const wchar_t     *p101_wcschr(const struct p101_env *env, const wchar_t *ws, wchar_t wc);
     int                p101_wcscmp(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2);
     int                p101_wcscoll(const struct p101_env *env, struct p101_error *err, const wchar_t *ws1, const wchar_t *ws2);
-    wchar_t           *p101_wcscpy(const struct p101_env *env, wchar_t *restrict ws1, const wchar_t *restrict ws2);
     size_t             p101_wcscspn(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2);
-    size_t             p101_wcsftime(const struct p101_env *env, wchar_t *restrict wcs, size_t maxsize, const wchar_t *restrict format, const struct tm *restrict timeptr);
+    size_t             p101_wcsftime(const struct p101_env *env, struct p101_error *err, wchar_t *restrict wcs, size_t maxsize, const wchar_t *restrict format, const struct tm *restrict timeptr);
     size_t             p101_wcslen(const struct p101_env *env, const wchar_t *ws);
     wchar_t           *p101_wcsncat(const struct p101_env *env, wchar_t *restrict ws1, const wchar_t *restrict ws2, size_t n);
     int                p101_wcsncmp(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2, size_t n);
@@ -80,6 +82,8 @@ extern "C"
     wchar_t           *p101_wmemcpy(const struct p101_env *env, wchar_t *restrict ws1, const wchar_t *restrict ws2, size_t n);
     wchar_t           *p101_wmemmove(const struct p101_env *env, wchar_t *ws1, const wchar_t *ws2, size_t n);
     wchar_t           *p101_wmemset(const struct p101_env *env, wchar_t *ws, wchar_t wc, size_t n);
+    int                p101_wprintf(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict format, ...);
+    int                p101_wscanf(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict format, ...);
 
 #ifdef __cplusplus
 }

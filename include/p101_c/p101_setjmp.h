@@ -18,6 +18,7 @@
  */
 
 #include <p101_env/env.h>
+#include <p101_error/attributes.h>
 #include <setjmp.h>
 
 #ifdef __cplusplus
@@ -26,7 +27,6 @@ extern "C"
 #endif
 
     P101_ATTR_NORETURN void p101_longjmp(const struct p101_env *env, jmp_buf buf, int val);
-    int                     p101_setjmp(const struct p101_env *env, jmp_buf buf);
 
 #ifdef __cplusplus
 }

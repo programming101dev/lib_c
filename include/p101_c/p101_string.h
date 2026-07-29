@@ -18,6 +18,7 @@
  */
 
 #include <p101_env/env.h>
+#include <p101_error/attributes.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -31,9 +32,13 @@ extern "C"
     void       *p101_memset(const struct p101_env *env, void *s, int c, size_t n);
     const char *p101_strchr(const struct p101_env *env, const char *s, int c);
     int         p101_strcmp(const struct p101_env *env, const char *s1, const char *s2);
-    int         p101_strcoll(const struct p101_env *env, const char *s1, const char *s2);
+    int         p101_strcoll(const struct p101_env *env, struct p101_error *err, const char *s1, const char *s2);
     size_t      p101_strcspn(const struct p101_env *env, const char *s1, const char *s2);
-    char       *p101_strerror(const struct p101_env *env, struct p101_error *err, int errnum);
+    /*
+     * Returns a newly allocated copy owned by the caller. Destroy it with
+     * p101_free(). Returns NULL when lookup or allocation fails.
+     */
+    char       *p101_strerror(const struct p101_env *env, struct p101_error *err, int errnum) P101_ATTR_MALLOC P101_ATTR_WARN_UNUSED_RESULT;
     size_t      p101_strlen(const struct p101_env *env, const char *s);
     char       *p101_strncat(const struct p101_env *env, char *restrict s1, const char *restrict s2, size_t n);
     int         p101_strncmp(const struct p101_env *env, const char *s1, const char *s2, size_t n);
@@ -47,10 +52,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
-// unsafe
-// char *p101_strtok(const struct p101_env *env, char *restrict s, const char *restrict sep);
-// char *p101_strcat(const struct p101_env *env, char *restrict s1, const char *restrict s2);
-// char *p101_strcpy(const struct p101_env *env, char *restrict s1, const char *restrict s2);
 
 #endif    // LIBP101_C_P101_STRING_H

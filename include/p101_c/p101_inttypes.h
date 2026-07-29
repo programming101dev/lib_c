@@ -25,8 +25,8 @@ extern "C"
 {
 #endif
 
-    intmax_t  p101_imaxabs(const struct p101_env *env, intmax_t j);
-    imaxdiv_t p101_imaxdiv(const struct p101_env *env, intmax_t numer, intmax_t denom);
+    intmax_t  p101_imaxabs(const struct p101_env *env, struct p101_error *err, intmax_t j);
+    imaxdiv_t p101_imaxdiv(const struct p101_env *env, struct p101_error *err, intmax_t numer, intmax_t denom);
     intmax_t  p101_strtoimax(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base);
     uintmax_t p101_strtoumax(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base);
     intmax_t  p101_wcstoimax(const struct p101_env *env, struct p101_error *err, const wchar_t *restrict nptr, wchar_t **restrict endptr, int base);

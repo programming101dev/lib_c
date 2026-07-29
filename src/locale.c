@@ -15,6 +15,7 @@
  */
 
 #include "p101_c/p101_locale.h"
+#include "p101_c_internal.h"
 #include <locale.h>
 
 struct lconv *p101_localeconv(const struct p101_env *env)
@@ -22,8 +23,9 @@ struct lconv *p101_localeconv(const struct p101_env *env)
     struct lconv *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = localeconv();
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -33,6 +35,7 @@ char *p101_setlocale(const struct p101_env *env, struct p101_error *err, int cat
     char *ret_val;
 
     P101_TRACE(env);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
     errno   = 0;
     ret_val = setlocale(category, locale);
 
@@ -47,6 +50,8 @@ char *p101_setlocale(const struct p101_env *env, struct p101_error *err, int cat
             P101_ERROR_RAISE_ERRNO(err, EINVAL);
         }
     }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }

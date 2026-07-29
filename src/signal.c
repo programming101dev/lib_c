@@ -15,6 +15,7 @@
  */
 
 #include "p101_c/p101_signal.h"
+#include "p101_c_internal.h"
 #include <signal.h>
 
 int p101_raise(const struct p101_env *env, struct p101_error *err, int sig)
@@ -22,13 +23,16 @@ int p101_raise(const struct p101_env *env, struct p101_error *err, int sig)
     int ret_val;
 
     P101_TRACE(env);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
     errno   = 0;
     ret_val = raise(sig);
 
-    if(ret_val == -1)    // cppcheck-suppress unreachableCode
+    if(ret_val != 0)    // cppcheck-suppress unreachableCode
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? EINVAL : errno);
     }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -38,14 +42,17 @@ void (*p101_signal(const struct p101_env *env, struct p101_error *err, int sig, 
     void (*ret_val)(int);
 
     P101_TRACE(env);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, SIG_ERR);
     errno   = 0;
     ret_val = signal(sig, func);
 
     // NOLINTNEXTLINE(performance-no-int-to-ptr)
     if(ret_val == SIG_ERR)
     {
-        P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? EINVAL : errno);
     }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }

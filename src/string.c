@@ -16,6 +16,7 @@
 
 #include "p101_c/p101_stdlib.h"
 #include "p101_c/p101_string.h"
+#include "p101_c_internal.h"
 #include <string.h>
 
 const void *p101_memchr(const struct p101_env *env, const void *s, int c, size_t n)
@@ -23,8 +24,9 @@ const void *p101_memchr(const struct p101_env *env, const void *s, int c, size_t
     const void *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = memchr(s, c, n);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -34,8 +36,9 @@ int p101_memcmp(const struct p101_env *env, const void *s1, const void *s2, size
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = memcmp(s1, s2, n);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -45,8 +48,9 @@ void *p101_memcpy(const struct p101_env *env, void *restrict s1, const void *res
     void *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = memcpy(s1, s2, n);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -56,8 +60,9 @@ void *p101_memmove(const struct p101_env *env, void *s1, const void *s2, size_t 
     void *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = memmove(s1, s2, n);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -67,8 +72,9 @@ void *p101_memset(const struct p101_env *env, void *s, int c, size_t n)
     void *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = memset(s, c, n);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -78,8 +84,9 @@ const char *p101_strchr(const struct p101_env *env, const char *s, int c)
     const char *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strchr(s, c);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -89,19 +96,28 @@ int p101_strcmp(const struct p101_env *env, const char *s1, const char *s2)
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strcmp(s1, s2);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
 
-int p101_strcoll(const struct p101_env *env, const char *s1, const char *s2)
+int p101_strcoll(const struct p101_env *env, struct p101_error *err, const char *s1, const char *s2)
 {
     int ret_val;
 
     P101_TRACE(env);
+    P101_C_FAULT_RETURN(env, err, "strcoll", 0);
     errno   = 0;
     ret_val = strcoll(s1, s2);
+
+    if(errno != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, errno);
+    }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -111,55 +127,66 @@ size_t p101_strcspn(const struct p101_env *env, const char *s1, const char *s2)
     size_t ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strcspn(s1, s2);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
 
+#ifdef __apple_build_version__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wallocator-wrappers"
+#endif
 char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errnum)
 {
-    char  *ret_val;
-    size_t len;
-    char  *copy;
+    const char *ret_val;
+    size_t      len;
+    char       *copy;
 
     P101_TRACE(env);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
     errno   = 0;
     ret_val = strerror(errnum);
 
     if(errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
+        P101_TRACE_EXIT(env);
+
+        return NULL;
     }
 
-    if(p101_error_has_error(err))
+    len  = strlen(ret_val);
+    copy = (char *)malloc(len + 1);
+
+    if(copy == NULL)
     {
-        return ret_val;
+        P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? ENOMEM : errno);
+        P101_TRACE_EXIT(env);
+
+        return NULL;
     }
 
-    len  = p101_strlen(env, ret_val);
-    copy = (char *)p101_malloc(env, err, len + 1);
+    memcpy(copy, ret_val, len + 1);
+    P101_TRACK_ALLOC(env, copy, len + 1);
 
-    if(copy != NULL)
-    {
-        p101_strncpy(env, copy, ret_val, len);
-        // #pragma GCC diagnostic push
-        // #pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
-        copy[len] = '\0';
-        // #pragma GCC diagnostic pop
-        ret_val = copy;
-    }
+    P101_TRACE_EXIT(env);
 
-    return ret_val;
+    return copy;
 }
+#ifdef __apple_build_version__
+    #pragma clang diagnostic pop
+#endif
 
 size_t p101_strlen(const struct p101_env *env, const char *s)
 {
     size_t ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strlen(s);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -169,8 +196,9 @@ char *p101_strncat(const struct p101_env *env, char *restrict s1, const char *re
     char *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strncat(s1, s2, n);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -180,8 +208,9 @@ int p101_strncmp(const struct p101_env *env, const char *s1, const char *s2, siz
     int ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strncmp(s1, s2, n);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -191,8 +220,9 @@ char *p101_strncpy(const struct p101_env *env, char *restrict s1, const char *re
     char *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strncpy(s1, s2, n);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -202,8 +232,9 @@ const char *p101_strpbrk(const struct p101_env *env, const char *s1, const char 
     const char *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strpbrk(s1, s2);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -213,8 +244,9 @@ const char *p101_strrchr(const struct p101_env *env, const char *s, int c)
     const char *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strrchr(s, c);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -224,8 +256,9 @@ size_t p101_strspn(const struct p101_env *env, const char *s1, const char *s2)
     size_t ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strspn(s1, s2);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -235,8 +268,9 @@ const char *p101_strstr(const struct p101_env *env, const char *s1, const char *
     const char *ret_val;
 
     P101_TRACE(env);
-    errno   = 0;
     ret_val = strstr(s1, s2);
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }
@@ -246,6 +280,7 @@ size_t p101_strxfrm(const struct p101_env *env, struct p101_error *err, char *re
     size_t ret_val;
 
     P101_TRACE(env);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
     errno   = 0;
     ret_val = strxfrm(s1, s2, n);
 
@@ -253,6 +288,8 @@ size_t p101_strxfrm(const struct p101_env *env, struct p101_error *err, char *re
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
+
+    P101_TRACE_EXIT(env);
 
     return ret_val;
 }

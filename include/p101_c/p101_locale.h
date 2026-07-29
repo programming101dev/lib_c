@@ -17,6 +17,7 @@
  * limitations under the License.
  */
 
+#include <locale.h>
 #include <p101_env/env.h>
 
 #ifdef __cplusplus

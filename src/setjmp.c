@@ -16,20 +16,9 @@
 
 #include "p101_c/p101_setjmp.h"
 
-void p101_longjmp(const struct p101_env *env, jmp_buf buf, int val)
+P101_ATTR_NORETURN void p101_longjmp(const struct p101_env *env, jmp_buf buf, int val)
 {
     P101_TRACE(env);
-    errno = 0;
+    P101_TRACE_EXIT(env);
     longjmp(buf, val);
-}
-
-int p101_setjmp(const struct p101_env *env, jmp_buf buf)
-{
-    int ret_val;
-
-    P101_TRACE(env);
-    errno   = 0;
-    ret_val = setjmp(buf);
-
-    return ret_val;
 }

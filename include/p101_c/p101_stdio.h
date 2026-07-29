@@ -18,32 +18,9 @@
  */
 
 #include <p101_env/env.h>
+#include <p101_error/attributes.h>
 #include <stdarg.h>
 #include <stdio.h>
-
-#ifndef P101_ATTR_PRINTF
-    #if defined(__GNUC__) || defined(__clang__)
-        #define P101_ATTR_PRINTF(format_index, first_arg) __attribute__((format(printf, format_index, first_arg)))
-    #else
-        #define P101_ATTR_PRINTF(format_index, first_arg)
-    #endif
-#endif
-
-#ifndef P101_ATTR_SCANF
-    #if defined(__GNUC__) || defined(__clang__)
-        #define P101_ATTR_SCANF(format_index, first_arg) __attribute__((format(scanf, format_index, first_arg)))
-    #else
-        #define P101_ATTR_SCANF(format_index, first_arg)
-    #endif
-#endif
-
-#ifndef P101_ATTR_WARN_UNUSED_RESULT
-    #if defined(__GNUC__) || defined(__clang__)
-        #define P101_ATTR_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
-    #else
-        #define P101_ATTR_WARN_UNUSED_RESULT
-    #endif
-#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -83,7 +60,7 @@ extern "C"
     int    p101_snprintf(const struct p101_env *env, struct p101_error *err, char *restrict s, size_t n, const char *restrict format, ...) P101_ATTR_PRINTF(5, 6);
     int    p101_sscanf(const struct p101_env *env, struct p101_error *err, const char *restrict s, const char *restrict format, ...) P101_ATTR_SCANF(4, 5);
     FILE  *p101_tmpfile(const struct p101_env *env, struct p101_error *err) P101_ATTR_WARN_UNUSED_RESULT;
-    int    p101_ungetc(const struct p101_env *env, int c, FILE *stream);
+    int    p101_ungetc(const struct p101_env *env, struct p101_error *err, int c, FILE *stream);
     int    p101_vfprintf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, va_list ap) P101_ATTR_PRINTF(4, 0);
     int    p101_vfscanf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, va_list ap) P101_ATTR_SCANF(4, 0);
     int    p101_vprintf(const struct p101_env *env, struct p101_error *err, const char *restrict format, va_list ap) P101_ATTR_PRINTF(3, 0);
@@ -94,12 +71,5 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
-// deprecated
-// int p101_vsprintf(const struct p101_env *env, struct p101_error *err, char *restrict s, const char *restrict format, va_list ap);
-
-// No error handling
-// void p101_rewind(const struct p101_env *env, struct p101_error *err, FILE *stream);
-// void p101_setbuf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, char *restrict buf);
 
 #endif    // LIBP101_C_P101_STDIO_H
