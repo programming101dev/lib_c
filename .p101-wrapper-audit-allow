@@ -6,6 +6,17 @@ src/complex.c:*:fetestexcept
 src/math.c:*:feclearexcept
 src/math.c:*:feraiseexcept
 src/math.c:*:fetestexcept
+src/stdatomic.c:*:atomic_compare_exchange_strong
+src/stdatomic.c:*:atomic_compare_exchange_weak
+src/stdatomic.c:*:atomic_exchange
+src/stdatomic.c:*:atomic_fetch_add
+src/stdatomic.c:*:atomic_fetch_and
+src/stdatomic.c:*:atomic_fetch_or
+src/stdatomic.c:*:atomic_fetch_sub
+src/stdatomic.c:*:atomic_fetch_xor
+src/stdatomic.c:*:atomic_load
+src/stdatomic.c:*:atomic_store
+src/stdlib.c:p101_exit_immediately:_Exit
 src/stdio.c:*:ferror
 src/stdio.c:*:fileno
 src/stdio.c:*:vfprintf

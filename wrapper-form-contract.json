@@ -1,0 +1,104 @@
+{
+  "schema": "p101-wrapper-form-contract-v1",
+  "selector": {
+    "include": "^p101_",
+    "exclude": [
+      "^p101_pointer_value_for_log$"
+    ],
+    "public_only": true,
+    "minimum_matches": 1
+  },
+  "mapping": {
+    "strip_prefix": "p101_"
+  },
+  "context_parameter": {
+    "index": 0,
+    "type_contains": "p101_env",
+    "mode": "required"
+  },
+  "error_parameter": {
+    "index": 1,
+    "type_contains": "p101_error",
+    "mode": "optional"
+  },
+  "requirements": {
+    "balanced_trace": true,
+    "fault": "when-error",
+    "target_required": true,
+    "target_call_count": 1,
+    "compare_target_signature": true
+  },
+  "overrides": [
+    {
+      "match": "^p101_exit_immediately$",
+      "target": "_Exit",
+      "compare_target_signature": false,
+      "reason": "The descriptive p101 name deliberately maps to ISO C _Exit."
+    },
+    {
+      "match": "^p101_atomic_flag_clear(_explicit)?$",
+      "target_replacement": "atomic_store\\1",
+      "compare_target_signature": false,
+      "reason": "Clang lowers atomic_flag_clear to its atomic store operation."
+    },
+    {
+      "match": "^p101_atomic_flag_test_and_set(_explicit)?$",
+      "target_replacement": "atomic_exchange\\1",
+      "compare_target_signature": false,
+      "reason": "Clang lowers atomic_flag_test_and_set to its atomic exchange operation."
+    },
+    {
+      "match": "^p101_atomic_uint_(.+)$",
+      "target_replacement": "atomic_\\1",
+      "compare_target_signature": false,
+      "reason": "The concrete uint wrappers map to ISO C generic atomic operations."
+    },
+    {
+      "match": "^p101_atomic_flag_clear_explicit$",
+      "target": "atomic_store",
+      "compare_target_signature": false,
+      "reason": "Clang's AtomicExpr name omits the source macro's explicit suffix."
+    },
+    {
+      "match": "^p101_atomic_flag_test_and_set_explicit$",
+      "target": "atomic_exchange",
+      "compare_target_signature": false,
+      "reason": "Clang's AtomicExpr name omits the source macro's explicit suffix."
+    },
+    {
+      "match": "^p101_atomic_uint_(.+)_explicit$",
+      "target_replacement": "atomic_\\1",
+      "compare_target_signature": false,
+      "reason": "Clang's AtomicExpr name omits the source macro's explicit suffix."
+    },
+    {
+      "match": "^p101_(fprintf|fscanf|printf|scanf|snprintf|sscanf)$",
+      "target_replacement": "v\\1_checked",
+      "compare_target_signature": false,
+      "reason": "Variadic front ends delegate to checked va_list helpers."
+    },
+    {
+      "match": "^p101_(vfprintf|vfscanf|vprintf|vscanf|vsnprintf|vsscanf)$",
+      "target_replacement": "\\1_checked",
+      "compare_target_signature": false,
+      "reason": "va_list front ends delegate to checked error-normalizing helpers."
+    },
+    {
+      "match": "^p101_(fwprintf|fwscanf|swprintf|swscanf|wprintf|wscanf)$",
+      "target_replacement": "v\\1_checked",
+      "compare_target_signature": false,
+      "reason": "Variadic wide-character front ends delegate to checked va_list helpers."
+    },
+    {
+      "match": "^p101_(vfwprintf|vfwscanf|vswprintf|vswscanf|vwprintf|vwscanf)$",
+      "target_replacement": "\\1_checked",
+      "compare_target_signature": false,
+      "reason": "Wide va_list front ends delegate to checked error-normalizing helpers."
+    },
+    {
+      "match": "^p101_(bsearch|memchr|strchr|strpbrk|strrchr|strstr|wcschr|wcspbrk|wcsrchr|wcsstr|wmemchr|wmemcpy|wmemmove)$",
+      "compare_target_signature": false,
+      "reason": "These wrappers intentionally preserve constness more strictly than the native C signature."
+    }
+  ]
+}
