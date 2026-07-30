@@ -42,6 +42,7 @@ P101_ATTR_NORETURN void p101_exit_immediately(const struct p101_env *env, int st
 {
     P101_TRACE(env);
     P101_TRACE_EXIT(env);
+    p101_env_complete_event_streams(env);
 
     _Exit(status);
 }
@@ -50,6 +51,7 @@ P101_ATTR_NORETURN void p101_abort(const struct p101_env *env)
 {
     P101_TRACE(env);
     P101_TRACE_EXIT(env);
+    p101_env_complete_event_streams(env);
 
     abort();
 }
@@ -259,6 +261,7 @@ P101_ATTR_NORETURN void p101_exit(const struct p101_env *env, int status)
 {
     P101_TRACE(env);
     P101_TRACE_EXIT(env);
+    p101_env_complete_event_streams(env);
 
     exit(status);
 }
@@ -517,6 +520,7 @@ P101_ATTR_NORETURN void p101_quick_exit(const struct p101_env *env, int status)
 {
     P101_TRACE(env);
     P101_TRACE_EXIT(env);
+    p101_env_complete_event_streams(env);
 
     quick_exit(status);
 }
