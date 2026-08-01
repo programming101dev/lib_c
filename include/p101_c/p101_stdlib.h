@@ -37,7 +37,7 @@ extern "C"
     div_t                   p101_div(const struct p101_env *env, struct p101_error *err, int numer, int denom);
     P101_ATTR_NORETURN void p101_exit(const struct p101_env *env, int status);
     void                    p101_free(const struct p101_env *env, void *ptr);
-    char                   *p101_getenv(const struct p101_env *env, const char *name);
+    char                   *p101_getenv(const struct p101_env *env, struct p101_error *err, const char *name);
     long                    p101_labs(const struct p101_env *env, struct p101_error *err, long i);
     ldiv_t                  p101_ldiv(const struct p101_env *env, struct p101_error *err, long numer, long denom);
     long long               p101_llabs(const struct p101_env *env, struct p101_error *err, long long i);

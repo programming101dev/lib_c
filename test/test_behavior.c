@@ -415,7 +415,7 @@ static int compare_ints(const void *left, const void *right)
     return (*a > *b) - (*a < *b);
 }
 
-static void test_stdlib_and_misc(const struct p101_env *env)
+static void test_stdlib_and_misc(const struct p101_env *env, struct p101_error *err)
 {
     int           values[] = {3, 1, 2};
     int           key      = 2;
@@ -426,7 +426,7 @@ static void test_stdlib_and_misc(const struct p101_env *env)
     p101_qsort(env, values, 3, sizeof(values[0]), compare_ints);
     EXPECT(values[0] == 1 && values[1] == 2 && values[2] == 3);
     EXPECT(p101_bsearch(env, &key, values, 3, sizeof(values[0]), compare_ints) == &values[1]);
-    EXPECT(p101_getenv(env, "PATH") == getenv("PATH"));
+    EXPECT(p101_getenv(env, err, "PATH") == getenv("PATH"));
     locale = p101_localeconv(env);
     EXPECT(locale != NULL && locale->decimal_point != NULL);
     EXPECT(p101_difftime(env, (time_t)4, (time_t)1) == 3.0);
@@ -704,7 +704,7 @@ int main(void)
     test_complex(env);
     test_character_classes(env);
     test_memory_and_strings(env);
-    test_stdlib_and_misc(env);
+    test_stdlib_and_misc(env, err);
     test_stdio(env, err);
     test_termination(env);
 

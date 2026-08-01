@@ -277,12 +277,19 @@ void p101_free(const struct p101_env *env, void *ptr)
     P101_TRACE_EXIT(env);
 }
 
-char *p101_getenv(const struct p101_env *env, const char *name)
+char *p101_getenv(const struct p101_env *env, struct p101_error *err, const char *name)
 {
     char *ret_val;
 
     P101_TRACE(env);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
+    errno   = 0;
     ret_val = getenv(name);
+
+    if(ret_val == NULL && errno != 0)
+    {
+        P101_ERROR_RAISE_ERRNO(err, errno);
+    }
 
     P101_TRACE_EXIT(env);
 

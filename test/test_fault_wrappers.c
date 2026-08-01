@@ -16,8 +16,10 @@
 #include <p101_c/p101_wctype.h>
 #include <p101_env/env.h>
 #include <p101_error/error.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static int failures;
 
@@ -79,7 +81,7 @@ static void test_p101_abs(struct p101_env *env, struct p101_error *err)
 static void test_p101_acos(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -106,7 +108,7 @@ static void test_p101_acos(struct p101_env *env, struct p101_error *err)
 static void test_p101_acosf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -133,7 +135,7 @@ static void test_p101_acosf(struct p101_env *env, struct p101_error *err)
 static void test_p101_acosh(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -160,7 +162,7 @@ static void test_p101_acosh(struct p101_env *env, struct p101_error *err)
 static void test_p101_acoshf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -187,7 +189,7 @@ static void test_p101_acoshf(struct p101_env *env, struct p101_error *err)
 static void test_p101_acoshl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -214,7 +216,7 @@ static void test_p101_acoshl(struct p101_env *env, struct p101_error *err)
 static void test_p101_acosl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -268,7 +270,7 @@ static void test_p101_aligned_alloc(struct p101_env *env, struct p101_error *err
 static void test_p101_asin(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -295,7 +297,7 @@ static void test_p101_asin(struct p101_env *env, struct p101_error *err)
 static void test_p101_asinf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -403,7 +405,7 @@ static void test_p101_asinhl(struct p101_env *env, struct p101_error *err)
 static void test_p101_asinl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -592,7 +594,7 @@ static void test_p101_atanf(struct p101_env *env, struct p101_error *err)
 static void test_p101_atanh(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -619,7 +621,7 @@ static void test_p101_atanh(struct p101_env *env, struct p101_error *err)
 static void test_p101_atanhf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -646,7 +648,7 @@ static void test_p101_atanhf(struct p101_env *env, struct p101_error *err)
 static void test_p101_atanhl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -1699,7 +1701,7 @@ static void test_p101_clogl(struct p101_env *env, struct p101_error *err)
 static void test_p101_cos(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -1726,7 +1728,7 @@ static void test_p101_cos(struct p101_env *env, struct p101_error *err)
 static void test_p101_cosf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -1753,7 +1755,7 @@ static void test_p101_cosf(struct p101_env *env, struct p101_error *err)
 static void test_p101_cosh(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -1780,7 +1782,7 @@ static void test_p101_cosh(struct p101_env *env, struct p101_error *err)
 static void test_p101_coshf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -1807,7 +1809,7 @@ static void test_p101_coshf(struct p101_env *env, struct p101_error *err)
 static void test_p101_coshl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -1834,7 +1836,7 @@ static void test_p101_coshl(struct p101_env *env, struct p101_error *err)
 static void test_p101_cosl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2266,7 +2268,7 @@ static void test_p101_div(struct p101_env *env, struct p101_error *err)
 static void test_p101_erf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2293,7 +2295,7 @@ static void test_p101_erf(struct p101_env *env, struct p101_error *err)
 static void test_p101_erfc(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2320,7 +2322,7 @@ static void test_p101_erfc(struct p101_env *env, struct p101_error *err)
 static void test_p101_erfcf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2347,7 +2349,7 @@ static void test_p101_erfcf(struct p101_env *env, struct p101_error *err)
 static void test_p101_erfcl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2374,7 +2376,7 @@ static void test_p101_erfcl(struct p101_env *env, struct p101_error *err)
 static void test_p101_erff(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2401,7 +2403,7 @@ static void test_p101_erff(struct p101_env *env, struct p101_error *err)
 static void test_p101_erfl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2428,7 +2430,7 @@ static void test_p101_erfl(struct p101_env *env, struct p101_error *err)
 static void test_p101_exp(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2536,7 +2538,7 @@ static void test_p101_exp2l(struct p101_env *env, struct p101_error *err)
 static void test_p101_expf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2563,7 +2565,7 @@ static void test_p101_expf(struct p101_env *env, struct p101_error *err)
 static void test_p101_expl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2590,7 +2592,7 @@ static void test_p101_expl(struct p101_env *env, struct p101_error *err)
 static void test_p101_expm1(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2617,7 +2619,7 @@ static void test_p101_expm1(struct p101_env *env, struct p101_error *err)
 static void test_p101_expm1f(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2644,7 +2646,7 @@ static void test_p101_expm1f(struct p101_env *env, struct p101_error *err)
 static void test_p101_expm1l(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2673,9 +2675,9 @@ static void test_p101_fclose(struct p101_env *env, struct p101_error *err)
 #ifdef __linux__
     static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, EPERM, EPIPE, EWOULDBLOCK};
 #elif defined(__APPLE__)
-    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOBUFS, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOBUFS, ENOSPC, EOPNOTSUPP, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, EPIPE};
 #else
     static const int errors[] = {EAGAIN, EBADF, EFBIG, EINTR, EIO, ENOMEM, ENOSPC, ENXIO, EPIPE};
 #endif
@@ -2698,7 +2700,7 @@ static void test_p101_fclose(struct p101_env *env, struct p101_error *err)
 static void test_p101_fdim(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2725,7 +2727,7 @@ static void test_p101_fdim(struct p101_env *env, struct p101_error *err)
 static void test_p101_fdimf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -2752,7 +2754,7 @@ static void test_p101_fdimf(struct p101_env *env, struct p101_error *err)
 static void test_p101_fdiml(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -3051,9 +3053,9 @@ static void test_p101_fflush(struct p101_env *env, struct p101_error *err)
 #ifdef __linux__
     static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, EPERM, EPIPE, EWOULDBLOCK};
 #elif defined(__APPLE__)
-    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOBUFS, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOBUFS, ENOSPC, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, EPIPE};
 #else
     static const int errors[] = {EAGAIN, EBADF, EFBIG, EINTR, EIO, ENOMEM, ENOSPC, ENXIO, EPIPE};
 #endif
@@ -3103,11 +3105,11 @@ static void test_p101_fgetc(struct p101_env *env, struct p101_error *err)
 static void test_p101_fgetpos(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENOENT, ENOMEM, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPERM, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOMEM, ENOSPC, ENXIO, EOVERFLOW, EPERM, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENETDOWN, ENETUNREACH, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE};
 #else
     static const int errors[] = {EBADF, EOVERFLOW, ESPIPE};
 #endif
@@ -3132,10 +3134,9 @@ static void test_p101_fgets(struct p101_env *env, struct p101_error *err)
 #ifdef __linux__
     static const int errors[] = {EIO};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES,   EAGAIN,      EBADF,   ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT,   EFAULT,  EFBIG, EINTR,     EINVAL, EIO,    EISDIR, ELOOP,     ENAMETOOLONG,
-                                 ENETDOWN, ENETUNREACH, ENOBUFS, ENOENT,     ENOMEM,  ENOSPC,       ENOTCONN, ENOTDIR, ENXIO, EOVERFLOW, EPIPE,  ESPIPE, ESTALE, ETIMEDOUT, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, EISDIR, ENETDOWN, ENETUNREACH, ENOBUFS, ENOMEM, ENOSPC, ENOTCONN, ENXIO, EOVERFLOW, EPIPE, ESPIPE, ESTALE, ETIMEDOUT, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EBUSY, ECONNRESET, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, EISDIR, ELOOP, ENAMETOOLONG, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, EOPNOTSUPP, EOVERFLOW, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EBUSY, ECONNRESET, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, EISDIR, ENOSPC, EOPNOTSUPP, EOVERFLOW, EPIPE};
 #else
     static const int errors[] = {EIO};
 #endif
@@ -3187,10 +3188,9 @@ static void test_p101_fgetws(struct p101_env *env, struct p101_error *err)
 #ifdef __linux__
     static const int errors[] = {EIO};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES,   EAGAIN,      EBADF,   ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT,   EFAULT,  EFBIG, EILSEQ,    EINTR, EINVAL, EIO,    EISDIR,    ELOOP,      ENAMETOOLONG,
-                                 ENETDOWN, ENETUNREACH, ENOBUFS, ENOENT,     ENOMEM,  ENOSPC,       ENOTCONN, ENOTDIR, ENXIO, EOVERFLOW, EPIPE, ESPIPE, ESTALE, ETIMEDOUT, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EILSEQ, EINTR, EINVAL, EIO, EISDIR, ENETDOWN, ENETUNREACH, ENOBUFS, ENOMEM, ENOSPC, ENOTCONN, ENXIO, EOVERFLOW, EPIPE, ESPIPE, ESTALE, ETIMEDOUT, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EBUSY, ECONNRESET, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EILSEQ, EINTR, EINVAL, EIO, EISDIR, ELOOP, ENAMETOOLONG, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, EOPNOTSUPP, EOVERFLOW, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EBUSY, ECONNRESET, EDQUOT, EFAULT, EFBIG, EILSEQ, EINTR, EINVAL, EIO, EISDIR, ENOSPC, EOPNOTSUPP, EOVERFLOW, EPIPE};
 #else
     static const int errors[] = {EIO};
 #endif
@@ -3213,7 +3213,7 @@ static void test_p101_fgetws(struct p101_env *env, struct p101_error *err)
 static void test_p101_fma(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -3240,7 +3240,7 @@ static void test_p101_fma(struct p101_env *env, struct p101_error *err)
 static void test_p101_fmaf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -3267,7 +3267,7 @@ static void test_p101_fmaf(struct p101_env *env, struct p101_error *err)
 static void test_p101_fmal(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -3294,7 +3294,7 @@ static void test_p101_fmal(struct p101_env *env, struct p101_error *err)
 static void test_p101_fmod(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -3321,7 +3321,7 @@ static void test_p101_fmod(struct p101_env *env, struct p101_error *err)
 static void test_p101_fmodf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -3348,7 +3348,7 @@ static void test_p101_fmodf(struct p101_env *env, struct p101_error *err)
 static void test_p101_fmodl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -3375,14 +3375,11 @@ static void test_p101_fmodl(struct p101_env *env, struct p101_error *err)
 static void test_p101_fopen(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EACCES,       EAGAIN, EBADF,  EBUSY,  EDESTADDRREQ, EDQUOT, EEXIST,  EFAULT, EFBIG,      EINTR,     EINVAL, EIO,   EISDIR, ELOOP,   EMFILE,
-                                 ENAMETOOLONG, ENFILE, ENODEV, ENOENT, ENOMEM,       ENOSPC, ENOTDIR, ENXIO,  EOPNOTSUPP, EOVERFLOW, EPERM,  EPIPE, EROFS,  ETXTBSY, EWOULDBLOCK};
+    static const int errors[] = {EACCES, EBUSY, EDQUOT, EEXIST, EFAULT, EFBIG, EINTR, EINVAL, EISDIR, ELOOP, EMFILE, ENAMETOOLONG, ENFILE, ENODEV, ENOENT, ENOMEM, ENOSPC, ENOTDIR, ENXIO, EOPNOTSUPP, EOVERFLOW, EPERM, EROFS, ETXTBSY, EWOULDBLOCK};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES,      EAGAIN, EBADF,   ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT,  EEXIST,  EFAULT, EFBIG,      EILSEQ,    EINTR, EINVAL, EIO,   EISDIR, ELOOP, EMFILE,  ENAMETOOLONG, ENETDOWN,
-                                 ENETUNREACH, ENFILE, ENOBUFS, ENOENT,     ENOLCK,  ENOSPC,       ENOTDIR, ENOTSUP, ENXIO,  EOPNOTSUPP, EOVERFLOW, EPERM, EPIPE,  EROFS, ESPIPE, ESRCH, ETXTBSY, EWOULDBLOCK,  EXDEV};
+    static const int errors[] = {EACCES, EAGAIN, EBADF, EDEADLK, EDQUOT, EEXIST, EFAULT, EILSEQ, EINTR, EINVAL, EIO, EISDIR, ELOOP, EMFILE, ENAMETOOLONG, ENFILE, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOPNOTSUPP, EOVERFLOW, EROFS, ETXTBSY, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EAGAIN,  EBADF,  EBUSY,  EDEADLK, EDESTADDRREQ, EDQUOT, EEXIST, EFAULT,     EFBIG,     EINTR, EINVAL, EIO,   EISDIR, ELOOP, EMFILE,  EMLINK,     ENAMETOOLONG,
-                                 ENFILE, ENOBUFS, ENOENT, ENOLCK, ENOSPC,  ENOTDIR,      ENOTTY, ENXIO,  EOPNOTSUPP, EOVERFLOW, EPERM, EPIPE,  EROFS, ESPIPE, ESRCH, ETXTBSY, EWOULDBLOCK};
+    static const int errors[] = {EACCES, EBADF, EDQUOT, EEXIST, EFAULT, EINTR, EINVAL, EIO, EISDIR, ELOOP, EMFILE, EMLINK, ENAMETOOLONG, ENFILE, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOPNOTSUPP, EPERM, EROFS, ETXTBSY, EWOULDBLOCK};
 #else
     static const int errors[] = {EACCES, EEXIST, EILSEQ, EINTR, EINVAL, EISDIR, ELOOP, EMFILE, ENAMETOOLONG, ENFILE, ENOENT, ENOMEM, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EROFS, ETXTBSY};
 #endif
@@ -3405,13 +3402,13 @@ static void test_p101_fopen(struct p101_env *env, struct p101_error *err)
 static void test_p101_fprintf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EBADF, EOVERFLOW};
+    static const int errors[] = {EIO};
 #elif defined(__APPLE__)
-    static const int errors[] = {EILSEQ, ENOMEM};
+    static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EILSEQ, ENOMEM, EOVERFLOW};
+    static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EBADF, EILSEQ, ENOMEM, EOVERFLOW};
+    static const int errors[] = {EILSEQ, ENOMEM, EOVERFLOW};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -3461,9 +3458,9 @@ static void test_p101_fputs(struct p101_env *env, struct p101_error *err)
 #ifdef __linux__
     static const int errors[] = {EIO};
 #elif defined(__APPLE__)
-    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOBUFS, ENOSPC, ENXIO, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOSPC, ENXIO, EPIPE, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOBUFS, ENOSPC, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, EPIPE};
 #else
     static const int errors[] = {EIO};
 #endif
@@ -3515,9 +3512,9 @@ static void test_p101_fputws(struct p101_env *env, struct p101_error *err)
 #ifdef __linux__
     static const int errors[] = {EIO};
 #elif defined(__APPLE__)
-    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOBUFS, ENOSPC, ENXIO, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOSPC, ENXIO, EPIPE, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOBUFS, ENOSPC, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, EPIPE};
 #else
     static const int errors[] = {EIO};
 #endif
@@ -3570,11 +3567,10 @@ static void test_p101_freopen(struct p101_env *env, struct p101_error *err)
     static const int errors[] = {EACCES,       EAGAIN, EBADF,  EBUSY,  EDESTADDRREQ, EDQUOT, EEXIST,  EFAULT, EFBIG,      EINTR,     EINVAL, EIO,   EISDIR, ELOOP,   EMFILE,
                                  ENAMETOOLONG, ENFILE, ENODEV, ENOENT, ENOMEM,       ENOSPC, ENOTDIR, ENXIO,  EOPNOTSUPP, EOVERFLOW, EPERM,  EPIPE, EROFS,  ETXTBSY, EWOULDBLOCK};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES,      EAGAIN, EBADF,   ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT,  EEXIST,  EFAULT, EFBIG,      EILSEQ,    EINTR, EINVAL, EIO,   EISDIR, ELOOP, EMFILE,  ENAMETOOLONG, ENETDOWN,
-                                 ENETUNREACH, ENFILE, ENOBUFS, ENOENT,     ENOLCK,  ENOSPC,       ENOTDIR, ENOTSUP, ENXIO,  EOPNOTSUPP, EOVERFLOW, EPERM, EPIPE,  EROFS, ESPIPE, ESRCH, ETXTBSY, EWOULDBLOCK,  EXDEV};
+    static const int errors[] = {EACCES,       EAGAIN,   EBADF,       ECONNRESET, EDEADLK, EDQUOT, EEXIST,  EFAULT, EFBIG,      EILSEQ,    EINTR, EINVAL, EIO,    EISDIR,  ELOOP,      EMFILE,
+                                 ENAMETOOLONG, ENETDOWN, ENETUNREACH, ENFILE,     ENOENT,  ENOSPC, ENOTDIR, ENXIO,  EOPNOTSUPP, EOVERFLOW, EPIPE, EROFS,  ESPIPE, ETXTBSY, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EAGAIN,  EBADF,  EBUSY,  EDEADLK, EDESTADDRREQ, EDQUOT, EEXIST, EFAULT,     EFBIG,     EINTR, EINVAL, EIO,   EISDIR, ELOOP, EMFILE,  EMLINK,     ENAMETOOLONG,
-                                 ENFILE, ENOBUFS, ENOENT, ENOLCK, ENOSPC,  ENOTDIR,      ENOTTY, ENXIO,  EOPNOTSUPP, EOVERFLOW, EPERM, EPIPE,  EROFS, ESPIPE, ESRCH, ETXTBSY, EWOULDBLOCK};
+    static const int errors[] = {EACCES, EAGAIN, EBADF, EDQUOT, EEXIST, EFAULT, EFBIG, EINTR, EINVAL, EIO, EISDIR, ELOOP, EMFILE, EMLINK, ENAMETOOLONG, ENFILE, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOPNOTSUPP, EPERM, EPIPE, EROFS, ETXTBSY, EWOULDBLOCK};
 #else
     static const int errors[] = {EACCES, EBADF, EEXIST, EILSEQ, EINTR, EINVAL, EISDIR, ELOOP, EMFILE, ENAMETOOLONG, ENFILE, ENOENT, ENOMEM, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EROFS, ETXTBSY};
 #endif
@@ -3624,11 +3620,11 @@ static void test_p101_fscanf(struct p101_env *env, struct p101_error *err)
 static void test_p101_fseek(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENOENT, ENOMEM, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPERM, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOMEM, ENOSPC, ENXIO, EOVERFLOW, EPERM, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENETDOWN, ENETUNREACH, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE};
 #else
     static const int errors[] = {EAGAIN, EBADF, EFBIG, EINTR, EINVAL, EIO, ENOMEM, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE};
 #endif
@@ -3651,11 +3647,11 @@ static void test_p101_fseek(struct p101_env *env, struct p101_error *err)
 static void test_p101_fsetpos(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENOENT, ENOMEM, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPERM, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOMEM, ENOSPC, ENXIO, EOVERFLOW, EPERM, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENETDOWN, ENETUNREACH, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE};
 #else
     static const int errors[] = {EAGAIN, EBADF, EFBIG, EINTR, EIO, ENOMEM, ENOSPC, ENXIO, EPIPE, ESPIPE};
 #endif
@@ -3678,11 +3674,11 @@ static void test_p101_fsetpos(struct p101_env *env, struct p101_error *err)
 static void test_p101_ftell(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENOENT, ENOMEM, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPERM, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOMEM, ENOSPC, ENXIO, EOVERFLOW, EPERM, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENETDOWN, ENETUNREACH, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENOBUFS, ENOENT, ENOSPC, ENOTDIR, ENXIO, EOVERFLOW, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE};
 #else
     static const int errors[] = {EBADF, EOVERFLOW, ESPIPE};
 #endif
@@ -3863,6 +3859,33 @@ static void test_p101_getchar(struct p101_env *env, struct p101_error *err)
     p101_env_set_fault_injector(env, NULL, NULL);
 }
 
+/* P101_TEST_CASE(p101_getenv) */
+static void test_p101_getenv(struct p101_env *env, struct p101_error *err)
+{
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EINVAL};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EINVAL};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        char *result = p101_getenv(env, err, NULL);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
 /* P101_TEST_CASE(p101_getwc) */
 static void test_p101_getwc(struct p101_env *env, struct p101_error *err)
 {
@@ -3921,7 +3944,7 @@ static void test_p101_getwchar(struct p101_env *env, struct p101_error *err)
 static void test_p101_hypot(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -3948,7 +3971,7 @@ static void test_p101_hypot(struct p101_env *env, struct p101_error *err)
 static void test_p101_hypotf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -3975,7 +3998,7 @@ static void test_p101_hypotf(struct p101_env *env, struct p101_error *err)
 static void test_p101_hypotl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4002,7 +4025,7 @@ static void test_p101_hypotl(struct p101_env *env, struct p101_error *err)
 static void test_p101_ilogb(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4029,7 +4052,7 @@ static void test_p101_ilogb(struct p101_env *env, struct p101_error *err)
 static void test_p101_ilogbf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4056,7 +4079,7 @@ static void test_p101_ilogbf(struct p101_env *env, struct p101_error *err)
 static void test_p101_ilogbl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4164,7 +4187,7 @@ static void test_p101_labs(struct p101_env *env, struct p101_error *err)
 static void test_p101_ldexp(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4191,7 +4214,7 @@ static void test_p101_ldexp(struct p101_env *env, struct p101_error *err)
 static void test_p101_ldexpf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4218,7 +4241,7 @@ static void test_p101_ldexpf(struct p101_env *env, struct p101_error *err)
 static void test_p101_ldexpl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4272,7 +4295,7 @@ static void test_p101_ldiv(struct p101_env *env, struct p101_error *err)
 static void test_p101_lgamma(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4299,7 +4322,7 @@ static void test_p101_lgamma(struct p101_env *env, struct p101_error *err)
 static void test_p101_lgammaf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4326,7 +4349,7 @@ static void test_p101_lgammaf(struct p101_env *env, struct p101_error *err)
 static void test_p101_lgammal(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4407,7 +4430,7 @@ static void test_p101_lldiv(struct p101_env *env, struct p101_error *err)
 static void test_p101_llrint(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4434,7 +4457,7 @@ static void test_p101_llrint(struct p101_env *env, struct p101_error *err)
 static void test_p101_llrintf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4461,7 +4484,7 @@ static void test_p101_llrintf(struct p101_env *env, struct p101_error *err)
 static void test_p101_llrintl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4488,7 +4511,7 @@ static void test_p101_llrintl(struct p101_env *env, struct p101_error *err)
 static void test_p101_llround(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4515,7 +4538,7 @@ static void test_p101_llround(struct p101_env *env, struct p101_error *err)
 static void test_p101_llroundf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4542,7 +4565,7 @@ static void test_p101_llroundf(struct p101_env *env, struct p101_error *err)
 static void test_p101_llroundl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4569,7 +4592,7 @@ static void test_p101_llroundl(struct p101_env *env, struct p101_error *err)
 static void test_p101_log(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4677,7 +4700,7 @@ static void test_p101_log10l(struct p101_env *env, struct p101_error *err)
 static void test_p101_log1p(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4704,7 +4727,7 @@ static void test_p101_log1p(struct p101_env *env, struct p101_error *err)
 static void test_p101_log1pf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4731,7 +4754,7 @@ static void test_p101_log1pf(struct p101_env *env, struct p101_error *err)
 static void test_p101_log1pl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4839,7 +4862,7 @@ static void test_p101_log2l(struct p101_env *env, struct p101_error *err)
 static void test_p101_logb(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4866,7 +4889,7 @@ static void test_p101_logb(struct p101_env *env, struct p101_error *err)
 static void test_p101_logbf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4893,7 +4916,7 @@ static void test_p101_logbf(struct p101_env *env, struct p101_error *err)
 static void test_p101_logbl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4920,7 +4943,7 @@ static void test_p101_logbl(struct p101_env *env, struct p101_error *err)
 static void test_p101_logf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4947,7 +4970,7 @@ static void test_p101_logf(struct p101_env *env, struct p101_error *err)
 static void test_p101_logl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -4974,7 +4997,7 @@ static void test_p101_logl(struct p101_env *env, struct p101_error *err)
 static void test_p101_lrint(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5001,7 +5024,7 @@ static void test_p101_lrint(struct p101_env *env, struct p101_error *err)
 static void test_p101_lrintf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5028,7 +5051,7 @@ static void test_p101_lrintf(struct p101_env *env, struct p101_error *err)
 static void test_p101_lrintl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5055,7 +5078,7 @@ static void test_p101_lrintl(struct p101_env *env, struct p101_error *err)
 static void test_p101_lround(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5082,7 +5105,7 @@ static void test_p101_lround(struct p101_env *env, struct p101_error *err)
 static void test_p101_lroundf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5109,7 +5132,7 @@ static void test_p101_lroundf(struct p101_env *env, struct p101_error *err)
 static void test_p101_lroundl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5352,7 +5375,7 @@ static void test_p101_mktime(struct p101_env *env, struct p101_error *err)
 static void test_p101_nextafter(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5379,7 +5402,7 @@ static void test_p101_nextafter(struct p101_env *env, struct p101_error *err)
 static void test_p101_nextafterf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5406,7 +5429,7 @@ static void test_p101_nextafterf(struct p101_env *env, struct p101_error *err)
 static void test_p101_nextafterl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5433,7 +5456,7 @@ static void test_p101_nextafterl(struct p101_env *env, struct p101_error *err)
 static void test_p101_nexttoward(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5460,7 +5483,7 @@ static void test_p101_nexttoward(struct p101_env *env, struct p101_error *err)
 static void test_p101_nexttowardf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5487,7 +5510,7 @@ static void test_p101_nexttowardf(struct p101_env *env, struct p101_error *err)
 static void test_p101_nexttowardl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5514,7 +5537,7 @@ static void test_p101_nexttowardl(struct p101_env *env, struct p101_error *err)
 static void test_p101_pow(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5541,7 +5564,7 @@ static void test_p101_pow(struct p101_env *env, struct p101_error *err)
 static void test_p101_powf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5568,7 +5591,7 @@ static void test_p101_powf(struct p101_env *env, struct p101_error *err)
 static void test_p101_powl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5595,13 +5618,13 @@ static void test_p101_powl(struct p101_env *env, struct p101_error *err)
 static void test_p101_printf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EBADF, EOVERFLOW};
+    static const int errors[] = {EIO};
 #elif defined(__APPLE__)
     static const int errors[] = {EILSEQ, ENOMEM};
 #elif defined(__FreeBSD__)
     static const int errors[] = {EILSEQ, ENOMEM, EOVERFLOW};
 #else
-    static const int errors[] = {EBADF, EILSEQ, ENOMEM, EOVERFLOW};
+    static const int errors[] = {ENOMEM};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -5678,9 +5701,9 @@ static void test_p101_puts(struct p101_env *env, struct p101_error *err)
 #ifdef __linux__
     static const int errors[] = {EIO};
 #elif defined(__APPLE__)
-    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOBUFS, ENOSPC, ENXIO, EPIPE, ESPIPE, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, ECONNRESET, EDEADLK, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENETDOWN, ENETUNREACH, ENOSPC, ENXIO, EPIPE, EWOULDBLOCK};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EAGAIN, EBADF, EDESTADDRREQ, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOBUFS, ENOSPC, EPIPE, ESPIPE};
+    static const int errors[] = {EAGAIN, EBADF, EDQUOT, EFAULT, EFBIG, EINTR, EINVAL, EIO, ENOSPC, EPIPE};
 #else
     static const int errors[] = {EIO};
 #endif
@@ -5811,7 +5834,7 @@ static void test_p101_realloc(struct p101_env *env, struct p101_error *err)
 static void test_p101_remainder(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5838,7 +5861,7 @@ static void test_p101_remainder(struct p101_env *env, struct p101_error *err)
 static void test_p101_remainderf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5865,7 +5888,7 @@ static void test_p101_remainderf(struct p101_env *env, struct p101_error *err)
 static void test_p101_remainderl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5896,7 +5919,7 @@ static void test_p101_remove(struct p101_env *env, struct p101_error *err)
 #elif defined(__APPLE__)
     static const int errors[] = {EACCES, EBADF, EBUSY, EFAULT, EINVAL, EIO, ELOOP, ENAMETOOLONG, ENOENT, ENOTDIR, ENOTEMPTY, EOVERFLOW, EPERM, EROFS};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EBADF, EBUSY, EDEADLK, EFAULT, EINVAL, EIO, EISDIR, ELOOP, ENAMETOOLONG, ENOENT, ENOSPC, ENOTDIR, ENOTEMPTY, EOVERFLOW, EPERM, EROFS};
+    static const int errors[] = {EACCES, EBADF, EBUSY, EFAULT, EINVAL, EIO, EISDIR, ELOOP, ENAMETOOLONG, ENOENT, ENOSPC, ENOTDIR, ENOTEMPTY, EOVERFLOW, EPERM, EROFS};
 #else
     static const int errors[] = {EIO};
 #endif
@@ -5919,7 +5942,7 @@ static void test_p101_remove(struct p101_env *env, struct p101_error *err)
 static void test_p101_remquo(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5946,7 +5969,7 @@ static void test_p101_remquo(struct p101_env *env, struct p101_error *err)
 static void test_p101_remquof(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -5973,7 +5996,7 @@ static void test_p101_remquof(struct p101_env *env, struct p101_error *err)
 static void test_p101_remquol(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6000,13 +6023,13 @@ static void test_p101_remquol(struct p101_env *env, struct p101_error *err)
 static void test_p101_rename(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EACCES, EBADF, EBUSY, EDQUOT, EEXIST, EFAULT, EINVAL, EISDIR, ELOOP, EMLINK, ENAMETOOLONG, ENOENT, ENOMEM, ENOSPC, ENOTDIR, ENOTEMPTY, EPERM, EROFS, EXDEV};
+    static const int errors[] = {EACCES, EBUSY, EDQUOT, EEXIST, EFAULT, EINVAL, EISDIR, ELOOP, EMLINK, ENAMETOOLONG, ENOENT, ENOMEM, ENOSPC, ENOTDIR, ENOTEMPTY, EPERM, EROFS, EXDEV};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES, EBADF, EDEADLK, EDQUOT, EEXIST, EFAULT, EINVAL, EIO, EISDIR, ELOOP, ENAMETOOLONG, ENOENT, ENOSPC, ENOTDIR, ENOTEMPTY, ENOTSUP, EPERM, EROFS, EXDEV};
+    static const int errors[] = {EACCES, EDEADLK, EDQUOT, EEXIST, EFAULT, EINVAL, EIO, EISDIR, ELOOP, ENAMETOOLONG, ENOENT, ENOSPC, ENOTDIR, ENOTEMPTY, ENOTSUP, EPERM, EROFS, EXDEV};
 #elif defined(__FreeBSD__)
     static const int errors[] = {EACCES, EBADF, EDQUOT, EEXIST, EFAULT, EINVAL, EIO, EISDIR, ELOOP, ENAMETOOLONG, ENOENT, ENOSPC, ENOTDIR, ENOTEMPTY, EOPNOTSUPP, EPERM, EROFS, EXDEV};
 #else
-    static const int errors[] = {EACCES, EBADF, EBUSY, EEXIST, EILSEQ, EINVAL, EIO, EISDIR, ELOOP, EMLINK, ENAMETOOLONG, ENOENT, ENOSPC, ENOTDIR, ENOTEMPTY, EPERM, EROFS, ETXTBSY, EXDEV};
+    static const int errors[] = {EACCES, EBUSY, EEXIST, EILSEQ, EINVAL, EIO, EISDIR, ELOOP, EMLINK, ENAMETOOLONG, ENOENT, ENOSPC, ENOTDIR, ENOTEMPTY, EPERM, EROFS, ETXTBSY, EXDEV};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -6027,7 +6050,7 @@ static void test_p101_rename(struct p101_env *env, struct p101_error *err)
 static void test_p101_scalbln(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6054,7 +6077,7 @@ static void test_p101_scalbln(struct p101_env *env, struct p101_error *err)
 static void test_p101_scalblnf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6081,7 +6104,7 @@ static void test_p101_scalblnf(struct p101_env *env, struct p101_error *err)
 static void test_p101_scalblnl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6108,7 +6131,7 @@ static void test_p101_scalblnl(struct p101_env *env, struct p101_error *err)
 static void test_p101_scalbn(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6135,7 +6158,7 @@ static void test_p101_scalbn(struct p101_env *env, struct p101_error *err)
 static void test_p101_scalbnf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6162,7 +6185,7 @@ static void test_p101_scalbnf(struct p101_env *env, struct p101_error *err)
 static void test_p101_scalbnl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6195,7 +6218,7 @@ static void test_p101_scanf(struct p101_env *env, struct p101_error *err)
 #elif defined(__FreeBSD__)
     static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EILSEQ, EINVAL, ENOMEM};
+    static const int errors[] = {EIO};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -6296,7 +6319,7 @@ static void test_p101_signal(struct p101_env *env, struct p101_error *err)
 static void test_p101_sin(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6323,7 +6346,7 @@ static void test_p101_sin(struct p101_env *env, struct p101_error *err)
 static void test_p101_sinf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6350,7 +6373,7 @@ static void test_p101_sinf(struct p101_env *env, struct p101_error *err)
 static void test_p101_sinh(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6377,7 +6400,7 @@ static void test_p101_sinh(struct p101_env *env, struct p101_error *err)
 static void test_p101_sinhf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6404,7 +6427,7 @@ static void test_p101_sinhf(struct p101_env *env, struct p101_error *err)
 static void test_p101_sinhl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6431,7 +6454,7 @@ static void test_p101_sinhl(struct p101_env *env, struct p101_error *err)
 static void test_p101_sinl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6460,11 +6483,11 @@ static void test_p101_snprintf(struct p101_env *env, struct p101_error *err)
 #ifdef __linux__
     static const int errors[] = {EIO};
 #elif defined(__APPLE__)
-    static const int errors[] = {EILSEQ, ENOMEM};
+    static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EILSEQ, ENOMEM, EOVERFLOW};
+    static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EBADF, EILSEQ, ENOMEM, EOVERFLOW};
+    static const int errors[] = {EIO};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -6485,7 +6508,7 @@ static void test_p101_snprintf(struct p101_env *env, struct p101_error *err)
 static void test_p101_sqrt(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6512,7 +6535,7 @@ static void test_p101_sqrt(struct p101_env *env, struct p101_error *err)
 static void test_p101_sqrtf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6539,7 +6562,7 @@ static void test_p101_sqrtf(struct p101_env *env, struct p101_error *err)
 static void test_p101_sqrtl(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -6572,7 +6595,7 @@ static void test_p101_sscanf(struct p101_env *env, struct p101_error *err)
 #elif defined(__FreeBSD__)
     static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EILSEQ, EINVAL, ENOMEM};
+    static const int errors[] = {EIO};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -6626,7 +6649,7 @@ static void test_p101_strerror(struct p101_env *env, struct p101_error *err)
 #elif defined(__FreeBSD__)
     static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EINVAL, ERANGE};
+    static const int errors[] = {EINVAL};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -6944,13 +6967,13 @@ static void test_p101_strxfrm(struct p101_env *env, struct p101_error *err)
 static void test_p101_swprintf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {ENOMEM, EOVERFLOW};
+    static const int errors[] = {EIO};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
     static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EILSEQ, ENOMEM, EOVERFLOW};
+    static const int errors[] = {EOVERFLOW};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -6971,13 +6994,13 @@ static void test_p101_swprintf(struct p101_env *env, struct p101_error *err)
 static void test_p101_swscanf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EILSEQ, EINVAL, ENOMEM};
+    static const int errors[] = {EIO};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
     static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EILSEQ, EINVAL, ENOMEM};
+    static const int errors[] = {EIO};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -7025,7 +7048,7 @@ static void test_p101_system(struct p101_env *env, struct p101_error *err)
 static void test_p101_tan(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -7187,7 +7210,7 @@ static void test_p101_tanl(struct p101_env *env, struct p101_error *err)
 static void test_p101_tgamma(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -7214,7 +7237,7 @@ static void test_p101_tgamma(struct p101_env *env, struct p101_error *err)
 static void test_p101_tgammaf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -7241,7 +7264,7 @@ static void test_p101_tgammaf(struct p101_env *env, struct p101_error *err)
 static void test_p101_tgammal(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EIO};
+    static const int errors[] = {EDOM, ERANGE};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
@@ -7324,11 +7347,9 @@ static void test_p101_tmpfile(struct p101_env *env, struct p101_error *err)
 #ifdef __linux__
     static const int errors[] = {EACCES, EEXIST, EINTR, EMFILE, ENFILE, ENOSPC, EROFS};
 #elif defined(__APPLE__)
-    static const int errors[] = {EACCES,      EAGAIN, EBADF,   ECONNRESET, EDEADLK, EDESTADDRREQ, EDQUOT,  EEXIST,  EFAULT, EFBIG,      EILSEQ,    EINTR, EINVAL, EIO,   EISDIR, ELOOP, EMFILE,  ENAMETOOLONG, ENETDOWN,
-                                 ENETUNREACH, ENFILE, ENOBUFS, ENOENT,     ENOLCK,  ENOSPC,       ENOTDIR, ENOTSUP, ENXIO,  EOPNOTSUPP, EOVERFLOW, EPERM, EPIPE,  EROFS, ESPIPE, ESRCH, ETXTBSY, EWOULDBLOCK,  EXDEV};
+    static const int errors[] = {EACCES, EAGAIN, EBADF, EDEADLK, EFBIG, EINTR, EINVAL, EMFILE, ENOLCK, ENOSPC, ENOTDIR, ENOTSUP, EOVERFLOW, EPERM, ESRCH, EXDEV};
 #elif defined(__FreeBSD__)
-    static const int errors[] = {EACCES, EAGAIN,  EBADF,  EBUSY,  EDEADLK, EDESTADDRREQ, EDQUOT, EEXIST, EFAULT,     EFBIG,     EINTR, EINVAL, EIO,   EISDIR, ELOOP, EMFILE,  EMLINK,     ENAMETOOLONG,
-                                 ENFILE, ENOBUFS, ENOENT, ENOLCK, ENOSPC,  ENOTDIR,      ENOTTY, ENXIO,  EOPNOTSUPP, EOVERFLOW, EPERM, EPIPE,  EROFS, ESPIPE, ESRCH, ETXTBSY, EWOULDBLOCK};
+    static const int errors[] = {EAGAIN, EBADF, EBUSY, EDEADLK, EINTR, EINVAL, EMFILE, ENOLCK, ENOTDIR, ENOTTY, EOPNOTSUPP, EOVERFLOW, EPERM, ESRCH};
 #else
     static const int errors[] = {EINTR, EMFILE, ENFILE, ENOMEM, ENOSPC};
 #endif
@@ -7420,6 +7441,366 @@ static void test_p101_ungetwc(struct p101_env *env, struct p101_error *err)
 
         p101_env_set_fault_injector(env, fail_next_call, &state);
         wint_t result = p101_ungetwc(env, err, 0, NULL);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vfprintf) */
+static void test_p101_vfprintf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vfprintf(env, err, NULL, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vfscanf) */
+static void test_p101_vfscanf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EAGAIN, EBADF, EILSEQ, EINTR, EINVAL, ENOMEM};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vfscanf(env, err, NULL, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vfwprintf) */
+static void test_p101_vfwprintf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vfwprintf(env, err, NULL, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vfwscanf) */
+static void test_p101_vfwscanf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vfwscanf(env, err, NULL, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vprintf) */
+static void test_p101_vprintf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vprintf(env, err, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vscanf) */
+static void test_p101_vscanf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EAGAIN, EBADF, EILSEQ, EINTR, EINVAL, ENOMEM};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vscanf(env, err, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vsnprintf) */
+static void test_p101_vsnprintf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vsnprintf(env, err, NULL, 0, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vsscanf) */
+static void test_p101_vsscanf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EILSEQ, EINVAL, ENOMEM};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vsscanf(env, err, NULL, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vswprintf) */
+static void test_p101_vswprintf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vswprintf(env, err, NULL, 0, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vswscanf) */
+static void test_p101_vswscanf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vswscanf(env, err, NULL, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vwprintf) */
+static void test_p101_vwprintf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vwprintf(env, err, NULL, arguments);
+        (void)result;
+        EXPECT(state.checks == 1);
+        EXPECT(p101_error_is_errno(err, state.errnum));
+        p101_error_reset(err);
+    }
+    p101_env_set_fault_injector(env, NULL, NULL);
+}
+
+/* P101_TEST_CASE(p101_vwscanf) */
+static void test_p101_vwscanf(struct p101_env *env, struct p101_error *err)
+{
+    va_list arguments;
+
+    memset(&arguments, 0, sizeof(arguments));
+#ifdef __linux__
+    static const int errors[] = {EIO};
+#elif defined(__APPLE__)
+    static const int errors[] = {EIO};
+#elif defined(__FreeBSD__)
+    static const int errors[] = {EIO};
+#else
+    static const int errors[] = {EIO};
+#endif
+
+    for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
+    {
+        struct fault_state state = {0, errors[index]};
+
+        p101_env_set_fault_injector(env, fail_next_call, &state);
+        int result = p101_vwscanf(env, err, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.errnum));
@@ -7567,13 +7948,13 @@ static void test_p101_wcstod(struct p101_env *env, struct p101_error *err)
 static void test_p101_wcstof(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EINVAL, ERANGE};
+    static const int errors[] = {EIO};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
     static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EINVAL, ERANGE};
+    static const int errors[] = {EIO};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -7648,13 +8029,13 @@ static void test_p101_wcstol(struct p101_env *env, struct p101_error *err)
 static void test_p101_wcstold(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EINVAL, ERANGE};
+    static const int errors[] = {EIO};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
     static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EINVAL, ERANGE};
+    static const int errors[] = {EIO};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -7924,7 +8305,7 @@ static void test_p101_wprintf(struct p101_env *env, struct p101_error *err)
 #elif defined(__FreeBSD__)
     static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EILSEQ, ENOMEM, EOVERFLOW};
+    static const int errors[] = {ENOMEM};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -7945,13 +8326,13 @@ static void test_p101_wprintf(struct p101_env *env, struct p101_error *err)
 static void test_p101_wscanf(struct p101_env *env, struct p101_error *err)
 {
 #ifdef __linux__
-    static const int errors[] = {EILSEQ, EINVAL, ENOMEM};
+    static const int errors[] = {EIO};
 #elif defined(__APPLE__)
     static const int errors[] = {EIO};
 #elif defined(__FreeBSD__)
     static const int errors[] = {EIO};
 #else
-    static const int errors[] = {EILSEQ, EINVAL, ENOMEM};
+    static const int errors[] = {EIO};
 #endif
 
     for(size_t index = 0U; index < sizeof(errors) / sizeof(errors[0]); index++)
@@ -8125,6 +8506,7 @@ int main(void)
     test_p101_fwscanf(env, err);
     test_p101_getc(env, err);
     test_p101_getchar(env, err);
+    test_p101_getenv(env, err);
     test_p101_getwc(env, err);
     test_p101_getwchar(env, err);
     test_p101_hypot(env, err);
@@ -8257,6 +8639,18 @@ int main(void)
     test_p101_towctrans(env, err);
     test_p101_ungetc(env, err);
     test_p101_ungetwc(env, err);
+    test_p101_vfprintf(env, err);
+    test_p101_vfscanf(env, err);
+    test_p101_vfwprintf(env, err);
+    test_p101_vfwscanf(env, err);
+    test_p101_vprintf(env, err);
+    test_p101_vscanf(env, err);
+    test_p101_vsnprintf(env, err);
+    test_p101_vsscanf(env, err);
+    test_p101_vswprintf(env, err);
+    test_p101_vswscanf(env, err);
+    test_p101_vwprintf(env, err);
+    test_p101_vwscanf(env, err);
     test_p101_wcrtomb(env, err);
     test_p101_wcscoll(env, err);
     test_p101_wcsftime(env, err);
