@@ -26,15 +26,14 @@ static int complex_prepare(void)
 {
     int prior_exceptions;
 
-    errno            = 0;
-    prior_exceptions = 0;
-
-    if((math_errhandling & MATH_ERREXCEPT) != 0)
+    errno = 0;
+    if((math_errhandling & MATH_ERREXCEPT) == 0)
     {
-        prior_exceptions = fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
-        (void)feclearexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
+        return 0;
     }
 
+    prior_exceptions = fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
+    (void)feclearexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
     return prior_exceptions;
 }
 
