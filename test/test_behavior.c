@@ -565,6 +565,34 @@ static int call_vwscanf(const struct p101_env *env, struct p101_error *err, cons
     return result;
 }
 
+static void test_wide_standard_io(const struct p101_env *env, struct p101_error *err)
+{
+    pid_t child;
+    int   status;
+
+    /*
+     * A standard stream becomes permanently byte- or wide-oriented after its
+     * first I/O operation. Exercise the wide standard-stream wrappers in a
+     * pristine child before the parent performs narrow I/O.
+     */
+    child = fork();
+    EXPECT(child >= 0);
+    if(child == 0)
+    {
+        bool succeeded;
+
+        succeeded = call_vwprintf(env, err, L"") == 0;
+        succeeded = call_vwscanf(env, err, L"") == 0 && succeeded;
+        succeeded = !p101_error_has_error(err) && succeeded;
+        _Exit(succeeded ? EXIT_SUCCESS : EXIT_FAILURE);
+    }
+    if(child > 0)
+    {
+        EXPECT(waitpid(child, &status, 0) == child);
+        EXPECT(WIFEXITED(status) && WEXITSTATUS(status) == EXIT_SUCCESS);
+    }
+}
+
 static void test_stdio(const struct p101_env *env, struct p101_error *err)
 {
     FILE   *stream;
@@ -612,8 +640,6 @@ static void test_stdio(const struct p101_env *env, struct p101_error *err)
     EXPECT(call_vswprintf(env, err, wide_buffer, 32, L"%ls", L"x") == 1 && wcscmp(wide_buffer, L"x") == 0);
     value = 0;
     EXPECT(call_vswscanf(env, err, L"7", L"%d", &value) == 1 && value == 7);
-    EXPECT(call_vwprintf(env, err, L"") == 0);
-    EXPECT(call_vwscanf(env, err, L"") == 0);
     EXPECT(!p101_error_has_error(err));
 }
 
@@ -672,6 +698,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
+    test_wide_standard_io(env, err);
     test_atomics(env);
     test_math(env);
     test_complex(env);

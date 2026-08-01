@@ -511,6 +511,7 @@ void p101_perror(const struct p101_env *env, const char *s)
     errno = actual_error;
     perror(s);
     P101_TRACE_EXIT(env);
+    errno = actual_error;
 }
 
 int p101_putc(const struct p101_env *env, struct p101_error *err, int c, FILE *stream)
