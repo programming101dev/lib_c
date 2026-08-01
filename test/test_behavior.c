@@ -1,4 +1,5 @@
 #include <complex.h>
+#include <ctype.h>
 #include <fenv.h>
 #include <locale.h>
 #include <math.h>
@@ -306,9 +307,9 @@ static void test_math(const struct p101_env *env)
 
 static void test_complex(const struct p101_env *env)
 {
-    double complex      z  = 2.0 + 3.0 * I;
-    float complex       zf = 2.0F + 3.0F * I;
-    long double complex zl = 2.0L + 3.0L * I;
+    double complex      z  = CMPLX(2.0, 3.0);
+    float complex       zf = CMPLXF(2.0F, 3.0F);
+    long double complex zl = CMPLXL(2.0L, 3.0L);
 
     EXPECT(p101_cimag(env, z) == 3.0);
     EXPECT(p101_cimagf(env, zf) == 3.0F);
