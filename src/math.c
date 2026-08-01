@@ -21,13 +21,19 @@
 
 static void math_check(struct p101_error *err, int prior_exceptions);
 static int  math_prepare(void);
+static int  math_prepare_exceptions(int handling);
 
 static int math_prepare(void)
 {
+    errno = 0;
+    return math_prepare_exceptions(math_errhandling);
+}
+
+static int math_prepare_exceptions(int handling)
+{
     int prior_exceptions;
 
-    errno = 0;
-    if((math_errhandling & MATH_ERREXCEPT) == 0)
+    if((handling & MATH_ERREXCEPT) == 0)
     {
         return 0;
     }
