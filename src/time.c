@@ -80,16 +80,18 @@ size_t p101_strftime(const struct p101_env *env, struct p101_error *err, char *r
 
     P101_TRACE(env);
     P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
-    errno = 0;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
     ret_val = strftime(buf, maxsize, format, timeptr);
 #pragma GCC diagnostic pop
 
-    if(ret_val == 0 && errno != 0)
-    {
-        P101_ERROR_RAISE_ERRNO(err, errno);
-    }
+    /*
+     * A zero result is ambiguous: it can mean that the formatted result is
+     * empty or that it did not fit.  The C and POSIX contracts do not define
+     * errno as a discriminator, and FreeBSD may set it for the empty-format
+     * case.  Preserve the native return contract; injected failures still use
+     * err through P101_C_FAULT_RETURN above.
+     */
 
     P101_TRACE_EXIT(env);
 
