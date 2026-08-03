@@ -70,6 +70,5 @@ set(p101_c_HEADERS
 set(p101_c_LINK_LIBRARIES
         p101_env
         p101_error
-        p101_tool_event
         m
 )
