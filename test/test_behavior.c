@@ -584,7 +584,7 @@ static void test_wide_standard_io(const struct p101_env *env, struct p101_error 
         succeeded = call_vwprintf(env, err, L"") == 0;
         succeeded = call_vwscanf(env, err, L"") == 0 && succeeded;
         succeeded = !p101_error_has_error(err) && succeeded;
-        _Exit(succeeded ? EXIT_SUCCESS : EXIT_FAILURE);
+        p101_exit_immediately(env, succeeded ? EXIT_SUCCESS : EXIT_FAILURE);
     }
     if(child > 0)
     {
