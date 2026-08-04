@@ -3402,7 +3402,8 @@ static void test_p101_div(struct p101_env *env, struct p101_error *err)
         EXPECT(p101_error_is_errno(err, state.code));
         EXPECT(errno == P101_TEST_ERRNO_SENTINEL);
         div_t expected_result = ((div_t){0, 0});
-        EXPECT(memcmp(&result, &expected_result, sizeof(result)) == 0);
+        EXPECT(result.quot == expected_result.quot);
+        EXPECT(result.rem == expected_result.rem);
         EXPECT(fault_resource_events == 0U);
         write_outcome("p101_div", "errno", error_names[index], state.code, failures == failures_before);
         p101_error_reset(err);
@@ -6248,7 +6249,8 @@ static void test_p101_imaxdiv(struct p101_env *env, struct p101_error *err)
         EXPECT(p101_error_is_errno(err, state.code));
         EXPECT(errno == P101_TEST_ERRNO_SENTINEL);
         imaxdiv_t expected_result = ((imaxdiv_t){0, 0});
-        EXPECT(memcmp(&result, &expected_result, sizeof(result)) == 0);
+        EXPECT(result.quot == expected_result.quot);
+        EXPECT(result.rem == expected_result.rem);
         EXPECT(fault_resource_events == 0U);
         write_outcome("p101_imaxdiv", "errno", error_names[index], state.code, failures == failures_before);
         p101_error_reset(err);
@@ -6449,7 +6451,8 @@ static void test_p101_ldiv(struct p101_env *env, struct p101_error *err)
         EXPECT(p101_error_is_errno(err, state.code));
         EXPECT(errno == P101_TEST_ERRNO_SENTINEL);
         ldiv_t expected_result = ((ldiv_t){0, 0});
-        EXPECT(memcmp(&result, &expected_result, sizeof(result)) == 0);
+        EXPECT(result.quot == expected_result.quot);
+        EXPECT(result.rem == expected_result.rem);
         EXPECT(fault_resource_events == 0U);
         write_outcome("p101_ldiv", "errno", error_names[index], state.code, failures == failures_before);
         p101_error_reset(err);
@@ -6650,7 +6653,8 @@ static void test_p101_lldiv(struct p101_env *env, struct p101_error *err)
         EXPECT(p101_error_is_errno(err, state.code));
         EXPECT(errno == P101_TEST_ERRNO_SENTINEL);
         lldiv_t expected_result = ((lldiv_t){0, 0});
-        EXPECT(memcmp(&result, &expected_result, sizeof(result)) == 0);
+        EXPECT(result.quot == expected_result.quot);
+        EXPECT(result.rem == expected_result.rem);
         EXPECT(fault_resource_events == 0U);
         write_outcome("p101_lldiv", "errno", error_names[index], state.code, failures == failures_before);
         p101_error_reset(err);
