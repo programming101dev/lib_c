@@ -6,10 +6,10 @@
 
 /*
  * Fault injection is test-only policy carried by p101_env. Keep the mechanics
- * here so every fallible C wrapper has the same early-return behavior.
+ * here so every fallible C wrapper converges on one exit point.
  */
 // clang-format off
-#define P101_C_FAULT_RETURN(env, err, call_name, failure_value)         \
+#define P101_C_FAULT_RETURN(env, err, call_name, result, failure_value) \
     do                                                                 \
     {                                                                  \
         int p101_c_fault_code_;                                        \
@@ -18,10 +18,14 @@
         if(p101_c_fault_code_ != 0)                                    \
         {                                                              \
             P101_ERROR_RAISE_ERRNO((err), p101_c_fault_code_);         \
-            P101_TRACE_EXIT(env);                                      \
-            return (failure_value);                                    \
+            (result) = (failure_value);                                \
+            goto p101_c_done_;                                         \
         }                                                              \
     } while(0)
+
+#define P101_C_DONE(env)                                                \
+    p101_c_done_:                                                       \
+    P101_TRACE_EXIT(env)
 // clang-format on
 
 #endif

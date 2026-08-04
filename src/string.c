@@ -108,7 +108,7 @@ int p101_strcoll(const struct p101_env *env, struct p101_error *err, const char 
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "strcoll", 0);
+    P101_C_FAULT_RETURN(env, err, "strcoll", ret_val, 0);
     errno   = 0;
     ret_val = strcoll(s1, s2);
 
@@ -117,7 +117,7 @@ int p101_strcoll(const struct p101_env *env, struct p101_error *err, const char 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -140,21 +140,23 @@ size_t p101_strcspn(const struct p101_env *env, const char *s1, const char *s2)
 #endif
 char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errnum)
 {
+    char       *p101_single_result_;
     const char *ret_val;
     size_t      len;
     char       *copy;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, NULL);
     errno   = 0;
     ret_val = strerror(errnum);
 
     if(errno != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, errno);
-        P101_TRACE_EXIT(env);
+        P101_C_DONE(env);
 
-        return NULL;
+        p101_single_result_ = NULL;
+        goto p101_single_exit_;
     }
 
     len  = p101_strlen(env, ret_val);
@@ -165,14 +167,19 @@ char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errn
         p101_free(env, copy);
         P101_TRACE_EXIT(env);
 
-        return NULL;
+        p101_single_result_ = NULL;
+        goto p101_single_exit_;
     }
 
     p101_memcpy(env, copy, ret_val, len + 1U);
 
     P101_TRACE_EXIT(env);
 
-    return copy;
+    p101_single_result_ = copy;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 #ifdef __apple_build_version__
     #pragma clang diagnostic pop
@@ -279,7 +286,7 @@ size_t p101_strxfrm(const struct p101_env *env, struct p101_error *err, char *re
     size_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno   = 0;
     ret_val = strxfrm(s1, s2, n);
 
@@ -288,7 +295,7 @@ size_t p101_strxfrm(const struct p101_env *env, struct p101_error *err, char *re
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }

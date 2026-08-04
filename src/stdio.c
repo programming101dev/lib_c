@@ -128,7 +128,7 @@ int p101_fclose(const struct p101_env *env, struct p101_error *err, FILE *stream
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     fd    = fileno(stream);
     errno = 0;
     P101_TRACK_POINTER_RESOURCE_RELEASE(env, "stdio-stream", stream, NULL);
@@ -142,7 +142,7 @@ int p101_fclose(const struct p101_env *env, struct p101_error *err, FILE *stream
     {
         P101_TRACK_CLOSE(env, fd);
     }
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -176,7 +176,7 @@ int p101_fflush(const struct p101_env *env, struct p101_error *err, FILE *stream
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fflush(stream);
 
@@ -185,7 +185,7 @@ int p101_fflush(const struct p101_env *env, struct p101_error *err, FILE *stream
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -196,7 +196,7 @@ int p101_fgetc(const struct p101_env *env, struct p101_error *err, FILE *stream)
     errno_t actual_error;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno        = 0;
     ret_val      = fgetc(stream);
     actual_error = errno;
@@ -206,7 +206,7 @@ int p101_fgetc(const struct p101_env *env, struct p101_error *err, FILE *stream)
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -216,7 +216,7 @@ int p101_fgetpos(const struct p101_env *env, struct p101_error *err, FILE *restr
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fgetpos(stream, pos);
 
@@ -225,7 +225,7 @@ int p101_fgetpos(const struct p101_env *env, struct p101_error *err, FILE *restr
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -235,7 +235,7 @@ char *p101_fgets(const struct p101_env *env, struct p101_error *err, char *restr
     char *ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, NULL);
     errno   = 0;
     ret_val = fgets(s, n, stream);
 
@@ -251,7 +251,7 @@ char *p101_fgets(const struct p101_env *env, struct p101_error *err, char *restr
         }
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -261,7 +261,7 @@ FILE *p101_fopen(const struct p101_env *env, struct p101_error *err, const char 
     FILE *ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, NULL);
     errno   = 0;
     ret_val = fopen(pathname, mode);
 
@@ -281,7 +281,7 @@ FILE *p101_fopen(const struct p101_env *env, struct p101_error *err, const char 
         }
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -291,7 +291,7 @@ int p101_fputc(const struct p101_env *env, struct p101_error *err, int c, FILE *
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fputc(c, stream);
 
@@ -300,7 +300,7 @@ int p101_fputc(const struct p101_env *env, struct p101_error *err, int c, FILE *
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -310,7 +310,7 @@ int p101_fputs(const struct p101_env *env, struct p101_error *err, const char *r
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fputs(s, stream);
 
@@ -319,7 +319,7 @@ int p101_fputs(const struct p101_env *env, struct p101_error *err, const char *r
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -330,7 +330,7 @@ size_t p101_fread(const struct p101_env *env, struct p101_error *err, void *rest
     errno_t actual_error;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno        = 0;
     ret_val      = fread(ptr, size, nitems, stream);
     actual_error = errno;
@@ -340,7 +340,7 @@ size_t p101_fread(const struct p101_env *env, struct p101_error *err, void *rest
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -351,7 +351,7 @@ FILE *p101_freopen(const struct p101_env *env, struct p101_error *err, const cha
     FILE *ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, NULL);
     old_fd = fileno(stream);
     errno  = 0;
     P101_TRACK_POINTER_RESOURCE_RELEASE(env, "stdio-stream", stream, "freopen");
@@ -378,7 +378,7 @@ FILE *p101_freopen(const struct p101_env *env, struct p101_error *err, const cha
         }
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -388,7 +388,7 @@ int p101_fseek(const struct p101_env *env, struct p101_error *err, FILE *stream,
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fseek(stream, offset, whence);
 
@@ -396,7 +396,7 @@ int p101_fseek(const struct p101_env *env, struct p101_error *err, FILE *stream,
     {
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -406,7 +406,7 @@ int p101_fsetpos(const struct p101_env *env, struct p101_error *err, FILE *strea
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fsetpos(stream, pos);
 
@@ -415,7 +415,7 @@ int p101_fsetpos(const struct p101_env *env, struct p101_error *err, FILE *strea
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -425,7 +425,7 @@ long p101_ftell(const struct p101_env *env, struct p101_error *err, FILE *stream
     long ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1L);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1L);
     errno   = 0;
     ret_val = ftell(stream);
 
@@ -434,7 +434,7 @@ long p101_ftell(const struct p101_env *env, struct p101_error *err, FILE *stream
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -445,7 +445,7 @@ size_t p101_fwrite(const struct p101_env *env, struct p101_error *err, const voi
     errno_t actual_error;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno        = 0;
     ret_val      = fwrite(ptr, size, nitems, stream);
     actual_error = errno;
@@ -455,7 +455,7 @@ size_t p101_fwrite(const struct p101_env *env, struct p101_error *err, const voi
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -466,7 +466,7 @@ int p101_getc(const struct p101_env *env, struct p101_error *err, FILE *stream)
     errno_t actual_error;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno        = 0;
     ret_val      = getc(stream);
     actual_error = errno;
@@ -476,7 +476,7 @@ int p101_getc(const struct p101_env *env, struct p101_error *err, FILE *stream)
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -487,7 +487,7 @@ int p101_getchar(const struct p101_env *env, struct p101_error *err)
     errno_t actual_error;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno        = 0;
     ret_val      = getchar();
     actual_error = errno;
@@ -497,7 +497,7 @@ int p101_getchar(const struct p101_env *env, struct p101_error *err)
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -519,7 +519,7 @@ int p101_putc(const struct p101_env *env, struct p101_error *err, int c, FILE *s
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = putc(c, stream);
 
@@ -528,7 +528,7 @@ int p101_putc(const struct p101_env *env, struct p101_error *err, int c, FILE *s
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -538,7 +538,7 @@ int p101_putchar(const struct p101_env *env, struct p101_error *err, int c)
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = putchar(c);
 
@@ -547,7 +547,7 @@ int p101_putchar(const struct p101_env *env, struct p101_error *err, int c)
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -557,7 +557,7 @@ int p101_puts(const struct p101_env *env, struct p101_error *err, const char *s)
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = puts(s);
 
@@ -566,7 +566,7 @@ int p101_puts(const struct p101_env *env, struct p101_error *err, const char *s)
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -576,7 +576,7 @@ int p101_remove(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = remove(path);
 
@@ -585,7 +585,7 @@ int p101_remove(const struct p101_env *env, struct p101_error *err, const char *
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -595,7 +595,7 @@ int p101_rename(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = rename(old_name, new_name);
 
@@ -604,7 +604,7 @@ int p101_rename(const struct p101_env *env, struct p101_error *err, const char *
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -614,7 +614,7 @@ int p101_setvbuf(const struct p101_env *env, struct p101_error *err, FILE *restr
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = setvbuf(stream, buf, type, size);
 
@@ -623,7 +623,7 @@ int p101_setvbuf(const struct p101_env *env, struct p101_error *err, FILE *restr
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -633,7 +633,7 @@ FILE *p101_tmpfile(const struct p101_env *env, struct p101_error *err)
     FILE *ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, NULL);
     errno   = 0;
     ret_val = tmpfile();
 
@@ -653,7 +653,7 @@ FILE *p101_tmpfile(const struct p101_env *env, struct p101_error *err)
         }
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -663,7 +663,7 @@ int p101_ungetc(const struct p101_env *env, struct p101_error *err, int c, FILE 
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = ungetc(c, stream);
 
@@ -672,7 +672,7 @@ int p101_ungetc(const struct p101_env *env, struct p101_error *err, int c, FILE 
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(errno));
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -683,12 +683,12 @@ int p101_fprintf(const struct p101_env *env, struct p101_error *err, FILE *restr
     int     ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     va_start(ap, format);
     ret_val = vfprintf_checked(err, stream, format, ap);
     va_end(ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -699,12 +699,12 @@ int p101_fscanf(const struct p101_env *env, struct p101_error *err, FILE *restri
     int     ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     va_start(ap, format);
     ret_val = vfscanf_checked(err, stream, format, ap);
     va_end(ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -715,12 +715,12 @@ int p101_printf(const struct p101_env *env, struct p101_error *err, const char *
     int     ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     va_start(ap, format);
     ret_val = vprintf_checked(err, format, ap);
     va_end(ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -731,12 +731,12 @@ int p101_scanf(const struct p101_env *env, struct p101_error *err, const char *r
     int     ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     va_start(ap, format);
     ret_val = vscanf_checked(err, format, ap);
     va_end(ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -747,12 +747,12 @@ int p101_snprintf(const struct p101_env *env, struct p101_error *err, char *rest
     int     ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     va_start(ap, format);
     ret_val = vsnprintf_checked(err, s, n, format, ap);
     va_end(ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -763,12 +763,12 @@ int p101_sscanf(const struct p101_env *env, struct p101_error *err, const char *
     int     ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     va_start(ap, format);
     ret_val = vsscanf_checked(err, s, format, ap);
     va_end(ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -778,10 +778,10 @@ int p101_vfprintf(const struct p101_env *env, struct p101_error *err, FILE *rest
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     ret_val = vfprintf_checked(err, stream, format, ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -791,10 +791,10 @@ int p101_vfscanf(const struct p101_env *env, struct p101_error *err, FILE *restr
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     ret_val = vfscanf_checked(err, stream, format, ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -804,10 +804,10 @@ int p101_vprintf(const struct p101_env *env, struct p101_error *err, const char 
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     ret_val = vprintf_checked(err, format, ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -817,10 +817,10 @@ int p101_vscanf(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     ret_val = vscanf_checked(err, format, ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -830,10 +830,10 @@ int p101_vsnprintf(const struct p101_env *env, struct p101_error *err, char *res
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     ret_val = vsnprintf_checked(err, s, n, format, ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -843,10 +843,10 @@ int p101_vsscanf(const struct p101_env *env, struct p101_error *err, const char 
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     ret_val = vsscanf_checked(err, s, format, ap);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }

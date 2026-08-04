@@ -22,7 +22,7 @@ clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
     clock_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, (clock_t)-1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, (clock_t)-1);
     errno   = 0;
     ret_val = clock();
 
@@ -38,7 +38,7 @@ clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
         }
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -60,7 +60,7 @@ time_t p101_mktime(const struct p101_env *env, struct p101_error *err, struct tm
     time_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, (time_t)-1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, (time_t)-1);
     errno   = 0;
     ret_val = mktime(tm);
 
@@ -69,7 +69,7 @@ time_t p101_mktime(const struct p101_env *env, struct p101_error *err, struct tm
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -79,7 +79,7 @@ size_t p101_strftime(const struct p101_env *env, struct p101_error *err, char *r
     size_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
     ret_val = strftime(buf, maxsize, format, timeptr);
@@ -93,7 +93,7 @@ size_t p101_strftime(const struct p101_env *env, struct p101_error *err, char *r
      * err through P101_C_FAULT_RETURN above.
      */
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -103,7 +103,7 @@ time_t p101_time(const struct p101_env *env, struct p101_error *err, time_t *tlo
     time_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, (time_t)-1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, (time_t)-1);
     errno   = 0;
     ret_val = time(tloc);
 
@@ -112,7 +112,7 @@ time_t p101_time(const struct p101_env *env, struct p101_error *err, time_t *tlo
         P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? EOVERFLOW : errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -122,7 +122,7 @@ int p101_timespec_get(const struct p101_env *env, struct p101_error *err, struct
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "timespec_get", 0);
+    P101_C_FAULT_RETURN(env, err, "timespec_get", ret_val, 0);
     errno   = 0;
     ret_val = timespec_get(ts, base);
 
@@ -131,7 +131,7 @@ int p101_timespec_get(const struct p101_env *env, struct p101_error *err, struct
         P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? EINVAL : errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }

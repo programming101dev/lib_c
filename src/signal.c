@@ -23,7 +23,7 @@ int p101_raise(const struct p101_env *env, struct p101_error *err, int sig)
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = raise(sig);
 
@@ -32,7 +32,7 @@ int p101_raise(const struct p101_env *env, struct p101_error *err, int sig)
         P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? EINVAL : errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -42,7 +42,7 @@ void (*p101_signal(const struct p101_env *env, struct p101_error *err, int sig, 
     void (*ret_val)(int);
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, SIG_ERR);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, SIG_ERR);
     errno   = 0;
     ret_val = signal(sig, func);
 
@@ -52,7 +52,7 @@ void (*p101_signal(const struct p101_env *env, struct p101_error *err, int sig, 
         P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? EINVAL : errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }

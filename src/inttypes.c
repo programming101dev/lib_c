@@ -22,7 +22,7 @@ intmax_t p101_imaxabs(const struct p101_env *env, struct p101_error *err, intmax
     intmax_t value;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, value, 0);
     errno = 0;
     if(j == INTMAX_MIN)
     {
@@ -34,7 +34,7 @@ intmax_t p101_imaxabs(const struct p101_env *env, struct p101_error *err, intmax
         value = imaxabs(j);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return value;
 }
@@ -44,19 +44,21 @@ intmax_t p101_imaxabs(const struct p101_env *env, struct p101_error *err, intmax
 
 imaxdiv_t p101_imaxdiv(const struct p101_env *env, struct p101_error *err, intmax_t numer, intmax_t denom)
 {
+    imaxdiv_t p101_single_result_;
     imaxdiv_t value;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "imaxdiv", ((imaxdiv_t){0, 0}));
+    P101_C_FAULT_RETURN(env, err, "imaxdiv", value, ((imaxdiv_t){0, 0}));
 
     if(denom == 0)
     {
         P101_ERROR_RAISE_ERRNO(err, EDOM);
         value.quot = 0;
         value.rem  = 0;
-        P101_TRACE_EXIT(env);
+        P101_C_DONE(env);
 
-        return value;
+        p101_single_result_ = value;
+        goto p101_single_exit_;
     }
     if(numer == INTMAX_MIN && denom == -1)
     {
@@ -65,7 +67,8 @@ imaxdiv_t p101_imaxdiv(const struct p101_env *env, struct p101_error *err, intma
         value.rem  = 0;
         P101_TRACE_EXIT(env);
 
-        return value;
+        p101_single_result_ = value;
+        goto p101_single_exit_;
     }
 
     errno = 0;
@@ -73,7 +76,11 @@ imaxdiv_t p101_imaxdiv(const struct p101_env *env, struct p101_error *err, intma
 
     P101_TRACE_EXIT(env);
 
-    return value;
+    p101_single_result_ = value;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 
 #pragma GCC diagnostic pop
@@ -84,7 +91,7 @@ intmax_t p101_strtoimax(const struct p101_env *env, struct p101_error *err, cons
     char    *temp_endptr;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, value, 0);
     errno = 0;
     value = strtoimax(nptr, &temp_endptr, base);
 
@@ -109,7 +116,7 @@ intmax_t p101_strtoimax(const struct p101_env *env, struct p101_error *err, cons
         *endptr = temp_endptr;
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return value;
 }
@@ -119,7 +126,7 @@ uintmax_t p101_strtoumax(const struct p101_env *env, struct p101_error *err, con
     uintmax_t value;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, value, 0);
     errno = 0;
     value = strtoumax(nptr, endptr, base);
 
@@ -131,7 +138,7 @@ uintmax_t p101_strtoumax(const struct p101_env *env, struct p101_error *err, con
         }
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return value;
 }
@@ -141,7 +148,7 @@ intmax_t p101_wcstoimax(const struct p101_env *env, struct p101_error *err, cons
     intmax_t value;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, value, 0);
     errno = 0;
     value = wcstoimax(nptr, endptr, base);
 
@@ -153,7 +160,7 @@ intmax_t p101_wcstoimax(const struct p101_env *env, struct p101_error *err, cons
         }
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return value;
 }
@@ -163,7 +170,7 @@ uintmax_t p101_wcstoumax(const struct p101_env *env, struct p101_error *err, con
     uintmax_t value;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, value, 0);
     errno = 0;
     value = wcstoumax(nptr, endptr, base);
 
@@ -175,7 +182,7 @@ uintmax_t p101_wcstoumax(const struct p101_env *env, struct p101_error *err, con
         }
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return value;
 }

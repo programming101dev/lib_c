@@ -1,5 +1,4 @@
 function	current_source
-p101_abort	libraries/lib_c/src/stdlib.c
 p101_abs	libraries/lib_c/src/stdlib.c
 p101_acos	libraries/lib_c/src/math.c
 p101_acosf	libraries/lib_c/src/math.c
@@ -139,8 +138,6 @@ p101_erfcf	libraries/lib_c/src/math.c
 p101_erfcl	libraries/lib_c/src/math.c
 p101_erff	libraries/lib_c/src/math.c
 p101_erfl	libraries/lib_c/src/math.c
-p101_exit	libraries/lib_c/src/stdlib.c
-p101_exit_immediately	libraries/lib_c/src/stdlib.c
 p101_exp	libraries/lib_c/src/math.c
 p101_exp2	libraries/lib_c/src/math.c
 p101_exp2f	libraries/lib_c/src/math.c
@@ -328,7 +325,6 @@ p101_puts	libraries/lib_c/src/stdio.c
 p101_putwc	libraries/lib_c/src/wchar.c
 p101_putwchar	libraries/lib_c/src/wchar.c
 p101_qsort	libraries/lib_c/src/stdlib.c
-p101_quick_exit	libraries/lib_c/src/stdlib.c
 p101_raise	libraries/lib_c/src/signal.c
 p101_realloc	libraries/lib_c/src/stdlib.c
 p101_remainder	libraries/lib_c/src/math.c

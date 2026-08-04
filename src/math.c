@@ -31,16 +31,22 @@ static int math_prepare(void)
 
 static int math_prepare_exceptions(int handling)
 {
+    int p101_single_result_;
     int prior_exceptions;
 
     if((handling & MATH_ERREXCEPT) == 0)
     {
-        return 0;
+        p101_single_result_ = 0;
+        goto p101_single_exit_;
     }
 
     prior_exceptions = fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
     (void)feclearexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
-    return prior_exceptions;
+    p101_single_result_ = prior_exceptions;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 
 static void math_check(struct p101_error *err, int prior_exceptions)
@@ -86,12 +92,12 @@ double p101_acos(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = acos(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -103,12 +109,12 @@ float p101_acosf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = acosf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -120,12 +126,12 @@ double p101_acosh(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = acosh(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -137,12 +143,12 @@ float p101_acoshf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = acoshf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -154,12 +160,12 @@ long double p101_acoshl(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = acoshl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -171,12 +177,12 @@ long double p101_acosl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = acosl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -188,12 +194,12 @@ double p101_asin(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = asin(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -205,12 +211,12 @@ float p101_asinf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = asinf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -222,12 +228,12 @@ double p101_asinh(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = asinh(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -239,12 +245,12 @@ float p101_asinhf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = asinhf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -256,12 +262,12 @@ long double p101_asinhl(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = asinhl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -273,12 +279,12 @@ long double p101_asinl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = asinl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -290,12 +296,12 @@ double p101_atan(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = atan(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -307,12 +313,12 @@ double p101_atan2(const struct p101_env *env, struct p101_error *err, double y, 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = atan2(y, x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -324,12 +330,12 @@ float p101_atan2f(const struct p101_env *env, struct p101_error *err, float y, f
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = atan2f(y, x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -341,12 +347,12 @@ long double p101_atan2l(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = atan2l(y, x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -358,12 +364,12 @@ float p101_atanf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = atanf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -375,12 +381,12 @@ double p101_atanh(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = atanh(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -392,12 +398,12 @@ float p101_atanhf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = atanhf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -409,12 +415,12 @@ long double p101_atanhl(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = atanhl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -426,12 +432,12 @@ long double p101_atanl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = atanl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -551,12 +557,12 @@ double p101_cos(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = cos(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -568,12 +574,12 @@ float p101_cosf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = cosf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -585,12 +591,12 @@ double p101_cosh(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = cosh(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -602,12 +608,12 @@ float p101_coshf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = coshf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -619,12 +625,12 @@ long double p101_coshl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = coshl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -636,12 +642,12 @@ long double p101_cosl(const struct p101_env *env, struct p101_error *err, long d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = cosl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -653,12 +659,12 @@ double p101_erf(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = erf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -670,12 +676,12 @@ double p101_erfc(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = erfc(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -687,12 +693,12 @@ float p101_erfcf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = erfcf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -704,12 +710,12 @@ long double p101_erfcl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = erfcl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -721,12 +727,12 @@ float p101_erff(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = erff(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -738,12 +744,12 @@ long double p101_erfl(const struct p101_env *env, struct p101_error *err, long d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = erfl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -755,12 +761,12 @@ double p101_exp(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = exp(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -772,12 +778,12 @@ double p101_exp2(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = exp2(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -789,12 +795,12 @@ float p101_exp2f(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = exp2f(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -806,12 +812,12 @@ long double p101_exp2l(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = exp2l(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -823,12 +829,12 @@ float p101_expf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = expf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -840,12 +846,12 @@ long double p101_expl(const struct p101_env *env, struct p101_error *err, long d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = expl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -857,12 +863,12 @@ double p101_expm1(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = expm1(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -874,12 +880,12 @@ float p101_expm1f(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = expm1f(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -891,12 +897,12 @@ long double p101_expm1l(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = expm1l(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -944,12 +950,12 @@ double p101_fdim(const struct p101_env *env, struct p101_error *err, double x, d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = fdim(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -961,12 +967,12 @@ float p101_fdimf(const struct p101_env *env, struct p101_error *err, float x, fl
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = fdimf(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -978,12 +984,12 @@ long double p101_fdiml(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = fdiml(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1031,12 +1037,12 @@ double p101_fma(const struct p101_env *env, struct p101_error *err, double x, do
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = fma(x, y, z);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1048,12 +1054,12 @@ float p101_fmaf(const struct p101_env *env, struct p101_error *err, float x, flo
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = fmaf(x, y, z);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1065,12 +1071,12 @@ long double p101_fmal(const struct p101_env *env, struct p101_error *err, long d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = fmal(x, y, z);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1154,12 +1160,12 @@ double p101_fmod(const struct p101_env *env, struct p101_error *err, double x, d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = fmod(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1171,12 +1177,12 @@ float p101_fmodf(const struct p101_env *env, struct p101_error *err, float x, fl
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = fmodf(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1188,12 +1194,12 @@ long double p101_fmodl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = fmodl(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1241,12 +1247,12 @@ double p101_hypot(const struct p101_env *env, struct p101_error *err, double x, 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = hypot(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1258,12 +1264,12 @@ float p101_hypotf(const struct p101_env *env, struct p101_error *err, float x, f
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = hypotf(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1275,12 +1281,12 @@ long double p101_hypotl(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = hypotl(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1292,12 +1298,12 @@ int p101_ilogb(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = ilogb(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1309,12 +1315,12 @@ int p101_ilogbf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = ilogbf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1326,12 +1332,12 @@ int p101_ilogbl(const struct p101_env *env, struct p101_error *err, long double 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = ilogbl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1343,12 +1349,12 @@ double p101_ldexp(const struct p101_env *env, struct p101_error *err, double x, 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = ldexp(x, exp);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1360,12 +1366,12 @@ float p101_ldexpf(const struct p101_env *env, struct p101_error *err, float x, i
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = ldexpf(x, exp);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1377,12 +1383,12 @@ long double p101_ldexpl(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = ldexpl(x, exp);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1394,12 +1400,12 @@ double p101_lgamma(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = lgamma(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1411,12 +1417,12 @@ float p101_lgammaf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = lgammaf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1428,12 +1434,12 @@ long double p101_lgammal(const struct p101_env *env, struct p101_error *err, lon
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = lgammal(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1445,12 +1451,12 @@ long long p101_llrint(const struct p101_env *env, struct p101_error *err, double
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = llrint(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1462,12 +1468,12 @@ long long p101_llrintf(const struct p101_env *env, struct p101_error *err, float
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = llrintf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1479,12 +1485,12 @@ long long p101_llrintl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = llrintl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1496,12 +1502,12 @@ long long p101_llround(const struct p101_env *env, struct p101_error *err, doubl
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = llround(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1513,12 +1519,12 @@ long long p101_llroundf(const struct p101_env *env, struct p101_error *err, floa
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = llroundf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1530,12 +1536,12 @@ long long p101_llroundl(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = llroundl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1547,12 +1553,12 @@ double p101_log(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1564,12 +1570,12 @@ double p101_log10(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log10(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1581,12 +1587,12 @@ float p101_log10f(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log10f(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1598,12 +1604,12 @@ long double p101_log10l(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log10l(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1615,12 +1621,12 @@ double p101_log1p(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log1p(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1632,12 +1638,12 @@ float p101_log1pf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log1pf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1649,12 +1655,12 @@ long double p101_log1pl(const struct p101_env *env, struct p101_error *err, long
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log1pl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1666,12 +1672,12 @@ double p101_log2(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log2(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1683,12 +1689,12 @@ float p101_log2f(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log2f(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1700,12 +1706,12 @@ long double p101_log2l(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = log2l(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1717,12 +1723,12 @@ double p101_logb(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = logb(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1734,12 +1740,12 @@ float p101_logbf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = logbf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1751,12 +1757,12 @@ long double p101_logbl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = logbl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1768,12 +1774,12 @@ float p101_logf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = logf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1785,12 +1791,12 @@ long double p101_logl(const struct p101_env *env, struct p101_error *err, long d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = logl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1802,12 +1808,12 @@ long p101_lrint(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = lrint(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1819,12 +1825,12 @@ long p101_lrintf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = lrintf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1836,12 +1842,12 @@ long p101_lrintl(const struct p101_env *env, struct p101_error *err, long double
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = lrintl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1853,12 +1859,12 @@ long p101_lround(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = lround(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1870,12 +1876,12 @@ long p101_lroundf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = lroundf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -1887,12 +1893,12 @@ long p101_lroundl(const struct p101_env *env, struct p101_error *err, long doubl
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = lroundl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2012,12 +2018,12 @@ double p101_nextafter(const struct p101_env *env, struct p101_error *err, double
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = nextafter(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2029,12 +2035,12 @@ float p101_nextafterf(const struct p101_env *env, struct p101_error *err, float 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = nextafterf(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2046,12 +2052,12 @@ long double p101_nextafterl(const struct p101_env *env, struct p101_error *err, 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = nextafterl(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2063,12 +2069,12 @@ double p101_nexttoward(const struct p101_env *env, struct p101_error *err, doubl
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = nexttoward(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2080,12 +2086,12 @@ float p101_nexttowardf(const struct p101_env *env, struct p101_error *err, float
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = nexttowardf(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2097,12 +2103,12 @@ long double p101_nexttowardl(const struct p101_env *env, struct p101_error *err,
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = nexttowardl(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2114,12 +2120,12 @@ double p101_pow(const struct p101_env *env, struct p101_error *err, double x, do
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = pow(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2131,12 +2137,12 @@ float p101_powf(const struct p101_env *env, struct p101_error *err, float x, flo
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = powf(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2148,12 +2154,12 @@ long double p101_powl(const struct p101_env *env, struct p101_error *err, long d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = powl(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2165,12 +2171,12 @@ double p101_remainder(const struct p101_env *env, struct p101_error *err, double
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = remainder(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2182,12 +2188,12 @@ float p101_remainderf(const struct p101_env *env, struct p101_error *err, float 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = remainderf(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2199,12 +2205,12 @@ long double p101_remainderl(const struct p101_env *env, struct p101_error *err, 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = remainderl(x, y);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2216,12 +2222,12 @@ double p101_remquo(const struct p101_env *env, struct p101_error *err, double x,
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = remquo(x, y, quo);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2233,12 +2239,12 @@ float p101_remquof(const struct p101_env *env, struct p101_error *err, float x, 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = remquof(x, y, quo);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2250,12 +2256,12 @@ long double p101_remquol(const struct p101_env *env, struct p101_error *err, lon
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = remquol(x, y, quo);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2339,12 +2345,12 @@ double p101_scalbln(const struct p101_env *env, struct p101_error *err, double x
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = scalbln(x, n);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2356,12 +2362,12 @@ float p101_scalblnf(const struct p101_env *env, struct p101_error *err, float x,
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = scalblnf(x, n);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2373,12 +2379,12 @@ long double p101_scalblnl(const struct p101_env *env, struct p101_error *err, lo
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = scalblnl(x, n);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2390,12 +2396,12 @@ double p101_scalbn(const struct p101_env *env, struct p101_error *err, double x,
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = scalbn(x, n);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2407,12 +2413,12 @@ float p101_scalbnf(const struct p101_env *env, struct p101_error *err, float x, 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = scalbnf(x, n);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2424,12 +2430,12 @@ long double p101_scalbnl(const struct p101_env *env, struct p101_error *err, lon
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = scalbnl(x, n);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2441,12 +2447,12 @@ double p101_sin(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = sin(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2458,12 +2464,12 @@ float p101_sinf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = sinf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2475,12 +2481,12 @@ double p101_sinh(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = sinh(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2492,12 +2498,12 @@ float p101_sinhf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = sinhf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2509,12 +2515,12 @@ long double p101_sinhl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = sinhl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2526,12 +2532,12 @@ long double p101_sinl(const struct p101_env *env, struct p101_error *err, long d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = sinl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2543,12 +2549,12 @@ double p101_sqrt(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = sqrt(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2560,12 +2566,12 @@ float p101_sqrtf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = sqrtf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2577,12 +2583,12 @@ long double p101_sqrtl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = sqrtl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2594,12 +2600,12 @@ double p101_tan(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = tan(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2611,12 +2617,12 @@ float p101_tanf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = tanf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2628,12 +2634,12 @@ double p101_tanh(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = tanh(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2645,12 +2651,12 @@ float p101_tanhf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = tanhf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2662,12 +2668,12 @@ long double p101_tanhl(const struct p101_env *env, struct p101_error *err, long 
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = tanhl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2679,12 +2685,12 @@ long double p101_tanl(const struct p101_env *env, struct p101_error *err, long d
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = tanl(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2696,12 +2702,12 @@ double p101_tgamma(const struct p101_env *env, struct p101_error *err, double x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = tgamma(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2713,12 +2719,12 @@ float p101_tgammaf(const struct p101_env *env, struct p101_error *err, float x)
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = tgammaf(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -2730,12 +2736,12 @@ long double p101_tgammal(const struct p101_env *env, struct p101_error *err, lon
     int prior_exceptions;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     prior_exceptions = math_prepare();
     ret_val          = tgammal(x);
     math_check(err, prior_exceptions);
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }

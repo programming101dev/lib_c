@@ -30,12 +30,6 @@
   },
   "overrides": [
     {
-      "match": "^p101_exit_immediately$",
-      "target": "_Exit",
-      "compare_target_signature": false,
-      "reason": "The descriptive p101 name deliberately maps to ISO C _Exit."
-    },
-    {
       "match": "^p101_atomic_flag_clear(_explicit)?$",
       "target_replacement": "atomic_store\\1",
       "compare_target_signature": false,

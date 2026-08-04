@@ -45,7 +45,6 @@ static int failures;
  * Each marker names one independently checked public API. The tests are
  * grouped by C facility so the fixtures stay readable.
  *
- * P101_TEST_CASE(p101_abort)
  * P101_TEST_CASE(p101_atomic_flag_clear_explicit)
  * P101_TEST_CASE(p101_atomic_flag_test_and_set_explicit)
  * P101_TEST_CASE(p101_atomic_signal_fence)
@@ -91,8 +90,6 @@ static int failures;
  * P101_TEST_CASE(p101_crealf)
  * P101_TEST_CASE(p101_creall)
  * P101_TEST_CASE(p101_difftime)
- * P101_TEST_CASE(p101_exit)
- * P101_TEST_CASE(p101_exit_immediately)
  * P101_TEST_CASE(p101_fabs)
  * P101_TEST_CASE(p101_fabsf)
  * P101_TEST_CASE(p101_fabsl)
@@ -155,7 +152,6 @@ static int failures;
  * P101_TEST_CASE(p101_nearbyintf)
  * P101_TEST_CASE(p101_nearbyintl)
  * P101_TEST_CASE(p101_qsort)
- * P101_TEST_CASE(p101_quick_exit)
  * P101_TEST_CASE(p101_rint)
  * P101_TEST_CASE(p101_rintf)
  * P101_TEST_CASE(p101_rintl)
@@ -580,11 +576,18 @@ static void test_wide_standard_io(const struct p101_env *env, struct p101_error 
     if(child == 0)
     {
         bool succeeded;
+        int  exit_status;
 
         succeeded = call_vwprintf(env, err, L"") == 0;
         succeeded = call_vwscanf(env, err, L"") == 0 && succeeded;
         succeeded = !p101_error_has_error(err) && succeeded;
-        p101_exit_immediately(env, succeeded ? EXIT_SUCCESS : EXIT_FAILURE);
+        exit_status = EXIT_FAILURE;
+        if(succeeded)
+        {
+            exit_status = EXIT_SUCCESS;
+        }
+        p101_env_complete_event_streams(env);
+        _exit(exit_status);
     }
     if(child > 0)
     {
@@ -643,44 +646,6 @@ static void test_stdio(const struct p101_env *env, struct p101_error *err)
     EXPECT(!p101_error_has_error(err));
 }
 
-static void test_termination(const struct p101_env *env)
-{
-    pid_t child;
-    int   status;
-
-    child = fork();
-    EXPECT(child >= 0);
-    if(child == 0)
-    {
-        p101_exit_immediately(env, 31);
-    }
-    EXPECT(waitpid(child, &status, 0) == child && WIFEXITED(status) && WEXITSTATUS(status) == 31);
-
-    child = fork();
-    EXPECT(child >= 0);
-    if(child == 0)
-    {
-        p101_exit(env, 32);
-    }
-    EXPECT(waitpid(child, &status, 0) == child && WIFEXITED(status) && WEXITSTATUS(status) == 32);
-
-    child = fork();
-    EXPECT(child >= 0);
-    if(child == 0)
-    {
-        p101_quick_exit(env, 33);
-    }
-    EXPECT(waitpid(child, &status, 0) == child && WIFEXITED(status) && WEXITSTATUS(status) == 33);
-
-    child = fork();
-    EXPECT(child >= 0);
-    if(child == 0)
-    {
-        p101_abort(env);
-    }
-    EXPECT(waitpid(child, &status, 0) == child && WIFSIGNALED(status));
-}
-
 int main(void)
 {
     struct p101_error *err;
@@ -706,8 +671,6 @@ int main(void)
     test_memory_and_strings(env);
     test_stdlib_and_misc(env, err);
     test_stdio(env, err);
-    test_termination(env);
-
     p101_env_destroy(env);
     p101_error_destroy(err);
     return failures == 0 ? EXIT_SUCCESS : EXIT_FAILURE;

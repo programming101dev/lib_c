@@ -38,7 +38,7 @@ int p101_feclearexcept(const struct p101_env *env, struct p101_error *err, int e
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = feclearexcept(excepts);
 
@@ -47,7 +47,7 @@ int p101_feclearexcept(const struct p101_env *env, struct p101_error *err, int e
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -57,7 +57,7 @@ int p101_fegetenv(const struct p101_env *env, struct p101_error *err, fenv_t *en
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fegetenv(envp);
 
@@ -66,7 +66,7 @@ int p101_fegetenv(const struct p101_env *env, struct p101_error *err, fenv_t *en
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -76,7 +76,7 @@ int p101_fegetexceptflag(const struct p101_env *env, struct p101_error *err, fex
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fegetexceptflag(flagp, excepts);
 
@@ -85,7 +85,7 @@ int p101_fegetexceptflag(const struct p101_env *env, struct p101_error *err, fex
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -95,7 +95,7 @@ int p101_fegetround(const struct p101_env *env, struct p101_error *err)
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fegetround();
 
@@ -104,7 +104,7 @@ int p101_fegetround(const struct p101_env *env, struct p101_error *err)
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -114,7 +114,7 @@ int p101_feholdexcept(const struct p101_env *env, struct p101_error *err, fenv_t
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = feholdexcept(envp);
 
@@ -123,7 +123,7 @@ int p101_feholdexcept(const struct p101_env *env, struct p101_error *err, fenv_t
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -133,7 +133,7 @@ int p101_feraiseexcept(const struct p101_env *env, struct p101_error *err, int e
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = feraiseexcept(excepts);
 
@@ -142,7 +142,7 @@ int p101_feraiseexcept(const struct p101_env *env, struct p101_error *err, int e
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -152,7 +152,7 @@ int p101_fesetenv(const struct p101_env *env, struct p101_error *err, const fenv
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fesetenv(envp);
 
@@ -161,7 +161,7 @@ int p101_fesetenv(const struct p101_env *env, struct p101_error *err, const fenv
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -171,7 +171,7 @@ int p101_fesetexceptflag(const struct p101_env *env, struct p101_error *err, con
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fesetexceptflag(flagp, excepts);
 
@@ -180,7 +180,7 @@ int p101_fesetexceptflag(const struct p101_env *env, struct p101_error *err, con
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -190,7 +190,7 @@ int p101_fesetround(const struct p101_env *env, struct p101_error *err, int roun
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = fesetround(round);
 
@@ -199,7 +199,7 @@ int p101_fesetround(const struct p101_env *env, struct p101_error *err, int roun
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -221,7 +221,7 @@ int p101_feupdateenv(const struct p101_env *env, struct p101_error *err, const f
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = feupdateenv(envp);
 
@@ -230,7 +230,7 @@ int p101_feupdateenv(const struct p101_env *env, struct p101_error *err, const f
         P101_ERROR_RAISE_ERRNO(err, fenv_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }

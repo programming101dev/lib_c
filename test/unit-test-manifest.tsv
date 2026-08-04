@@ -305,7 +305,6 @@ p101_wctrans	fault	test/test_fault_wrappers.c
 p101_wctype	fault	test/test_fault_wrappers.c
 p101_wprintf	fault	test/test_fault_wrappers.c
 p101_wscanf	fault	test/test_fault_wrappers.c
-p101_abort	behavior	test/test_behavior.c
 p101_atomic_flag_clear	behavior-existing	test/test_lib_c.c
 p101_atomic_flag_clear_explicit	behavior	test/test_behavior.c
 p101_atomic_flag_test_and_set	behavior-existing	test/test_lib_c.c
@@ -357,8 +356,6 @@ p101_creal	behavior	test/test_behavior.c
 p101_crealf	behavior	test/test_behavior.c
 p101_creall	behavior	test/test_behavior.c
 p101_difftime	behavior	test/test_behavior.c
-p101_exit	behavior	test/test_behavior.c
-p101_exit_immediately	behavior	test/test_behavior.c
 p101_fabs	behavior	test/test_behavior.c
 p101_fabsf	behavior	test/test_behavior.c
 p101_fabsl	behavior	test/test_behavior.c
@@ -422,7 +419,6 @@ p101_nearbyintf	behavior	test/test_behavior.c
 p101_nearbyintl	behavior	test/test_behavior.c
 p101_perror	behavior-existing	test/test_lib_c.c
 p101_qsort	behavior	test/test_behavior.c
-p101_quick_exit	behavior	test/test_behavior.c
 p101_rint	behavior	test/test_behavior.c
 p101_rintf	behavior	test/test_behavior.c
 p101_rintl	behavior	test/test_behavior.c

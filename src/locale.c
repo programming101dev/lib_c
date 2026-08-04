@@ -35,7 +35,7 @@ char *p101_setlocale(const struct p101_env *env, struct p101_error *err, int cat
     char *ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, NULL);
     errno   = 0;
     ret_val = setlocale(category, locale);
 
@@ -51,7 +51,7 @@ char *p101_setlocale(const struct p101_env *env, struct p101_error *err, int cat
         }
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }

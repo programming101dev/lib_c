@@ -6,7 +6,6 @@ src/complex.c:*:fetestexcept
 src/math.c:*:feclearexcept
 src/math.c:*:feraiseexcept
 src/math.c:*:fetestexcept
-src/stdlib.c:p101_exit_immediately:_Exit
 src/stdio.c:*:ferror
 src/stdio.c:*:fileno
 src/stdio.c:*:va_end

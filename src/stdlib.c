@@ -38,30 +38,12 @@ static int multibyte_error_code(void)
     return (errno == 0) ? EILSEQ : errno;
 }
 
-P101_ATTR_NORETURN void p101_exit_immediately(const struct p101_env *env, int status)
-{
-    P101_TRACE(env);
-    P101_TRACE_EXIT(env);
-    p101_env_complete_event_streams(env);
-
-    _Exit(status);
-}
-
-P101_ATTR_NORETURN void p101_abort(const struct p101_env *env)
-{
-    P101_TRACE(env);
-    P101_TRACE_EXIT(env);
-    p101_env_complete_event_streams(env);
-
-    abort();
-}
-
 int p101_abs(const struct p101_env *env, struct p101_error *err, int i)
 {
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno = 0;
 
     if(i == INT_MIN)
@@ -74,7 +56,7 @@ int p101_abs(const struct p101_env *env, struct p101_error *err, int i)
         ret_val = abs(i);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -84,7 +66,7 @@ int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno = 0;
 
     ret_val = atexit(func);
@@ -94,7 +76,7 @@ int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)
         P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? EAGAIN : errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -105,17 +87,19 @@ int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)
 #endif
 void *p101_aligned_alloc(const struct p101_env *env, struct p101_error *err, size_t alignment, size_t size)
 {
+    void *p101_single_result_;
     void *memory;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "aligned_alloc", NULL);
+    P101_C_FAULT_RETURN(env, err, "aligned_alloc", memory, NULL);
 
     if(alignment == 0 || size == 0 || (alignment & (alignment - 1U)) != 0 || (size % alignment) != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, EINVAL);
-        P101_TRACE_EXIT(env);
+        P101_C_DONE(env);
 
-        return NULL;
+        p101_single_result_ = NULL;
+        goto p101_single_exit_;
     }
 
     errno  = 0;
@@ -132,7 +116,11 @@ void *p101_aligned_alloc(const struct p101_env *env, struct p101_error *err, siz
 
     P101_TRACE_EXIT(env);
 
-    return memory;
+    p101_single_result_ = memory;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 #ifdef __apple_build_version__
     #pragma clang diagnostic pop
@@ -143,7 +131,7 @@ int p101_at_quick_exit(const struct p101_env *env, struct p101_error *err, void 
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "at_quick_exit", -1);
+    P101_C_FAULT_RETURN(env, err, "at_quick_exit", ret_val, -1);
     errno   = 0;
     ret_val = at_quick_exit(func);
 
@@ -152,7 +140,7 @@ int p101_at_quick_exit(const struct p101_env *env, struct p101_error *err, void 
         P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? EAGAIN : errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -175,18 +163,20 @@ const void *p101_bsearch(const struct p101_env *env, const void *key, const void
 #endif
 void *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nelem, size_t elsize)
 {
+    void  *p101_single_result_;
     void  *memory;
     size_t requested_size;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "calloc", NULL);
+    P101_C_FAULT_RETURN(env, err, "calloc", memory, NULL);
 
     if(nelem == 0 || elsize == 0)
     {
         P101_ERROR_RAISE_ERRNO(err, EINVAL);
-        P101_TRACE_EXIT(env);
+        P101_C_DONE(env);
 
-        return NULL;
+        p101_single_result_ = NULL;
+        goto p101_single_exit_;
     }
 
     if(nelem > (SIZE_MAX / elsize))
@@ -194,7 +184,8 @@ void *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nel
         P101_ERROR_RAISE_ERRNO(err, EOVERFLOW);
         P101_TRACE_EXIT(env);
 
-        return NULL;
+        p101_single_result_ = NULL;
+        goto p101_single_exit_;
     }
 
     requested_size = nelem * elsize;
@@ -212,7 +203,11 @@ void *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nel
 
     P101_TRACE_EXIT(env);
 
-    return memory;
+    p101_single_result_ = memory;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 #ifdef __apple_build_version__
     #pragma clang diagnostic pop
@@ -223,19 +218,21 @@ void *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nel
 
 div_t p101_div(const struct p101_env *env, struct p101_error *err, int numer, int denom)
 {
+    div_t p101_single_result_;
     div_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "div", ((div_t){0, 0}));
+    P101_C_FAULT_RETURN(env, err, "div", ret_val, ((div_t){0, 0}));
 
     if(denom == 0)
     {
         P101_ERROR_RAISE_ERRNO(err, EDOM);
         ret_val.quot = 0;
         ret_val.rem  = 0;
-        P101_TRACE_EXIT(env);
+        P101_C_DONE(env);
 
-        return ret_val;
+        p101_single_result_ = ret_val;
+        goto p101_single_exit_;
     }
     if(numer == INT_MIN && denom == -1)
     {
@@ -244,7 +241,8 @@ div_t p101_div(const struct p101_env *env, struct p101_error *err, int numer, in
         ret_val.rem  = 0;
         P101_TRACE_EXIT(env);
 
-        return ret_val;
+        p101_single_result_ = ret_val;
+        goto p101_single_exit_;
     }
 
     errno   = 0;
@@ -252,19 +250,14 @@ div_t p101_div(const struct p101_env *env, struct p101_error *err, int numer, in
 
     P101_TRACE_EXIT(env);
 
-    return ret_val;
+    p101_single_result_ = ret_val;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 
 #pragma GCC diagnostic pop
-
-P101_ATTR_NORETURN void p101_exit(const struct p101_env *env, int status)
-{
-    P101_TRACE(env);
-    P101_TRACE_EXIT(env);
-    p101_env_complete_event_streams(env);
-
-    exit(status);
-}
 
 void p101_free(const struct p101_env *env, void *ptr)
 {
@@ -282,7 +275,7 @@ char *p101_getenv(const struct p101_env *env, struct p101_error *err, const char
     char *ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, NULL);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, NULL);
     errno   = 0;
     ret_val = getenv(name);
 
@@ -291,7 +284,7 @@ char *p101_getenv(const struct p101_env *env, struct p101_error *err, const char
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -301,7 +294,7 @@ long p101_labs(const struct p101_env *env, struct p101_error *err, long i)
     long ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno = 0;
 
     if(i == LONG_MIN)
@@ -314,7 +307,7 @@ long p101_labs(const struct p101_env *env, struct p101_error *err, long i)
         ret_val = labs(i);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -324,19 +317,21 @@ long p101_labs(const struct p101_env *env, struct p101_error *err, long i)
 
 ldiv_t p101_ldiv(const struct p101_env *env, struct p101_error *err, long numer, long denom)
 {
+    ldiv_t p101_single_result_;
     ldiv_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "ldiv", ((ldiv_t){0, 0}));
+    P101_C_FAULT_RETURN(env, err, "ldiv", ret_val, ((ldiv_t){0, 0}));
 
     if(denom == 0)
     {
         P101_ERROR_RAISE_ERRNO(err, EDOM);
         ret_val.quot = 0;
         ret_val.rem  = 0;
-        P101_TRACE_EXIT(env);
+        P101_C_DONE(env);
 
-        return ret_val;
+        p101_single_result_ = ret_val;
+        goto p101_single_exit_;
     }
     if(numer == LONG_MIN && denom == -1L)
     {
@@ -345,7 +340,8 @@ ldiv_t p101_ldiv(const struct p101_env *env, struct p101_error *err, long numer,
         ret_val.rem  = 0;
         P101_TRACE_EXIT(env);
 
-        return ret_val;
+        p101_single_result_ = ret_val;
+        goto p101_single_exit_;
     }
 
     errno   = 0;
@@ -353,7 +349,11 @@ ldiv_t p101_ldiv(const struct p101_env *env, struct p101_error *err, long numer,
 
     P101_TRACE_EXIT(env);
 
-    return ret_val;
+    p101_single_result_ = ret_val;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 
 #pragma GCC diagnostic pop
@@ -363,7 +363,7 @@ long long p101_llabs(const struct p101_env *env, struct p101_error *err, long lo
     long long ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno = 0;
 
     if(i == LLONG_MIN)
@@ -376,7 +376,7 @@ long long p101_llabs(const struct p101_env *env, struct p101_error *err, long lo
         ret_val = llabs(i);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -386,19 +386,21 @@ long long p101_llabs(const struct p101_env *env, struct p101_error *err, long lo
 
 lldiv_t p101_lldiv(const struct p101_env *env, struct p101_error *err, long long numer, long long denom)
 {
+    lldiv_t p101_single_result_;
     lldiv_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "lldiv", ((lldiv_t){0, 0}));
+    P101_C_FAULT_RETURN(env, err, "lldiv", ret_val, ((lldiv_t){0, 0}));
 
     if(denom == 0)
     {
         P101_ERROR_RAISE_ERRNO(err, EDOM);
         ret_val.quot = 0;
         ret_val.rem  = 0;
-        P101_TRACE_EXIT(env);
+        P101_C_DONE(env);
 
-        return ret_val;
+        p101_single_result_ = ret_val;
+        goto p101_single_exit_;
     }
     if(numer == LLONG_MIN && denom == -1LL)
     {
@@ -407,7 +409,8 @@ lldiv_t p101_lldiv(const struct p101_env *env, struct p101_error *err, long long
         ret_val.rem  = 0;
         P101_TRACE_EXIT(env);
 
-        return ret_val;
+        p101_single_result_ = ret_val;
+        goto p101_single_exit_;
     }
 
     errno   = 0;
@@ -415,7 +418,11 @@ lldiv_t p101_lldiv(const struct p101_env *env, struct p101_error *err, long long
 
     P101_TRACE_EXIT(env);
 
-    return ret_val;
+    p101_single_result_ = ret_val;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 
 #pragma GCC diagnostic pop
@@ -426,17 +433,19 @@ lldiv_t p101_lldiv(const struct p101_env *env, struct p101_error *err, long long
 #endif
 void *p101_malloc(const struct p101_env *env, struct p101_error *err, size_t size)
 {
+    void *p101_single_result_;
     void *memory;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "malloc", NULL);
+    P101_C_FAULT_RETURN(env, err, "malloc", memory, NULL);
 
     if(size == 0)
     {
         P101_ERROR_RAISE_ERRNO(err, EINVAL);
-        P101_TRACE_EXIT(env);
+        P101_C_DONE(env);
 
-        return NULL;
+        p101_single_result_ = NULL;
+        goto p101_single_exit_;
     }
 
     errno  = 0;
@@ -453,7 +462,11 @@ void *p101_malloc(const struct p101_env *env, struct p101_error *err, size_t siz
 
     P101_TRACE_EXIT(env);
 
-    return memory;
+    p101_single_result_ = memory;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 #ifdef __apple_build_version__
     #pragma clang diagnostic pop
@@ -464,7 +477,7 @@ int p101_mblen(const struct p101_env *env, struct p101_error *err, const char *s
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = mblen(s, n);
 
@@ -473,7 +486,7 @@ int p101_mblen(const struct p101_env *env, struct p101_error *err, const char *s
         P101_ERROR_RAISE_ERRNO(err, multibyte_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -483,7 +496,7 @@ size_t p101_mbstowcs(const struct p101_env *env, struct p101_error *err, wchar_t
     size_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, (size_t)-1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, (size_t)-1);
     errno   = 0;
     ret_val = mbstowcs(pwcs, s, n);
 
@@ -492,7 +505,7 @@ size_t p101_mbstowcs(const struct p101_env *env, struct p101_error *err, wchar_t
         P101_ERROR_RAISE_ERRNO(err, multibyte_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -502,7 +515,7 @@ int p101_mbtowc(const struct p101_env *env, struct p101_error *err, wchar_t *res
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = mbtowc(pwc, s, n);
 
@@ -511,7 +524,7 @@ int p101_mbtowc(const struct p101_env *env, struct p101_error *err, wchar_t *res
         P101_ERROR_RAISE_ERRNO(err, multibyte_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -523,33 +536,26 @@ void p101_qsort(const struct p101_env *env, void *base, size_t nel, size_t width
     P101_TRACE_EXIT(env);
 }
 
-P101_ATTR_NORETURN void p101_quick_exit(const struct p101_env *env, int status)
-{
-    P101_TRACE(env);
-    P101_TRACE_EXIT(env);
-    p101_env_complete_event_streams(env);
-
-    quick_exit(status);
-}
-
 #ifdef __apple_build_version__
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wallocator-wrappers"
 #endif
 void *p101_realloc(const struct p101_env *env, struct p101_error *err, void *ptr, size_t size)
 {
+    void     *p101_single_result_;
     void     *memory;
     uintptr_t old_ptr_value;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, "realloc", NULL);
+    P101_C_FAULT_RETURN(env, err, "realloc", memory, NULL);
 
     if(size == 0)
     {
         P101_ERROR_RAISE_ERRNO(err, EINVAL);
-        P101_TRACE_EXIT(env);
+        P101_C_DONE(env);
 
-        return NULL;
+        p101_single_result_ = NULL;
+        goto p101_single_exit_;
     }
 
     errno         = 0;
@@ -567,7 +573,11 @@ void *p101_realloc(const struct p101_env *env, struct p101_error *err, void *ptr
 
     P101_TRACE_EXIT(env);
 
-    return memory;
+    p101_single_result_ = memory;
+    goto p101_single_exit_;
+
+p101_single_exit_:
+    return p101_single_result_;
 }
 #ifdef __apple_build_version__
     #pragma clang diagnostic pop
@@ -578,7 +588,7 @@ double p101_strtod(const struct p101_env *env, struct p101_error *err, const cha
     double ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno   = 0;
     ret_val = strtod(nptr, endptr);
 
@@ -587,7 +597,7 @@ double p101_strtod(const struct p101_env *env, struct p101_error *err, const cha
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -597,7 +607,7 @@ float p101_strtof(const struct p101_env *env, struct p101_error *err, const char
     float ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno   = 0;
     ret_val = strtof(nptr, endptr);
 
@@ -606,7 +616,7 @@ float p101_strtof(const struct p101_env *env, struct p101_error *err, const char
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -616,7 +626,7 @@ long p101_strtol(const struct p101_env *env, struct p101_error *err, const char 
     long ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno   = 0;
     ret_val = strtol(nptr, endptr, base);
 
@@ -625,7 +635,7 @@ long p101_strtol(const struct p101_env *env, struct p101_error *err, const char 
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -635,7 +645,7 @@ long double p101_strtold(const struct p101_env *env, struct p101_error *err, con
     long double ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno   = 0;
     ret_val = strtold(nptr, endptr);
 
@@ -644,7 +654,7 @@ long double p101_strtold(const struct p101_env *env, struct p101_error *err, con
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -654,7 +664,7 @@ long long p101_strtoll(const struct p101_env *env, struct p101_error *err, const
     long long ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno   = 0;
     ret_val = strtoll(nptr, endptr, base);
 
@@ -663,7 +673,7 @@ long long p101_strtoll(const struct p101_env *env, struct p101_error *err, const
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -673,7 +683,7 @@ unsigned long p101_strtoul(const struct p101_env *env, struct p101_error *err, c
     unsigned long ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno   = 0;
     ret_val = strtoul(str, endptr, base);
 
@@ -682,7 +692,7 @@ unsigned long p101_strtoul(const struct p101_env *env, struct p101_error *err, c
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -692,7 +702,7 @@ unsigned long long p101_strtoull(const struct p101_env *env, struct p101_error *
     unsigned long long ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
     errno   = 0;
     ret_val = strtoull(str, endptr, base);
 
@@ -701,7 +711,7 @@ unsigned long long p101_strtoull(const struct p101_env *env, struct p101_error *
         P101_ERROR_RAISE_ERRNO(err, errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -711,7 +721,7 @@ int p101_system(const struct p101_env *env, struct p101_error *err, const char *
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = system(command);    // NOLINT(cert-env33-c, bugprone-command-processor)
 
@@ -720,7 +730,7 @@ int p101_system(const struct p101_env *env, struct p101_error *err, const char *
         P101_ERROR_RAISE_ERRNO(err, (errno == 0) ? EIO : errno);
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -730,7 +740,7 @@ size_t p101_wcstombs(const struct p101_env *env, struct p101_error *err, char *r
     size_t ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, (size_t)-1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, (size_t)-1);
     errno   = 0;
     ret_val = wcstombs(s, pwcs, n);
 
@@ -739,7 +749,7 @@ size_t p101_wcstombs(const struct p101_env *env, struct p101_error *err, char *r
         P101_ERROR_RAISE_ERRNO(err, multibyte_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
@@ -749,7 +759,7 @@ int p101_wctomb(const struct p101_env *env, struct p101_error *err, char *s, wch
     int ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, -1);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     errno   = 0;
     ret_val = wctomb(s, wchar);
 
@@ -758,7 +768,7 @@ int p101_wctomb(const struct p101_env *env, struct p101_error *err, char *s, wch
         P101_ERROR_RAISE_ERRNO(err, multibyte_error_code());
     }
 
-    P101_TRACE_EXIT(env);
+    P101_C_DONE(env);
 
     return ret_val;
 }
