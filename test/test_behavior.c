@@ -578,9 +578,9 @@ static void test_wide_standard_io(const struct p101_env *env, struct p101_error 
         bool succeeded;
         int  exit_status;
 
-        succeeded = call_vwprintf(env, err, L"") == 0;
-        succeeded = call_vwscanf(env, err, L"") == 0 && succeeded;
-        succeeded = !p101_error_has_error(err) && succeeded;
+        succeeded   = call_vwprintf(env, err, L"") == 0;
+        succeeded   = call_vwscanf(env, err, L"") == 0 && succeeded;
+        succeeded   = !p101_error_has_error(err) && succeeded;
         exit_status = EXIT_FAILURE;
         if(succeeded)
         {

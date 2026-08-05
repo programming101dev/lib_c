@@ -1,7 +1,10 @@
 #include <arpa/inet.h>
+#include <dirent.h>
 #include <errno.h>
 #include <fmtmsg.h>
 #include <fnmatch.h>
+#include <ftw.h>
+#include <limits.h>
 #include <math.h>
 #include <p101_c/p101_complex.h>
 #include <p101_c/p101_ctype.h>
@@ -20,16 +23,32 @@
 #include <p101_c/p101_wctype.h>
 #include <p101_env/env.h>
 #include <p101_error/error.h>
+#include <pthread.h>
+#include <search.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <utmpx.h>
 
 static int    failures;
 static size_t fault_resource_events;
 static FILE  *outcome_stream;
+
+static void native_signal_callback(int signal_number)
+{
+    (void)signal_number;
+}
+
+static void native_void_callback(void)
+{
+}
 
 #define P101_TEST_ERRNO_SENTINEL 0x5A5A
 
@@ -167,6 +186,47 @@ static void test_p101_abs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_abs(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_acos) */
@@ -207,6 +267,47 @@ static void test_p101_acos(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_acos(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_acosf) */
@@ -247,6 +348,47 @@ static void test_p101_acosf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_acosf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_acosh) */
@@ -287,6 +429,47 @@ static void test_p101_acosh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_acosh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_acoshf) */
@@ -327,6 +510,47 @@ static void test_p101_acoshf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_acoshf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_acoshl) */
@@ -367,6 +591,47 @@ static void test_p101_acoshl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_acoshl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_acosl) */
@@ -407,6 +672,47 @@ static void test_p101_acosl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_acosl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_aligned_alloc) */
@@ -447,6 +753,47 @@ static void test_p101_aligned_alloc(struct p101_env *env, struct p101_error *err
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            void *native_result = p101_aligned_alloc(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_asin) */
@@ -487,6 +834,47 @@ static void test_p101_asin(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_asin(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_asinf) */
@@ -527,6 +915,47 @@ static void test_p101_asinf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_asinf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_asinh) */
@@ -567,6 +996,47 @@ static void test_p101_asinh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_asinh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_asinhf) */
@@ -607,6 +1077,47 @@ static void test_p101_asinhf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_asinhf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_asinhl) */
@@ -647,6 +1158,47 @@ static void test_p101_asinhl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_asinhl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_asinl) */
@@ -687,6 +1239,47 @@ static void test_p101_asinl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_asinl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_at_quick_exit) */
@@ -727,6 +1320,47 @@ static void test_p101_at_quick_exit(struct p101_env *env, struct p101_error *err
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_at_quick_exit(native_env, native_err, native_void_callback);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atan) */
@@ -767,6 +1401,47 @@ static void test_p101_atan(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_atan(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atan2) */
@@ -807,6 +1482,47 @@ static void test_p101_atan2(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_atan2(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atan2f) */
@@ -847,6 +1563,47 @@ static void test_p101_atan2f(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_atan2f(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atan2l) */
@@ -887,6 +1644,47 @@ static void test_p101_atan2l(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_atan2l(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atanf) */
@@ -927,6 +1725,47 @@ static void test_p101_atanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_atanf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atanh) */
@@ -967,6 +1806,47 @@ static void test_p101_atanh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_atanh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atanhf) */
@@ -1007,6 +1887,47 @@ static void test_p101_atanhf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_atanhf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atanhl) */
@@ -1047,6 +1968,47 @@ static void test_p101_atanhl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_atanhl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atanl) */
@@ -1087,6 +2049,47 @@ static void test_p101_atanl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_atanl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_atexit) */
@@ -1127,6 +2130,47 @@ static void test_p101_atexit(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_atexit(native_env, native_err, native_void_callback);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cabs) */
@@ -1167,6 +2211,47 @@ static void test_p101_cabs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_cabs(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cabsf) */
@@ -1207,6 +2292,47 @@ static void test_p101_cabsf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_cabsf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cabsl) */
@@ -1247,6 +2373,47 @@ static void test_p101_cabsl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_cabsl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cacos) */
@@ -1287,6 +2454,47 @@ static void test_p101_cacos(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_cacos(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cacosf) */
@@ -1327,6 +2535,47 @@ static void test_p101_cacosf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_cacosf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cacosh) */
@@ -1367,6 +2616,47 @@ static void test_p101_cacosh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_cacosh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cacoshf) */
@@ -1407,6 +2697,47 @@ static void test_p101_cacoshf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_cacoshf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cacoshl) */
@@ -1447,6 +2778,47 @@ static void test_p101_cacoshl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_cacoshl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cacosl) */
@@ -1487,6 +2859,47 @@ static void test_p101_cacosl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_cacosl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_calloc) */
@@ -1527,6 +2940,47 @@ static void test_p101_calloc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            void *native_result = p101_calloc(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_carg) */
@@ -1567,6 +3021,47 @@ static void test_p101_carg(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_carg(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cargf) */
@@ -1607,6 +3102,47 @@ static void test_p101_cargf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_cargf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cargl) */
@@ -1647,6 +3183,47 @@ static void test_p101_cargl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_cargl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_casin) */
@@ -1687,6 +3264,47 @@ static void test_p101_casin(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_casin(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_casinf) */
@@ -1727,6 +3345,47 @@ static void test_p101_casinf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_casinf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_casinh) */
@@ -1767,6 +3426,47 @@ static void test_p101_casinh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_casinh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_casinhf) */
@@ -1807,6 +3507,47 @@ static void test_p101_casinhf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_casinhf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_casinhl) */
@@ -1847,6 +3588,47 @@ static void test_p101_casinhl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_casinhl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_casinl) */
@@ -1887,6 +3669,47 @@ static void test_p101_casinl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_casinl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_catan) */
@@ -1927,6 +3750,47 @@ static void test_p101_catan(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_catan(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_catanf) */
@@ -1967,6 +3831,47 @@ static void test_p101_catanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_catanf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_catanh) */
@@ -2007,6 +3912,47 @@ static void test_p101_catanh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_catanh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_catanhf) */
@@ -2047,6 +3993,47 @@ static void test_p101_catanhf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_catanhf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_catanhl) */
@@ -2087,6 +4074,47 @@ static void test_p101_catanhl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_catanhl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_catanl) */
@@ -2127,6 +4155,47 @@ static void test_p101_catanl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_catanl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ccos) */
@@ -2167,6 +4236,47 @@ static void test_p101_ccos(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_ccos(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ccosf) */
@@ -2207,6 +4317,47 @@ static void test_p101_ccosf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_ccosf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ccosh) */
@@ -2247,6 +4398,47 @@ static void test_p101_ccosh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_ccosh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ccoshf) */
@@ -2287,6 +4479,47 @@ static void test_p101_ccoshf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_ccoshf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cexp) */
@@ -2327,6 +4560,47 @@ static void test_p101_cexp(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_cexp(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cexpf) */
@@ -2367,6 +4641,47 @@ static void test_p101_cexpf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_cexpf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cexpl) */
@@ -2407,6 +4722,47 @@ static void test_p101_cexpl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_cexpl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_clock) */
@@ -2447,6 +4803,47 @@ static void test_p101_clock(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            clock_t native_result = p101_clock(native_env, native_err);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_clog) */
@@ -2487,6 +4884,47 @@ static void test_p101_clog(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_clog(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_clogf) */
@@ -2527,6 +4965,47 @@ static void test_p101_clogf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_clogf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_clogl) */
@@ -2567,6 +5046,47 @@ static void test_p101_clogl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_clogl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cos) */
@@ -2607,6 +5127,47 @@ static void test_p101_cos(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_cos(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cosf) */
@@ -2647,6 +5208,47 @@ static void test_p101_cosf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_cosf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cosh) */
@@ -2687,6 +5289,47 @@ static void test_p101_cosh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_cosh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_coshf) */
@@ -2727,6 +5370,47 @@ static void test_p101_coshf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_coshf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_coshl) */
@@ -2767,6 +5451,47 @@ static void test_p101_coshl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_coshl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cosl) */
@@ -2807,6 +5532,47 @@ static void test_p101_cosl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_cosl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cpow) */
@@ -2847,6 +5613,47 @@ static void test_p101_cpow(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_cpow(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cpowf) */
@@ -2887,6 +5694,47 @@ static void test_p101_cpowf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_cpowf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_cpowl) */
@@ -2927,6 +5775,47 @@ static void test_p101_cpowl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_cpowl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_csin) */
@@ -2967,6 +5856,47 @@ static void test_p101_csin(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_csin(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_csinf) */
@@ -3007,6 +5937,47 @@ static void test_p101_csinf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_csinf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_csinh) */
@@ -3047,6 +6018,47 @@ static void test_p101_csinh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_csinh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_csinhf) */
@@ -3087,6 +6099,47 @@ static void test_p101_csinhf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_csinhf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_csqrt) */
@@ -3127,6 +6180,47 @@ static void test_p101_csqrt(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_csqrt(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_csqrtf) */
@@ -3167,6 +6261,47 @@ static void test_p101_csqrtf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_csqrtf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_csqrtl) */
@@ -3207,6 +6342,47 @@ static void test_p101_csqrtl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex long double native_result = p101_csqrtl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ctan) */
@@ -3247,6 +6423,47 @@ static void test_p101_ctan(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_ctan(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ctanf) */
@@ -3287,6 +6504,47 @@ static void test_p101_ctanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_ctanf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ctanh) */
@@ -3327,6 +6585,47 @@ static void test_p101_ctanh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex double native_result = p101_ctanh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ctanhf) */
@@ -3367,6 +6666,47 @@ static void test_p101_ctanhf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            _Complex float native_result = p101_ctanhf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_div) */
@@ -3409,6 +6749,47 @@ static void test_p101_div(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            div_t native_result = p101_div(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_erf) */
@@ -3449,6 +6830,47 @@ static void test_p101_erf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_erf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_erfc) */
@@ -3489,6 +6911,47 @@ static void test_p101_erfc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_erfc(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_erfcf) */
@@ -3529,6 +6992,47 @@ static void test_p101_erfcf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_erfcf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_erfcl) */
@@ -3569,6 +7073,47 @@ static void test_p101_erfcl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_erfcl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_erff) */
@@ -3609,6 +7154,47 @@ static void test_p101_erff(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_erff(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_erfl) */
@@ -3649,6 +7235,47 @@ static void test_p101_erfl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_erfl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_exp) */
@@ -3689,6 +7316,47 @@ static void test_p101_exp(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_exp(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_exp2) */
@@ -3729,6 +7397,47 @@ static void test_p101_exp2(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_exp2(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_exp2f) */
@@ -3769,6 +7478,47 @@ static void test_p101_exp2f(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_exp2f(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_exp2l) */
@@ -3809,6 +7559,47 @@ static void test_p101_exp2l(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_exp2l(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_expf) */
@@ -3849,6 +7640,47 @@ static void test_p101_expf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_expf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_expl) */
@@ -3889,6 +7721,47 @@ static void test_p101_expl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_expl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_expm1) */
@@ -3929,6 +7802,47 @@ static void test_p101_expm1(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_expm1(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_expm1f) */
@@ -3969,6 +7883,47 @@ static void test_p101_expm1f(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_expm1f(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_expm1l) */
@@ -4009,6 +7964,47 @@ static void test_p101_expm1l(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_expm1l(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fclose) */
@@ -4049,6 +8045,52 @@ static void test_p101_fclose(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fclose(native_env, native_err, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fdim) */
@@ -4089,6 +8131,47 @@ static void test_p101_fdim(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_fdim(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fdimf) */
@@ -4129,6 +8212,47 @@ static void test_p101_fdimf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_fdimf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fdiml) */
@@ -4169,6 +8293,47 @@ static void test_p101_fdiml(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_fdiml(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_feclearexcept) */
@@ -4209,6 +8374,47 @@ static void test_p101_feclearexcept(struct p101_env *env, struct p101_error *err
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_feclearexcept(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fegetenv) */
@@ -4254,6 +8460,52 @@ static void test_p101_fegetenv(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            fenv_t native_fenv;
+            if(fegetenv(&native_fenv) != 0)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fegetenv(native_env, native_err, &native_fenv);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fegetexceptflag) */
@@ -4299,6 +8551,52 @@ static void test_p101_fegetexceptflag(struct p101_env *env, struct p101_error *e
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            fexcept_t native_fexcept;
+            if(fegetexceptflag(&native_fexcept, FE_ALL_EXCEPT) != 0)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fegetexceptflag(native_env, native_err, &native_fexcept, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fegetround) */
@@ -4339,6 +8637,47 @@ static void test_p101_fegetround(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_fegetround(native_env, native_err);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_feholdexcept) */
@@ -4384,6 +8723,52 @@ static void test_p101_feholdexcept(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            fenv_t native_fenv;
+            if(fegetenv(&native_fenv) != 0)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_feholdexcept(native_env, native_err, &native_fenv);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_feraiseexcept) */
@@ -4424,6 +8809,47 @@ static void test_p101_feraiseexcept(struct p101_env *env, struct p101_error *err
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_feraiseexcept(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fesetenv) */
@@ -4464,6 +8890,52 @@ static void test_p101_fesetenv(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            fenv_t native_fenv;
+            if(fegetenv(&native_fenv) != 0)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fesetenv(native_env, native_err, &native_fenv);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fesetexceptflag) */
@@ -4504,6 +8976,52 @@ static void test_p101_fesetexceptflag(struct p101_env *env, struct p101_error *e
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            fexcept_t native_fexcept;
+            if(fegetexceptflag(&native_fexcept, FE_ALL_EXCEPT) != 0)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fesetexceptflag(native_env, native_err, &native_fexcept, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fesetround) */
@@ -4544,6 +9062,47 @@ static void test_p101_fesetround(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_fesetround(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_feupdateenv) */
@@ -4584,6 +9143,52 @@ static void test_p101_feupdateenv(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            fenv_t native_fenv;
+            if(fegetenv(&native_fenv) != 0)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_feupdateenv(native_env, native_err, &native_fenv);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fflush) */
@@ -4624,6 +9229,52 @@ static void test_p101_fflush(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fflush(native_env, native_err, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fgetc) */
@@ -4664,6 +9315,52 @@ static void test_p101_fgetc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fgetc(native_env, native_err, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fgetpos) */
@@ -4709,6 +9406,57 @@ static void test_p101_fgetpos(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            fpos_t native_fpos;
+            if(fgetpos(native_stream, &native_fpos) != 0)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fgetpos(native_env, native_err, native_stream, &native_fpos);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fgets) */
@@ -4755,6 +9503,53 @@ static void test_p101_fgets(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            char  native_argument_2[PATH_MAX] = {0};
+            char *native_result               = p101_fgets(native_env, native_err, native_argument_2, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fgetwc) */
@@ -4795,6 +9590,52 @@ static void test_p101_fgetwc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            wint_t native_result = p101_fgetwc(native_env, native_err, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fgetws) */
@@ -4841,6 +9682,53 @@ static void test_p101_fgetws(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            wchar_t  native_argument_2[PATH_MAX] = {0};
+            wchar_t *native_result               = p101_fgetws(native_env, native_err, native_argument_2, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fma) */
@@ -4881,6 +9769,47 @@ static void test_p101_fma(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_fma(native_env, native_err, 0, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fmaf) */
@@ -4921,6 +9850,47 @@ static void test_p101_fmaf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_fmaf(native_env, native_err, 0, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fmal) */
@@ -4961,6 +9931,47 @@ static void test_p101_fmal(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_fmal(native_env, native_err, 0, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fmod) */
@@ -5001,6 +10012,47 @@ static void test_p101_fmod(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_fmod(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fmodf) */
@@ -5041,6 +10093,47 @@ static void test_p101_fmodf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_fmodf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fmodl) */
@@ -5081,6 +10174,47 @@ static void test_p101_fmodl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_fmodl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fopen) */
@@ -5124,6 +10258,47 @@ static void test_p101_fopen(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_result = p101_fopen(native_env, native_err, "p101", "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fprintf) */
@@ -5153,7 +10328,7 @@ static void test_p101_fprintf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_fprintf(env, err, NULL, "p101");
+        int result = p101_fprintf(env, err, NULL, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -5164,6 +10339,52 @@ static void test_p101_fprintf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fprintf(native_env, native_err, native_stream, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fputc) */
@@ -5204,6 +10425,52 @@ static void test_p101_fputc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fputc(native_env, native_err, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fputs) */
@@ -5244,6 +10511,52 @@ static void test_p101_fputs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fputs(native_env, native_err, "p101", native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fputwc) */
@@ -5284,6 +10597,52 @@ static void test_p101_fputwc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            wint_t native_result = p101_fputwc(native_env, native_err, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fputws) */
@@ -5324,6 +10683,52 @@ static void test_p101_fputws(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fputws(native_env, native_err, L"p101", native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fread) */
@@ -5369,6 +10774,53 @@ static void test_p101_fread(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            unsigned char native_argument_2[4096] = {0};
+            size_t        native_result           = p101_fread(native_env, native_err, native_argument_2, 0, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_freopen) */
@@ -5414,6 +10866,52 @@ static void test_p101_freopen(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            FILE *native_result = p101_freopen(native_env, native_err, "p101", "p101", native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fscanf) */
@@ -5443,7 +10941,7 @@ static void test_p101_fscanf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_fscanf(env, err, NULL, "p101");
+        int result = p101_fscanf(env, err, NULL, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -5454,6 +10952,52 @@ static void test_p101_fscanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fscanf(native_env, native_err, native_stream, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fseek) */
@@ -5494,6 +11038,52 @@ static void test_p101_fseek(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fseek(native_env, native_err, native_stream, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fsetpos) */
@@ -5534,6 +11124,57 @@ static void test_p101_fsetpos(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            fpos_t native_fpos;
+            if(fgetpos(native_stream, &native_fpos) != 0)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fsetpos(native_env, native_err, native_stream, &native_fpos);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ftell) */
@@ -5574,6 +11215,52 @@ static void test_p101_ftell(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            long native_result = p101_ftell(native_env, native_err, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fwide) */
@@ -5614,6 +11301,52 @@ static void test_p101_fwide(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fwide(native_env, native_err, native_stream, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fwprintf) */
@@ -5643,7 +11376,7 @@ static void test_p101_fwprintf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_fwprintf(env, err, NULL, L"p101");
+        int result = p101_fwprintf(env, err, NULL, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -5654,6 +11387,52 @@ static void test_p101_fwprintf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fwprintf(native_env, native_err, native_stream, L"p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fwrite) */
@@ -5694,6 +11473,52 @@ static void test_p101_fwrite(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            size_t native_result = p101_fwrite(native_env, native_err, NULL, 0, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_fwscanf) */
@@ -5723,7 +11548,7 @@ static void test_p101_fwscanf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_fwscanf(env, err, NULL, L"p101");
+        int result = p101_fwscanf(env, err, NULL, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -5734,6 +11559,52 @@ static void test_p101_fwscanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_fwscanf(native_env, native_err, native_stream, L"p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_getc) */
@@ -5774,6 +11645,52 @@ static void test_p101_getc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_getc(native_env, native_err, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_getchar) */
@@ -5814,6 +11731,47 @@ static void test_p101_getchar(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_getchar(native_env, native_err);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_getenv) */
@@ -5854,6 +11812,47 @@ static void test_p101_getenv(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char *native_result = p101_getenv(native_env, native_err, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_getwc) */
@@ -5894,6 +11893,52 @@ static void test_p101_getwc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            wint_t native_result = p101_getwc(native_env, native_err, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_getwchar) */
@@ -5934,6 +11979,47 @@ static void test_p101_getwchar(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wint_t native_result = p101_getwchar(native_env, native_err);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_hypot) */
@@ -5974,6 +12060,47 @@ static void test_p101_hypot(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_hypot(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_hypotf) */
@@ -6014,6 +12141,47 @@ static void test_p101_hypotf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_hypotf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_hypotl) */
@@ -6054,6 +12222,47 @@ static void test_p101_hypotl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_hypotl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ilogb) */
@@ -6094,6 +12303,47 @@ static void test_p101_ilogb(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_ilogb(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ilogbf) */
@@ -6134,6 +12384,47 @@ static void test_p101_ilogbf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_ilogbf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ilogbl) */
@@ -6174,6 +12465,47 @@ static void test_p101_ilogbl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_ilogbl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_imaxabs) */
@@ -6214,6 +12546,47 @@ static void test_p101_imaxabs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            intmax_t native_result = p101_imaxabs(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_imaxdiv) */
@@ -6256,6 +12629,47 @@ static void test_p101_imaxdiv(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            imaxdiv_t native_result = p101_imaxdiv(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_labs) */
@@ -6296,6 +12710,47 @@ static void test_p101_labs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long native_result = p101_labs(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ldexp) */
@@ -6336,6 +12791,47 @@ static void test_p101_ldexp(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_ldexp(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ldexpf) */
@@ -6376,6 +12872,47 @@ static void test_p101_ldexpf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_ldexpf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ldexpl) */
@@ -6416,6 +12953,47 @@ static void test_p101_ldexpl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_ldexpl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ldiv) */
@@ -6458,6 +13036,47 @@ static void test_p101_ldiv(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            ldiv_t native_result = p101_ldiv(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lgamma) */
@@ -6498,6 +13117,47 @@ static void test_p101_lgamma(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_lgamma(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lgammaf) */
@@ -6538,6 +13198,47 @@ static void test_p101_lgammaf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_lgammaf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lgammal) */
@@ -6578,6 +13279,47 @@ static void test_p101_lgammal(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_lgammal(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_llabs) */
@@ -6618,6 +13360,47 @@ static void test_p101_llabs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long long native_result = p101_llabs(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lldiv) */
@@ -6660,6 +13443,47 @@ static void test_p101_lldiv(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            lldiv_t native_result = p101_lldiv(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_llrint) */
@@ -6700,6 +13524,47 @@ static void test_p101_llrint(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long long native_result = p101_llrint(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_llrintf) */
@@ -6740,6 +13605,47 @@ static void test_p101_llrintf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long long native_result = p101_llrintf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_llrintl) */
@@ -6780,6 +13686,47 @@ static void test_p101_llrintl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long long native_result = p101_llrintl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_llround) */
@@ -6820,6 +13767,47 @@ static void test_p101_llround(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long long native_result = p101_llround(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_llroundf) */
@@ -6860,6 +13848,47 @@ static void test_p101_llroundf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long long native_result = p101_llroundf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_llroundl) */
@@ -6900,6 +13929,47 @@ static void test_p101_llroundl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long long native_result = p101_llroundl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log) */
@@ -6940,6 +14010,47 @@ static void test_p101_log(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_log(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log10) */
@@ -6980,6 +14091,47 @@ static void test_p101_log10(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_log10(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log10f) */
@@ -7020,6 +14172,47 @@ static void test_p101_log10f(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_log10f(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log10l) */
@@ -7060,6 +14253,47 @@ static void test_p101_log10l(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_log10l(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log1p) */
@@ -7100,6 +14334,47 @@ static void test_p101_log1p(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_log1p(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log1pf) */
@@ -7140,6 +14415,47 @@ static void test_p101_log1pf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_log1pf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log1pl) */
@@ -7180,6 +14496,47 @@ static void test_p101_log1pl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_log1pl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log2) */
@@ -7220,6 +14577,47 @@ static void test_p101_log2(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_log2(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log2f) */
@@ -7260,6 +14658,47 @@ static void test_p101_log2f(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_log2f(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_log2l) */
@@ -7300,6 +14739,47 @@ static void test_p101_log2l(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_log2l(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_logb) */
@@ -7340,6 +14820,47 @@ static void test_p101_logb(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_logb(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_logbf) */
@@ -7380,6 +14901,47 @@ static void test_p101_logbf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_logbf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_logbl) */
@@ -7420,6 +14982,47 @@ static void test_p101_logbl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_logbl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_logf) */
@@ -7460,6 +15063,47 @@ static void test_p101_logf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_logf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_logl) */
@@ -7500,6 +15144,47 @@ static void test_p101_logl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_logl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lrint) */
@@ -7540,6 +15225,47 @@ static void test_p101_lrint(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long native_result = p101_lrint(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lrintf) */
@@ -7580,6 +15306,47 @@ static void test_p101_lrintf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long native_result = p101_lrintf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lrintl) */
@@ -7620,6 +15387,47 @@ static void test_p101_lrintl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long native_result = p101_lrintl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lround) */
@@ -7660,6 +15468,47 @@ static void test_p101_lround(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long native_result = p101_lround(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lroundf) */
@@ -7700,6 +15549,47 @@ static void test_p101_lroundf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long native_result = p101_lroundf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_lroundl) */
@@ -7740,6 +15630,47 @@ static void test_p101_lroundl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long native_result = p101_lroundl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_malloc) */
@@ -7780,6 +15711,47 @@ static void test_p101_malloc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            void *native_result = p101_malloc(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_mblen) */
@@ -7820,6 +15792,47 @@ static void test_p101_mblen(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_mblen(native_env, native_err, "p101", 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_mbrlen) */
@@ -7865,6 +15878,48 @@ static void test_p101_mbrlen(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            mbstate_t native_argument_4 = {0};
+            size_t    native_result     = p101_mbrlen(native_env, native_err, "p101", 0, &native_argument_4);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_mbrtowc) */
@@ -7915,6 +15970,49 @@ static void test_p101_mbrtowc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t   native_argument_2[PATH_MAX] = {0};
+            mbstate_t native_argument_5           = {0};
+            size_t    native_result               = p101_mbrtowc(native_env, native_err, native_argument_2, "p101", 0, &native_argument_5);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_mbsrtowcs) */
@@ -7965,6 +16063,50 @@ static void test_p101_mbsrtowcs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t     native_argument_2[PATH_MAX] = {0};
+            const char *native_argument_3[2]        = {"p101", NULL};
+            mbstate_t   native_argument_5           = {0};
+            size_t      native_result               = p101_mbsrtowcs(native_env, native_err, native_argument_2, native_argument_3, 0, &native_argument_5);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_mbstowcs) */
@@ -8010,6 +16152,48 @@ static void test_p101_mbstowcs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t native_argument_2[PATH_MAX] = {0};
+            size_t  native_result               = p101_mbstowcs(native_env, native_err, native_argument_2, "p101", 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_mbtowc) */
@@ -8055,6 +16239,48 @@ static void test_p101_mbtowc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t native_argument_2[PATH_MAX] = {0};
+            int     native_result               = p101_mbtowc(native_env, native_err, native_argument_2, "p101", 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_mktime) */
@@ -8095,6 +16321,48 @@ static void test_p101_mktime(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            struct tm native_argument_2 = {0};
+            time_t    native_result     = p101_mktime(native_env, native_err, &native_argument_2);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_nextafter) */
@@ -8135,6 +16403,47 @@ static void test_p101_nextafter(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_nextafter(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_nextafterf) */
@@ -8175,6 +16484,47 @@ static void test_p101_nextafterf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_nextafterf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_nextafterl) */
@@ -8215,6 +16565,47 @@ static void test_p101_nextafterl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_nextafterl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_nexttoward) */
@@ -8255,6 +16646,47 @@ static void test_p101_nexttoward(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_nexttoward(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_nexttowardf) */
@@ -8295,6 +16727,47 @@ static void test_p101_nexttowardf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_nexttowardf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_nexttowardl) */
@@ -8335,6 +16808,47 @@ static void test_p101_nexttowardl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_nexttowardl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_pow) */
@@ -8375,6 +16889,47 @@ static void test_p101_pow(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_pow(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_powf) */
@@ -8415,6 +16970,47 @@ static void test_p101_powf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_powf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_powl) */
@@ -8455,6 +17051,47 @@ static void test_p101_powl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_powl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_printf) */
@@ -8484,7 +17121,7 @@ static void test_p101_printf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_printf(env, err, "p101");
+        int result = p101_printf(env, err, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -8495,6 +17132,47 @@ static void test_p101_printf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_printf(native_env, native_err, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_putc) */
@@ -8535,6 +17213,52 @@ static void test_p101_putc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_putc(native_env, native_err, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_putchar) */
@@ -8575,6 +17299,47 @@ static void test_p101_putchar(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_putchar(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_puts) */
@@ -8615,6 +17380,47 @@ static void test_p101_puts(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_puts(native_env, native_err, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_putwc) */
@@ -8655,6 +17461,52 @@ static void test_p101_putwc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            wint_t native_result = p101_putwc(native_env, native_err, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_putwchar) */
@@ -8695,6 +17547,47 @@ static void test_p101_putwchar(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wint_t native_result = p101_putwchar(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_raise) */
@@ -8735,6 +17628,47 @@ static void test_p101_raise(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_raise(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_realloc) */
@@ -8780,6 +17714,48 @@ static void test_p101_realloc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            unsigned char native_argument_2[4096] = {0};
+            void         *native_result           = p101_realloc(native_env, native_err, native_argument_2, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_remainder) */
@@ -8820,6 +17796,47 @@ static void test_p101_remainder(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_remainder(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_remainderf) */
@@ -8860,6 +17877,47 @@ static void test_p101_remainderf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_remainderf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_remainderl) */
@@ -8900,6 +17958,47 @@ static void test_p101_remainderl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_remainderl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_remove) */
@@ -8940,6 +18039,47 @@ static void test_p101_remove(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_remove(native_env, native_err, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_remquo) */
@@ -8985,6 +18125,48 @@ static void test_p101_remquo(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int    native_argument_4 = {0};
+            double native_result     = p101_remquo(native_env, native_err, 0, 0, &native_argument_4);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_remquof) */
@@ -9030,6 +18212,48 @@ static void test_p101_remquof(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int   native_argument_4 = {0};
+            float native_result     = p101_remquof(native_env, native_err, 0, 0, &native_argument_4);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_remquol) */
@@ -9075,6 +18299,48 @@ static void test_p101_remquol(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int         native_argument_4 = {0};
+            long double native_result     = p101_remquol(native_env, native_err, 0, 0, &native_argument_4);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_rename) */
@@ -9115,6 +18381,47 @@ static void test_p101_rename(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_rename(native_env, native_err, "p101", "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_scalbln) */
@@ -9155,6 +18462,47 @@ static void test_p101_scalbln(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_scalbln(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_scalblnf) */
@@ -9195,6 +18543,47 @@ static void test_p101_scalblnf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_scalblnf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_scalblnl) */
@@ -9235,6 +18624,47 @@ static void test_p101_scalblnl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_scalblnl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_scalbn) */
@@ -9275,6 +18705,47 @@ static void test_p101_scalbn(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_scalbn(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_scalbnf) */
@@ -9315,6 +18786,47 @@ static void test_p101_scalbnf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_scalbnf(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_scalbnl) */
@@ -9355,6 +18867,47 @@ static void test_p101_scalbnl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_scalbnl(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_scanf) */
@@ -9384,7 +18937,7 @@ static void test_p101_scanf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_scanf(env, err, "p101");
+        int result = p101_scanf(env, err, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -9395,6 +18948,47 @@ static void test_p101_scanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_scanf(native_env, native_err, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_setlocale) */
@@ -9435,6 +19029,47 @@ static void test_p101_setlocale(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char *native_result = p101_setlocale(native_env, native_err, 0, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_setvbuf) */
@@ -9480,6 +19115,53 @@ static void test_p101_setvbuf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            char native_argument_3[PATH_MAX] = {0};
+            int  native_result               = p101_setvbuf(native_env, native_err, native_stream, native_argument_3, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_signal) */
@@ -9520,6 +19202,47 @@ static void test_p101_signal(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            void (*native_result)(int) = p101_signal(native_env, native_err, 0, native_signal_callback);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sin) */
@@ -9560,6 +19283,47 @@ static void test_p101_sin(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_sin(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sinf) */
@@ -9600,6 +19364,47 @@ static void test_p101_sinf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_sinf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sinh) */
@@ -9640,6 +19445,47 @@ static void test_p101_sinh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_sinh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sinhf) */
@@ -9680,6 +19526,47 @@ static void test_p101_sinhf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_sinhf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sinhl) */
@@ -9720,6 +19607,47 @@ static void test_p101_sinhl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_sinhl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sinl) */
@@ -9760,6 +19688,47 @@ static void test_p101_sinl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_sinl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_snprintf) */
@@ -9793,7 +19762,7 @@ static void test_p101_snprintf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_snprintf(env, err, argument_2, 0, "p101");
+        int result = p101_snprintf(env, err, argument_2, 0, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -9805,6 +19774,48 @@ static void test_p101_snprintf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char native_argument_2[PATH_MAX] = {0};
+            int  native_result               = p101_snprintf(native_env, native_err, native_argument_2, 0, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sqrt) */
@@ -9845,6 +19856,47 @@ static void test_p101_sqrt(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_sqrt(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sqrtf) */
@@ -9885,6 +19937,47 @@ static void test_p101_sqrtf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_sqrtf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sqrtl) */
@@ -9925,6 +20018,47 @@ static void test_p101_sqrtl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_sqrtl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_sscanf) */
@@ -9954,7 +20088,7 @@ static void test_p101_sscanf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_sscanf(env, err, NULL, "p101");
+        int result = p101_sscanf(env, err, NULL, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -9965,6 +20099,47 @@ static void test_p101_sscanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_sscanf(native_env, native_err, "p101", "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strcoll) */
@@ -10005,6 +20180,47 @@ static void test_p101_strcoll(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_strcoll(native_env, native_err, "p101", "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strerror) */
@@ -10045,6 +20261,47 @@ static void test_p101_strerror(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char *native_result = p101_strerror(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strftime) */
@@ -10078,7 +20335,7 @@ static void test_p101_strftime(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        size_t result = p101_strftime(env, err, argument_2, 0, "p101", NULL);
+        size_t result = p101_strftime(env, err, argument_2, 0, NULL, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -10090,6 +20347,49 @@ static void test_p101_strftime(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char      native_argument_2[PATH_MAX] = {0};
+            struct tm native_argument_5           = {0};
+            size_t    native_result               = p101_strftime(native_env, native_err, native_argument_2, 0, "p101", &native_argument_5);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strtod) */
@@ -10135,6 +20435,48 @@ static void test_p101_strtod(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char  *native_argument_3 = NULL;
+            double native_result     = p101_strtod(native_env, native_err, "p101", &native_argument_3);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strtof) */
@@ -10180,6 +20522,48 @@ static void test_p101_strtof(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char *native_argument_3 = NULL;
+            float native_result     = p101_strtof(native_env, native_err, "p101", &native_argument_3);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strtoimax) */
@@ -10225,6 +20609,48 @@ static void test_p101_strtoimax(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char    *native_argument_3 = NULL;
+            intmax_t native_result     = p101_strtoimax(native_env, native_err, "p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strtol) */
@@ -10270,6 +20696,48 @@ static void test_p101_strtol(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char *native_argument_3 = NULL;
+            long  native_result     = p101_strtol(native_env, native_err, "p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strtold) */
@@ -10315,6 +20783,48 @@ static void test_p101_strtold(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char       *native_argument_3 = NULL;
+            long double native_result     = p101_strtold(native_env, native_err, "p101", &native_argument_3);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strtoll) */
@@ -10360,6 +20870,48 @@ static void test_p101_strtoll(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char     *native_argument_3 = NULL;
+            long long native_result     = p101_strtoll(native_env, native_err, "p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strtoul) */
@@ -10405,6 +20957,48 @@ static void test_p101_strtoul(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char         *native_argument_3 = NULL;
+            unsigned long native_result     = p101_strtoul(native_env, native_err, "p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strtoull) */
@@ -10450,6 +21044,48 @@ static void test_p101_strtoull(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char              *native_argument_3 = NULL;
+            unsigned long long native_result     = p101_strtoull(native_env, native_err, "p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strtoumax) */
@@ -10495,6 +21131,48 @@ static void test_p101_strtoumax(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char     *native_argument_3 = NULL;
+            uintmax_t native_result     = p101_strtoumax(native_env, native_err, "p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_strxfrm) */
@@ -10540,6 +21218,48 @@ static void test_p101_strxfrm(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char   native_argument_2[PATH_MAX] = {0};
+            size_t native_result               = p101_strxfrm(native_env, native_err, native_argument_2, "p101", 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_swprintf) */
@@ -10573,7 +21293,7 @@ static void test_p101_swprintf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_swprintf(env, err, argument_2, 0, L"p101");
+        int result = p101_swprintf(env, err, argument_2, 0, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -10585,6 +21305,48 @@ static void test_p101_swprintf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t native_argument_2[PATH_MAX] = {0};
+            int     native_result               = p101_swprintf(native_env, native_err, native_argument_2, 0, L"p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_swscanf) */
@@ -10614,7 +21376,7 @@ static void test_p101_swscanf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_swscanf(env, err, NULL, L"p101");
+        int result = p101_swscanf(env, err, NULL, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -10625,6 +21387,47 @@ static void test_p101_swscanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_swscanf(native_env, native_err, L"p101", L"p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_system) */
@@ -10665,6 +21468,47 @@ static void test_p101_system(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_system(native_env, native_err, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tan) */
@@ -10705,6 +21549,47 @@ static void test_p101_tan(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_tan(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tanf) */
@@ -10745,6 +21630,47 @@ static void test_p101_tanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_tanf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tanh) */
@@ -10785,6 +21711,47 @@ static void test_p101_tanh(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_tanh(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tanhf) */
@@ -10825,6 +21792,47 @@ static void test_p101_tanhf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_tanhf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tanhl) */
@@ -10865,6 +21873,47 @@ static void test_p101_tanhl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_tanhl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tanl) */
@@ -10905,6 +21954,47 @@ static void test_p101_tanl(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_tanl(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tgamma) */
@@ -10945,6 +22035,47 @@ static void test_p101_tgamma(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            double native_result = p101_tgamma(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tgammaf) */
@@ -10985,6 +22116,47 @@ static void test_p101_tgammaf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            float native_result = p101_tgammaf(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tgammal) */
@@ -11025,6 +22197,47 @@ static void test_p101_tgammal(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            long double native_result = p101_tgammal(native_env, native_err, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_time) */
@@ -11070,6 +22283,48 @@ static void test_p101_time(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            time_t native_argument_2 = {0};
+            time_t native_result     = p101_time(native_env, native_err, &native_argument_2);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_timespec_get) */
@@ -11110,6 +22365,48 @@ static void test_p101_timespec_get(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            struct timespec native_argument_2 = {0};
+            int             native_result     = p101_timespec_get(native_env, native_err, &native_argument_2, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_tmpfile) */
@@ -11150,6 +22447,47 @@ static void test_p101_tmpfile(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_result = p101_tmpfile(native_env, native_err);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_towctrans) */
@@ -11190,6 +22528,47 @@ static void test_p101_towctrans(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wint_t native_result = p101_towctrans(native_env, native_err, 0, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ungetc) */
@@ -11230,6 +22609,52 @@ static void test_p101_ungetc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_ungetc(native_env, native_err, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_ungetwc) */
@@ -11270,6 +22695,52 @@ static void test_p101_ungetwc(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            wint_t native_result = p101_ungetwc(native_env, native_err, 0, native_stream);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_vfprintf) */
@@ -11302,7 +22773,7 @@ static void test_p101_vfprintf(struct p101_env *env, struct p101_error *err, ...
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vfprintf(env, err, NULL, "p101", arguments);
+        int result = p101_vfprintf(env, err, NULL, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11313,6 +22784,52 @@ static void test_p101_vfprintf(struct p101_env *env, struct p101_error *err, ...
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_vfprintf(native_env, native_err, native_stream, "p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11346,7 +22863,7 @@ static void test_p101_vfscanf(struct p101_env *env, struct p101_error *err, ...)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vfscanf(env, err, NULL, "p101", arguments);
+        int result = p101_vfscanf(env, err, NULL, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11357,6 +22874,52 @@ static void test_p101_vfscanf(struct p101_env *env, struct p101_error *err, ...)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_vfscanf(native_env, native_err, native_stream, "p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11390,7 +22953,7 @@ static void test_p101_vfwprintf(struct p101_env *env, struct p101_error *err, ..
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vfwprintf(env, err, NULL, L"p101", arguments);
+        int result = p101_vfwprintf(env, err, NULL, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11401,6 +22964,52 @@ static void test_p101_vfwprintf(struct p101_env *env, struct p101_error *err, ..
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_vfwprintf(native_env, native_err, native_stream, L"p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11434,7 +23043,7 @@ static void test_p101_vfwscanf(struct p101_env *env, struct p101_error *err, ...
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vfwscanf(env, err, NULL, L"p101", arguments);
+        int result = p101_vfwscanf(env, err, NULL, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11445,6 +23054,52 @@ static void test_p101_vfwscanf(struct p101_env *env, struct p101_error *err, ...
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            FILE *native_stream = tmpfile();
+            if(native_stream == NULL)
+            {
+                _Exit(77);
+            }
+            int native_result = p101_vfwscanf(native_env, native_err, native_stream, L"p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11478,7 +23133,7 @@ static void test_p101_vprintf(struct p101_env *env, struct p101_error *err, ...)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vprintf(env, err, "p101", arguments);
+        int result = p101_vprintf(env, err, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11489,6 +23144,47 @@ static void test_p101_vprintf(struct p101_env *env, struct p101_error *err, ...)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_vprintf(native_env, native_err, "p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11522,7 +23218,7 @@ static void test_p101_vscanf(struct p101_env *env, struct p101_error *err, ...)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vscanf(env, err, "p101", arguments);
+        int result = p101_vscanf(env, err, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11533,6 +23229,47 @@ static void test_p101_vscanf(struct p101_env *env, struct p101_error *err, ...)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_vscanf(native_env, native_err, "p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11570,7 +23307,7 @@ static void test_p101_vsnprintf(struct p101_env *env, struct p101_error *err, ..
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vsnprintf(env, err, argument_2, 0, "p101", arguments);
+        int result = p101_vsnprintf(env, err, argument_2, 0, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11582,6 +23319,48 @@ static void test_p101_vsnprintf(struct p101_env *env, struct p101_error *err, ..
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char native_argument_2[PATH_MAX] = {0};
+            int  native_result               = p101_vsnprintf(native_env, native_err, native_argument_2, 0, "p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11615,7 +23394,7 @@ static void test_p101_vsscanf(struct p101_env *env, struct p101_error *err, ...)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vsscanf(env, err, NULL, "p101", arguments);
+        int result = p101_vsscanf(env, err, NULL, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11626,6 +23405,47 @@ static void test_p101_vsscanf(struct p101_env *env, struct p101_error *err, ...)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_vsscanf(native_env, native_err, "p101", "p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11663,7 +23483,7 @@ static void test_p101_vswprintf(struct p101_env *env, struct p101_error *err, ..
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vswprintf(env, err, argument_2, 0, L"p101", arguments);
+        int result = p101_vswprintf(env, err, argument_2, 0, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11675,6 +23495,48 @@ static void test_p101_vswprintf(struct p101_env *env, struct p101_error *err, ..
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t native_argument_2[PATH_MAX] = {0};
+            int     native_result               = p101_vswprintf(native_env, native_err, native_argument_2, 0, L"p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11708,7 +23570,7 @@ static void test_p101_vswscanf(struct p101_env *env, struct p101_error *err, ...
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vswscanf(env, err, NULL, L"p101", arguments);
+        int result = p101_vswscanf(env, err, NULL, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11719,6 +23581,47 @@ static void test_p101_vswscanf(struct p101_env *env, struct p101_error *err, ...
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_vswscanf(native_env, native_err, L"p101", L"p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11752,7 +23655,7 @@ static void test_p101_vwprintf(struct p101_env *env, struct p101_error *err, ...
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vwprintf(env, err, L"p101", arguments);
+        int result = p101_vwprintf(env, err, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11763,6 +23666,47 @@ static void test_p101_vwprintf(struct p101_env *env, struct p101_error *err, ...
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_vwprintf(native_env, native_err, L"p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11796,7 +23740,7 @@ static void test_p101_vwscanf(struct p101_env *env, struct p101_error *err, ...)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vwscanf(env, err, L"p101", arguments);
+        int result = p101_vwscanf(env, err, NULL, arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11807,6 +23751,47 @@ static void test_p101_vwscanf(struct p101_env *env, struct p101_error *err, ...)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_vwscanf(native_env, native_err, L"p101", arguments);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
     va_end(arguments);
 }
 
@@ -11858,6 +23843,49 @@ static void test_p101_wcrtomb(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char      native_argument_2[PATH_MAX] = {0};
+            mbstate_t native_argument_4           = {0};
+            size_t    native_result               = p101_wcrtomb(native_env, native_err, native_argument_2, 0, &native_argument_4);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcscoll) */
@@ -11898,6 +23926,47 @@ static void test_p101_wcscoll(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_wcscoll(native_env, native_err, L"p101", L"p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcsftime) */
@@ -11931,7 +24000,7 @@ static void test_p101_wcsftime(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        size_t result = p101_wcsftime(env, err, argument_2, 0, L"p101", NULL);
+        size_t result = p101_wcsftime(env, err, argument_2, 0, NULL, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -11943,6 +24012,49 @@ static void test_p101_wcsftime(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t   native_argument_2[PATH_MAX] = {0};
+            struct tm native_argument_5           = {0};
+            size_t    native_result               = p101_wcsftime(native_env, native_err, native_argument_2, 0, L"p101", &native_argument_5);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcsrtombs) */
@@ -11993,6 +24105,50 @@ static void test_p101_wcsrtombs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char           native_argument_2[PATH_MAX] = {0};
+            const wchar_t *native_argument_3[2]        = {L"p101", NULL};
+            mbstate_t      native_argument_5           = {0};
+            size_t         native_result               = p101_wcsrtombs(native_env, native_err, native_argument_2, native_argument_3, 0, &native_argument_5);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstod) */
@@ -12038,6 +24194,48 @@ static void test_p101_wcstod(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t *native_argument_3 = NULL;
+            double   native_result     = p101_wcstod(native_env, native_err, L"p101", &native_argument_3);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstof) */
@@ -12083,6 +24281,48 @@ static void test_p101_wcstof(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t *native_argument_3 = NULL;
+            float    native_result     = p101_wcstof(native_env, native_err, L"p101", &native_argument_3);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstoimax) */
@@ -12128,6 +24368,48 @@ static void test_p101_wcstoimax(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t *native_argument_3 = NULL;
+            intmax_t native_result     = p101_wcstoimax(native_env, native_err, L"p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstol) */
@@ -12173,6 +24455,48 @@ static void test_p101_wcstol(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t *native_argument_3 = NULL;
+            long     native_result     = p101_wcstol(native_env, native_err, L"p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstold) */
@@ -12218,6 +24542,48 @@ static void test_p101_wcstold(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t    *native_argument_3 = NULL;
+            long double native_result     = p101_wcstold(native_env, native_err, L"p101", &native_argument_3);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstoll) */
@@ -12263,6 +24629,48 @@ static void test_p101_wcstoll(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t  *native_argument_3 = NULL;
+            long long native_result     = p101_wcstoll(native_env, native_err, L"p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstombs) */
@@ -12308,6 +24716,48 @@ static void test_p101_wcstombs(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char   native_argument_2[PATH_MAX] = {0};
+            size_t native_result               = p101_wcstombs(native_env, native_err, native_argument_2, L"p101", 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstoul) */
@@ -12353,6 +24803,48 @@ static void test_p101_wcstoul(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t      *native_argument_3 = NULL;
+            unsigned long native_result     = p101_wcstoul(native_env, native_err, L"p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstoull) */
@@ -12398,6 +24890,48 @@ static void test_p101_wcstoull(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t           *native_argument_3 = NULL;
+            unsigned long long native_result     = p101_wcstoull(native_env, native_err, L"p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcstoumax) */
@@ -12443,6 +24977,48 @@ static void test_p101_wcstoumax(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t  *native_argument_3 = NULL;
+            uintmax_t native_result     = p101_wcstoumax(native_env, native_err, L"p101", &native_argument_3, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wcsxfrm) */
@@ -12488,6 +25064,48 @@ static void test_p101_wcsxfrm(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wchar_t native_argument_2[PATH_MAX] = {0};
+            size_t  native_result               = p101_wcsxfrm(native_env, native_err, native_argument_2, L"p101", 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wctomb) */
@@ -12533,6 +25151,48 @@ static void test_p101_wctomb(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            char native_argument_2[PATH_MAX] = {0};
+            int  native_result               = p101_wctomb(native_env, native_err, native_argument_2, 0);
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wctrans) */
@@ -12573,6 +25233,47 @@ static void test_p101_wctrans(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wctrans_t native_result = p101_wctrans(native_env, native_err, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wctype) */
@@ -12613,6 +25314,47 @@ static void test_p101_wctype(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            wctype_t native_result = p101_wctype(native_env, native_err, "p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wprintf) */
@@ -12642,7 +25384,7 @@ static void test_p101_wprintf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_wprintf(env, err, L"p101");
+        int result = p101_wprintf(env, err, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -12653,6 +25395,47 @@ static void test_p101_wprintf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_wprintf(native_env, native_err, L"p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 /* P101_TEST_CASE(p101_wscanf) */
@@ -12682,7 +25465,7 @@ static void test_p101_wscanf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_wscanf(env, err, L"p101");
+        int result = p101_wscanf(env, err, NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -12693,6 +25476,47 @@ static void test_p101_wscanf(struct p101_env *env, struct p101_error *err)
         p101_error_reset(err);
     }
     p101_env_set_fault_injector(env, NULL, NULL);
+    {
+        int   native_status = 0;
+        pid_t native_pid    = fork();
+
+        EXPECT(native_pid >= 0);
+        if(native_pid == 0)
+        {
+            struct p101_error *native_err;
+            struct p101_env   *native_env;
+
+            (void)alarm(2U);
+            (void)unsetenv("P101_CALL_LOG");
+            (void)unsetenv("P101_RESOURCE_LOG");
+            native_err = p101_error_create(false);
+            if(native_err == NULL)
+            {
+                _Exit(77);
+            }
+            native_env = p101_env_create(native_err, NULL);
+            if(native_env == NULL)
+            {
+                p101_error_destroy(native_err);
+                _Exit(77);
+            }
+            int native_result = p101_wscanf(native_env, native_err, L"p101");
+            (void)native_result;
+            p101_env_destroy(native_env);
+            p101_error_destroy(native_err);
+            _Exit(EXIT_SUCCESS);
+        }
+        if(native_pid > 0)
+        {
+            EXPECT(waitpid(native_pid, &native_status, 0) == native_pid);
+            EXPECT(WIFEXITED(native_status));
+            if(WIFEXITED(native_status))
+            {
+                EXPECT(WEXITSTATUS(native_status) == EXIT_SUCCESS);
+            }
+        }
+        p101_error_reset(err);
+    }
 }
 
 int main(void)
