@@ -1,23 +1,23 @@
-# Exact native boundaries used to implement public wrappers. Rules are
-# path:function:callee; `*` means every implementation helper in that file.
-src/complex.c:*:feclearexcept
-src/complex.c:*:feraiseexcept
-src/complex.c:*:fetestexcept
-src/math.c:*:feclearexcept
-src/math.c:*:feraiseexcept
-src/math.c:*:fetestexcept
-src/stdio.c:*:ferror
-src/stdio.c:*:fileno
-src/stdio.c:*:va_end
-src/stdio.c:*:va_start
-src/stdio.c:*:vfprintf
-src/stdio.c:*:vfscanf
-src/stdio.c:*:vsnprintf
-src/stdio.c:*:vsscanf
-src/wchar.c:*:ferror
-src/wchar.c:*:va_end
-src/wchar.c:*:va_start
-src/wchar.c:*:vfwprintf
-src/wchar.c:*:vfwscanf
-src/wchar.c:*:vswprintf
-src/wchar.c:*:vswscanf
+# Exact native declaration identities used to implement public wrappers.
+# Columns are path, optional caller USR, and callee USR.
+src/complex.c		c:@F@feclearexcept
+src/complex.c		c:@F@feraiseexcept
+src/complex.c		c:@F@fetestexcept
+src/math.c		c:@F@feclearexcept
+src/math.c		c:@F@feraiseexcept
+src/math.c		c:@F@fetestexcept
+src/stdio.c		c:@F@ferror
+src/stdio.c		c:@F@fileno
+src/stdio.c		c:@F@va_end
+src/stdio.c		c:@F@va_start
+src/stdio.c		c:@F@vfprintf
+src/stdio.c		c:@F@vfscanf
+src/stdio.c		c:@F@vsnprintf
+src/stdio.c		c:@F@vsscanf
+src/wchar.c		c:@F@ferror
+src/wchar.c		c:@F@va_end
+src/wchar.c		c:@F@va_start
+src/wchar.c		c:@F@vfwprintf
+src/wchar.c		c:@F@vfwscanf
+src/wchar.c		c:@F@vswprintf
+src/wchar.c		c:@F@vswscanf

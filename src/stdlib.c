@@ -148,9 +148,11 @@ int p101_at_quick_exit(const struct p101_env *env, struct p101_error *err, void 
 const void *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width, int (*compar)(const void *, const void *))
 {
     const void *ret_val;
+    void       *raw_result;
 
     P101_TRACE(env);
-    ret_val = bsearch(key, base, nel, width, compar);
+    raw_result = bsearch(key, base, nel, width, compar);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 

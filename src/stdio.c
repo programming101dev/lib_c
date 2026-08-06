@@ -54,6 +54,7 @@ static int vfprintf_checked(struct p101_error *err, FILE *restrict stream, const
 
 static int vfscanf_checked(struct p101_error *err, FILE *restrict stream, const char *restrict format, va_list ap)
 {
+    int stream_error;
     int ret_val;
     int actual_error;
 
@@ -63,7 +64,12 @@ static int vfscanf_checked(struct p101_error *err, FILE *restrict stream, const 
     ret_val      = vfscanf(stream, format, ap);
     actual_error = errno;
 #pragma GCC diagnostic pop
-    if(ret_val == EOF && ferror(stream))
+    stream_error = 0;
+    if(ret_val == EOF)
+    {
+        stream_error = ferror(stream);
+    }
+    if(ret_val == EOF && stream_error != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
@@ -73,12 +79,18 @@ static int vfscanf_checked(struct p101_error *err, FILE *restrict stream, const 
 
 static int vprintf_checked(struct p101_error *err, const char *restrict format, va_list ap)
 {
-    return vfprintf_checked(err, stdout, format, ap);
+    int result;
+
+    result = vfprintf_checked(err, stdout, format, ap);
+    return result;
 }
 
 static int vscanf_checked(struct p101_error *err, const char *restrict format, va_list ap)
 {
-    return vfscanf_checked(err, stdin, format, ap);
+    int result;
+
+    result = vfscanf_checked(err, stdin, format, ap);
+    return result;
 }
 
 static int vsnprintf_checked(struct p101_error *err, char *restrict s, size_t n, const char *restrict format, va_list ap)
@@ -192,6 +204,7 @@ int p101_fflush(const struct p101_env *env, struct p101_error *err, FILE *stream
 
 int p101_fgetc(const struct p101_env *env, struct p101_error *err, FILE *stream)
 {
+    int     stream_error;
     int     ret_val;
     errno_t actual_error;
 
@@ -201,7 +214,8 @@ int p101_fgetc(const struct p101_env *env, struct p101_error *err, FILE *stream)
     ret_val      = fgetc(stream);
     actual_error = errno;
 
-    if(ferror(stream))
+    stream_error = ferror(stream);
+    if(stream_error != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
@@ -241,11 +255,13 @@ char *p101_fgets(const struct p101_env *env, struct p101_error *err, char *restr
 
     if(ret_val == NULL)
     {
+        int     stream_error;
         errno_t temp_errno;
 
-        temp_errno = errno;
+        temp_errno   = errno;
+        stream_error = ferror(stream);
 
-        if(ferror(stream))
+        if(stream_error != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, stdio_error_code(temp_errno));
         }
@@ -326,6 +342,7 @@ int p101_fputs(const struct p101_env *env, struct p101_error *err, const char *r
 
 size_t p101_fread(const struct p101_env *env, struct p101_error *err, void *restrict ptr, size_t size, size_t nitems, FILE *restrict stream)
 {
+    int     stream_error;
     size_t  ret_val;
     errno_t actual_error;
 
@@ -335,7 +352,8 @@ size_t p101_fread(const struct p101_env *env, struct p101_error *err, void *rest
     ret_val      = fread(ptr, size, nitems, stream);
     actual_error = errno;
 
-    if(ferror(stream))
+    stream_error = ferror(stream);
+    if(stream_error != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
@@ -441,6 +459,7 @@ long p101_ftell(const struct p101_env *env, struct p101_error *err, FILE *stream
 
 size_t p101_fwrite(const struct p101_env *env, struct p101_error *err, const void *restrict ptr, size_t size, size_t nitems, FILE *restrict stream)
 {
+    int     stream_error;
     size_t  ret_val;
     errno_t actual_error;
 
@@ -450,7 +469,8 @@ size_t p101_fwrite(const struct p101_env *env, struct p101_error *err, const voi
     ret_val      = fwrite(ptr, size, nitems, stream);
     actual_error = errno;
 
-    if(ferror(stream))
+    stream_error = ferror(stream);
+    if(stream_error != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
@@ -462,6 +482,7 @@ size_t p101_fwrite(const struct p101_env *env, struct p101_error *err, const voi
 
 int p101_getc(const struct p101_env *env, struct p101_error *err, FILE *stream)
 {
+    int     stream_error;
     int     ret_val;
     errno_t actual_error;
 
@@ -471,7 +492,8 @@ int p101_getc(const struct p101_env *env, struct p101_error *err, FILE *stream)
     ret_val      = getc(stream);
     actual_error = errno;
 
-    if(ferror(stream))
+    stream_error = ferror(stream);
+    if(stream_error != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }
@@ -483,6 +505,7 @@ int p101_getc(const struct p101_env *env, struct p101_error *err, FILE *stream)
 
 int p101_getchar(const struct p101_env *env, struct p101_error *err)
 {
+    int     stream_error;
     int     ret_val;
     errno_t actual_error;
 
@@ -492,7 +515,8 @@ int p101_getchar(const struct p101_env *env, struct p101_error *err)
     ret_val      = getchar();
     actual_error = errno;
 
-    if(ferror(stdin))
+    stream_error = ferror(stdin);
+    if(stream_error != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, stdio_error_code(actual_error));
     }

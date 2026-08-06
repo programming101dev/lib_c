@@ -17,14 +17,17 @@
 #include "p101_c/p101_stdlib.h"
 #include "p101_c/p101_string.h"
 #include "p101_c_internal.h"
+#include <stdbool.h>
 #include <string.h>
 
 const void *p101_memchr(const struct p101_env *env, const void *s, int c, size_t n)
 {
     const void *ret_val;
+    void       *raw_result;
 
     P101_TRACE(env);
-    ret_val = memchr(s, c, n);
+    raw_result = memchr(s, c, n);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 
@@ -81,10 +84,12 @@ void *p101_memset(const struct p101_env *env, void *s, int c, size_t n)
 
 const char *p101_strchr(const struct p101_env *env, const char *s, int c)
 {
+    char       *raw_result;
     const char *ret_val;
 
     P101_TRACE(env);
-    ret_val = strchr(s, c);
+    raw_result = strchr(s, c);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 
@@ -140,15 +145,19 @@ size_t p101_strcspn(const struct p101_env *env, const char *s1, const char *s2)
 #endif
 char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errnum)
 {
+    bool        has_error;
     char       *p101_single_result_;
+    char       *raw_result;
     const char *ret_val;
     size_t      len;
     char       *copy;
+    void       *memory;
 
     P101_TRACE(env);
     P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, NULL);
-    errno   = 0;
-    ret_val = strerror(errnum);
+    errno      = 0;
+    raw_result = strerror(errnum);
+    ret_val    = raw_result;
 
     if(errno != 0)
     {
@@ -159,10 +168,12 @@ char *p101_strerror(const struct p101_env *env, struct p101_error *err, int errn
         goto p101_single_exit_;
     }
 
-    len  = p101_strlen(env, ret_val);
-    copy = (char *)p101_malloc(env, err, len + 1U);
+    len       = p101_strlen(env, ret_val);
+    memory    = p101_malloc(env, err, len + 1U);
+    copy      = (char *)memory;
+    has_error = p101_error_has_error(err);
 
-    if(copy == NULL || p101_error_has_error(err))
+    if(copy == NULL || has_error)
     {
         p101_free(env, copy);
         P101_TRACE_EXIT(env);
@@ -235,10 +246,12 @@ char *p101_strncpy(const struct p101_env *env, char *restrict s1, const char *re
 
 const char *p101_strpbrk(const struct p101_env *env, const char *s1, const char *s2)
 {
+    char       *raw_result;
     const char *ret_val;
 
     P101_TRACE(env);
-    ret_val = strpbrk(s1, s2);
+    raw_result = strpbrk(s1, s2);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 
@@ -247,10 +260,12 @@ const char *p101_strpbrk(const struct p101_env *env, const char *s1, const char 
 
 const char *p101_strrchr(const struct p101_env *env, const char *s, int c)
 {
+    char       *raw_result;
     const char *ret_val;
 
     P101_TRACE(env);
-    ret_val = strrchr(s, c);
+    raw_result = strrchr(s, c);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 
@@ -271,10 +286,12 @@ size_t p101_strspn(const struct p101_env *env, const char *s1, const char *s2)
 
 const char *p101_strstr(const struct p101_env *env, const char *s1, const char *s2)
 {
+    char       *raw_result;
     const char *ret_val;
 
     P101_TRACE(env);
-    ret_val = strstr(s1, s2);
+    raw_result = strstr(s1, s2);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 

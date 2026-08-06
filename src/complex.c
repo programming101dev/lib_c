@@ -25,12 +25,16 @@ static int  complex_prepare_exceptions(int handling);
 
 static int complex_prepare(void)
 {
-    errno = 0;
-    return complex_prepare_exceptions(math_errhandling);
+    int prior_exceptions;
+
+    errno            = 0;
+    prior_exceptions = complex_prepare_exceptions(math_errhandling);
+    return prior_exceptions;
 }
 
 static int complex_prepare_exceptions(int handling)
 {
+    int clear_result;
     int p101_single_result_;
     int prior_exceptions;
 
@@ -41,7 +45,8 @@ static int complex_prepare_exceptions(int handling)
     }
 
     prior_exceptions = fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
-    (void)feclearexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
+    clear_result     = feclearexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW);
+    (void)clear_result;
     p101_single_result_ = prior_exceptions;
     goto p101_single_exit_;
 
@@ -76,7 +81,10 @@ static void complex_check(struct p101_error *err, int prior_exceptions)
 
     if(prior_exceptions != 0)
     {
-        (void)feraiseexcept(prior_exceptions);
+        int raise_result;
+
+        raise_result = feraiseexcept(prior_exceptions);
+        (void)raise_result;
     }
 
     if(error_code != 0)

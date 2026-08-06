@@ -70,11 +70,17 @@ static int vfwprintf_checked(struct p101_error *err, FILE *restrict stream, cons
 
 static int vfwscanf_checked(struct p101_error *err, FILE *restrict stream, const wchar_t *restrict format, va_list arg)
 {
+    int stream_error;
     int ret_val;
 
-    errno   = 0;
-    ret_val = vfwscanf(stream, format, arg);
-    if(ret_val == EOF && ferror(stream))
+    errno        = 0;
+    ret_val      = vfwscanf(stream, format, arg);
+    stream_error = 0;
+    if(ret_val == EOF)
+    {
+        stream_error = ferror(stream);
+    }
+    if(ret_val == EOF && stream_error != 0)
     {
         P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
     }
@@ -112,12 +118,18 @@ static int vswscanf_checked(struct p101_error *err, const wchar_t *restrict ws, 
 
 static int vwprintf_checked(struct p101_error *err, const wchar_t *restrict format, va_list arg)
 {
-    return vfwprintf_checked(err, stdout, format, arg);
+    int result;
+
+    result = vfwprintf_checked(err, stdout, format, arg);
+    return result;
 }
 
 static int vwscanf_checked(struct p101_error *err, const wchar_t *restrict format, va_list arg)
 {
-    return vfwscanf_checked(err, stdin, format, arg);
+    int result;
+
+    result = vfwscanf_checked(err, stdin, format, arg);
+    return result;
 }
 
 wint_t p101_btowc(const struct p101_env *env, int c)
@@ -143,11 +155,14 @@ wint_t p101_fgetwc(const struct p101_env *env, struct p101_error *err, FILE *str
 
     if(ret_val == WEOF)
     {
+        int stream_error;
+
+        stream_error = ferror(stream);
         if(errno != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        else if(ferror(stream))
+        else if(stream_error != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
@@ -169,11 +184,14 @@ wchar_t *p101_fgetws(const struct p101_env *env, struct p101_error *err, wchar_t
 
     if(ret_val == NULL)
     {
+        int stream_error;
+
+        stream_error = ferror(stream);
         if(errno != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        else if(ferror(stream))
+        else if(stream_error != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
@@ -195,11 +213,14 @@ wint_t p101_fputwc(const struct p101_env *env, struct p101_error *err, wchar_t w
 
     if(ret_val == WEOF)
     {
+        int stream_error;
+
+        stream_error = ferror(stream);
         if(errno != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        else if(ferror(stream))
+        else if(stream_error != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
@@ -221,11 +242,14 @@ int p101_fputws(const struct p101_env *env, struct p101_error *err, const wchar_
 
     if(ret_val == -1)
     {
+        int stream_error;
+
+        stream_error = ferror(stream);
         if(errno != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        else if(ferror(stream))
+        else if(stream_error != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
@@ -266,11 +290,14 @@ wint_t p101_getwc(const struct p101_env *env, struct p101_error *err, FILE *stre
 
     if(ret_val == WEOF)
     {
+        int stream_error;
+
+        stream_error = ferror(stream);
         if(errno != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        else if(ferror(stream))
+        else if(stream_error != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
@@ -292,11 +319,14 @@ wint_t p101_getwchar(const struct p101_env *env, struct p101_error *err)
 
     if(ret_val == WEOF)
     {
+        int stream_error;
+
+        stream_error = ferror(stdin);
         if(errno != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        else if(ferror(stdin))
+        else if(stream_error != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
@@ -387,11 +417,14 @@ wint_t p101_putwc(const struct p101_env *env, struct p101_error *err, wchar_t wc
 
     if(ret_val == WEOF)
     {
+        int stream_error;
+
+        stream_error = ferror(stream);
         if(errno != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        else if(ferror(stream))
+        else if(stream_error != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
@@ -413,11 +446,14 @@ wint_t p101_putwchar(const struct p101_env *env, struct p101_error *err, wchar_t
 
     if(ret_val == WEOF)
     {
+        int stream_error;
+
+        stream_error = ferror(stdout);
         if(errno != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, errno);
         }
-        else if(ferror(stdout))
+        else if(stream_error != 0)
         {
             P101_ERROR_RAISE_ERRNO(err, wchar_io_error_code());
         }
@@ -649,10 +685,12 @@ size_t p101_wcrtomb(const struct p101_env *env, struct p101_error *err, char *re
 
 const wchar_t *p101_wcschr(const struct p101_env *env, const wchar_t *ws, wchar_t wc)
 {
+    wchar_t       *raw_result;
     const wchar_t *ret_val;
 
     P101_TRACE(env);
-    ret_val = wcschr(ws, wc);
+    raw_result = wcschr(ws, wc);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 
@@ -771,10 +809,12 @@ wchar_t *p101_wcsncpy(const struct p101_env *env, wchar_t *restrict ws1, const w
 
 const wchar_t *p101_wcspbrk(const struct p101_env *env, const wchar_t *ws1, const wchar_t *ws2)
 {
+    wchar_t       *raw_result;
     const wchar_t *ret_val;
 
     P101_TRACE(env);
-    ret_val = wcspbrk(ws1, ws2);
+    raw_result = wcspbrk(ws1, ws2);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 
@@ -783,10 +823,12 @@ const wchar_t *p101_wcspbrk(const struct p101_env *env, const wchar_t *ws1, cons
 
 const wchar_t *p101_wcsrchr(const struct p101_env *env, const wchar_t *ws, wchar_t wc)
 {
+    wchar_t       *raw_result;
     const wchar_t *ret_val;
 
     P101_TRACE(env);
-    ret_val = wcsrchr(ws, wc);
+    raw_result = wcsrchr(ws, wc);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 
@@ -826,10 +868,12 @@ size_t p101_wcsspn(const struct p101_env *env, const wchar_t *ws1, const wchar_t
 
 const wchar_t *p101_wcsstr(const struct p101_env *env, const wchar_t *restrict ws1, const wchar_t *restrict ws2)
 {
+    wchar_t       *raw_result;
     const wchar_t *ret_val;
 
     P101_TRACE(env);
-    ret_val = wcsstr(ws1, ws2);
+    raw_result = wcsstr(ws1, ws2);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 
@@ -1014,10 +1058,12 @@ int p101_wctob(const struct p101_env *env, wint_t c)
 
 const wchar_t *p101_wmemchr(const struct p101_env *env, const wchar_t *ws, wchar_t wc, size_t n)
 {
+    wchar_t       *raw_result;
     const wchar_t *ret_val;
 
     P101_TRACE(env);
-    ret_val = wmemchr(ws, wc, n);
+    raw_result = wmemchr(ws, wc, n);
+    ret_val    = raw_result;
 
     P101_TRACE_EXIT(env);
 
