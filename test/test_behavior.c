@@ -286,7 +286,7 @@ static void test_math(const struct p101_env *env)
     EXPECT(p101_modfl(env, 1.5L, &integral_l) == 0.5L && integral_l == 1.0L);
     EXPECT(isnan(p101_nan(env, "")));
     EXPECT(isnan(p101_nanf(env, "")));
-    EXPECT(isnan(p101_nanl(env, "")));
+    EXPECT(isunordered(p101_nanl(env, ""), p101_nanl(env, "")));
     EXPECT(p101_nearbyint(env, 2.0) == 2.0);
     EXPECT(p101_nearbyintf(env, 2.0F) == 2.0F);
     EXPECT(p101_nearbyintl(env, 2.0L) == 2.0L);
