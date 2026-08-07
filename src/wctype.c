@@ -218,14 +218,21 @@ wint_t p101_towupper(const struct p101_env *env, wint_t wc)
 
 wctrans_t p101_wctrans(const struct p101_env *env, struct p101_error *err, const char *charclass)
 {
-    wctrans_t ret_val;
+    /*
+     * wctrans_t is a pointer type on some platforms and an integer type on
+     * others, so the "no mapping" value cannot be spelled as 0 or NULL
+     * portably. A zero-initialized static of the same type is the null
+     * mapping on either kind of platform.
+     */
+    static const wctrans_t no_mapping;
+    wctrans_t              ret_val;
 
     P101_TRACE(env);
-    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, 0);
+    P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, no_mapping);
     errno   = 0;
     ret_val = wctrans(charclass);
 
-    if(ret_val == 0)
+    if(ret_val == no_mapping)
     {
         if(errno != 0)
         {
