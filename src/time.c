@@ -30,6 +30,7 @@
 #pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wunknown-warning-option"
 #pragma GCC diagnostic ignored "-Wuseless-cast"
+
 clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
 {
     clock_t ret_val;
@@ -55,6 +56,7 @@ clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
 
     return ret_val;
 }
+
 #pragma GCC diagnostic pop
 
 double p101_difftime(const struct p101_env *env, time_t time1, time_t time0)
