@@ -22,16 +22,14 @@
  * (clock_t)-1 — the sentinel these functions must return and compare against —
  * is a redundant cast on one platform and a required one on the others. No
  * single spelling satisfies every platform, so GCC's redundant-cast report is
- * disabled for this function alone. The guard is narrow: clang has no such
- * diagnostic. -Wpragmas is silenced first so GCC versions that do not know
- * -Wuseless-cast in C mode accept the pragma instead of erroring on it.
+ * disabled for this function alone. -Wpragmas and -Wunknown-warning-option
+ * are silenced first so compilers that do not know -Wuseless-cast accept the
+ * pragma instead of complaining about it.
  */
-#if defined(__GNUC__) && !defined(__clang__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wpragmas"
-    #pragma GCC diagnostic ignored "-Wunknown-warning-option"
-    #pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wunknown-warning-option"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
 clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
 {
     clock_t ret_val;
@@ -57,9 +55,7 @@ clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
 
     return ret_val;
 }
-#if defined(__GNUC__) && !defined(__clang__)
-    #pragma GCC diagnostic pop
-#endif
+#pragma GCC diagnostic pop
 
 double p101_difftime(const struct p101_env *env, time_t time1, time_t time0)
 {
