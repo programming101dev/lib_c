@@ -17,6 +17,19 @@
 #include "p101_c/p101_time.h"
 #include "p101_c_internal.h"
 
+/*
+ * clock_t is an int on FreeBSD and a long or unsigned long elsewhere, so
+ * (clock_t)-1 — the sentinel these functions must return and compare against —
+ * is a redundant cast on one platform and a required one on the others. No
+ * single spelling satisfies every platform, so GCC's redundant-cast report is
+ * disabled for this function alone. The guard is narrow: clang has no such
+ * diagnostic, and GCC before 16 rejects the pragma outright because the
+ * option was C++-only there.
+ */
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 16
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
 clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
 {
     clock_t ret_val;
@@ -42,6 +55,9 @@ clock_t p101_clock(const struct p101_env *env, struct p101_error *err)
 
     return ret_val;
 }
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 16
+#pragma GCC diagnostic pop
+#endif
 
 double p101_difftime(const struct p101_env *env, time_t time1, time_t time0)
 {
