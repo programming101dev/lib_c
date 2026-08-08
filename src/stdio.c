@@ -16,6 +16,7 @@
 
 #include "p101_c/p101_stdio.h"
 #include "p101_c_internal.h"
+#include <p101_env/resource_classes.h>
 
 static int stdio_error_code(int err_code);
 static int vfprintf_checked(struct p101_error *err, FILE *restrict stream, const char *restrict format, va_list ap) P101_ATTR_PRINTF(3, 0);
@@ -143,7 +144,7 @@ int p101_fclose(const struct p101_env *env, struct p101_error *err, FILE *stream
     P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, -1);
     fd    = fileno(stream);
     errno = 0;
-    P101_TRACK_POINTER_RESOURCE_RELEASE(env, "stdio-stream", stream, NULL);
+    P101_TRACK_POINTER_RESOURCE_RELEASE(env, P101_RESOURCE_CLASS_STDIO_STREAM, stream, NULL);
     ret_val = fclose(stream);
 
     if(ret_val != 0)
@@ -289,7 +290,7 @@ FILE *p101_fopen(const struct p101_env *env, struct p101_error *err, const char 
     {
         int fd;
 
-        P101_TRACK_POINTER_RESOURCE_ACQUIRE(env, "stdio-stream", ret_val, 0U, pathname);
+        P101_TRACK_POINTER_RESOURCE_ACQUIRE(env, P101_RESOURCE_CLASS_STDIO_STREAM, ret_val, 0U, pathname);
         fd = fileno(ret_val);
         if(fd >= 0)
         {
@@ -372,7 +373,7 @@ FILE *p101_freopen(const struct p101_env *env, struct p101_error *err, const cha
     P101_C_FAULT_RETURN(env, err, __func__ + 5, ret_val, NULL);
     old_fd = fileno(stream);
     errno  = 0;
-    P101_TRACK_POINTER_RESOURCE_RELEASE(env, "stdio-stream", stream, "freopen");
+    P101_TRACK_POINTER_RESOURCE_RELEASE(env, P101_RESOURCE_CLASS_STDIO_STREAM, stream, "freopen");
     ret_val = freopen(pathname, mode, stream);
 
     if(old_fd >= 0)
@@ -388,7 +389,7 @@ FILE *p101_freopen(const struct p101_env *env, struct p101_error *err, const cha
     {
         int new_fd;
 
-        P101_TRACK_POINTER_RESOURCE_ACQUIRE(env, "stdio-stream", ret_val, 0U, pathname);
+        P101_TRACK_POINTER_RESOURCE_ACQUIRE(env, P101_RESOURCE_CLASS_STDIO_STREAM, ret_val, 0U, pathname);
         new_fd = fileno(ret_val);
         if(new_fd >= 0)
         {
@@ -669,7 +670,7 @@ FILE *p101_tmpfile(const struct p101_env *env, struct p101_error *err)
     {
         int fd;
 
-        P101_TRACK_POINTER_RESOURCE_ACQUIRE(env, "stdio-stream", ret_val, 0U, "tmpfile");
+        P101_TRACK_POINTER_RESOURCE_ACQUIRE(env, P101_RESOURCE_CLASS_STDIO_STREAM, ret_val, 0U, "tmpfile");
         fd = fileno(ret_val);
         if(fd >= 0)
         {
