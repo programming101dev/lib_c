@@ -476,7 +476,7 @@ static void test_p101_strftime(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        size_t result = p101_strftime(env, err, argument_2, 0, NULL, NULL);
+        size_t result = p101_strftime(env, err, argument_2, 0, "x", NULL);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));

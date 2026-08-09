@@ -1006,7 +1006,7 @@ static void test_p101_fprintf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_fprintf(env, err, NULL, NULL);
+        int result = p101_fprintf(env, err, NULL, "x");
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -1655,7 +1655,7 @@ static void test_p101_fscanf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_fscanf(env, err, NULL, NULL);
+        int result = p101_fscanf(env, err, NULL, "x");
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -2543,7 +2543,7 @@ static void test_p101_printf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_printf(env, err, NULL);
+        int result = p101_printf(env, err, "x");
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -3270,7 +3270,7 @@ static void test_p101_scanf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_scanf(env, err, NULL);
+        int result = p101_scanf(env, err, "x");
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -3527,7 +3527,7 @@ static void test_p101_snprintf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_snprintf(env, err, argument_2, 0, NULL);
+        int result = p101_snprintf(env, err, argument_2, 0, "x");
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -3649,7 +3649,7 @@ static void test_p101_sscanf(struct p101_env *env, struct p101_error *err)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_sscanf(env, err, NULL, NULL);
+        int result = p101_sscanf(env, err, "x", "x");
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -4019,7 +4019,7 @@ static void test_p101_vfprintf(struct p101_env *env, struct p101_error *err, ...
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vfprintf(env, err, NULL, NULL, arguments);
+        int result = p101_vfprintf(env, err, NULL, "x", arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -4150,7 +4150,7 @@ static void test_p101_vfscanf(struct p101_env *env, struct p101_error *err, ...)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vfscanf(env, err, NULL, NULL, arguments);
+        int result = p101_vfscanf(env, err, NULL, "x", arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -4281,7 +4281,7 @@ static void test_p101_vprintf(struct p101_env *env, struct p101_error *err, ...)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vprintf(env, err, NULL, arguments);
+        int result = p101_vprintf(env, err, "x", arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -4405,7 +4405,7 @@ static void test_p101_vscanf(struct p101_env *env, struct p101_error *err, ...)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vscanf(env, err, NULL, arguments);
+        int result = p101_vscanf(env, err, "x", arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -4533,7 +4533,7 @@ static void test_p101_vsnprintf(struct p101_env *env, struct p101_error *err, ..
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vsnprintf(env, err, argument_2, 0, NULL, arguments);
+        int result = p101_vsnprintf(env, err, argument_2, 0, "x", arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
@@ -4659,7 +4659,7 @@ static void test_p101_vsscanf(struct p101_env *env, struct p101_error *err, ...)
         fault_resource_events = 0U;
         errno                 = P101_TEST_ERRNO_SENTINEL;
         p101_env_set_fault_injector(env, fail_next_call, &state);
-        int result = p101_vsscanf(env, err, NULL, NULL, arguments);
+        int result = p101_vsscanf(env, err, "x", "x", arguments);
         (void)result;
         EXPECT(state.checks == 1);
         EXPECT(p101_error_is_errno(err, state.code));
