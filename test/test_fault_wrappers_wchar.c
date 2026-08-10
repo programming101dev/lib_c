@@ -3459,7 +3459,7 @@ static void test_p101_wcsftime(struct p101_env *env, struct p101_error *err)
             }
             wchar_t   native_argument_2[PATH_MAX] = {0};
             struct tm native_argument_5           = {0};
-            size_t    native_result               = p101_wcsftime(native_env, native_err, native_argument_2, 0, L"p101", &native_argument_5);
+            size_t    native_result               = p101_wcsftime(native_env, native_err, native_argument_2, PATH_MAX, L"p101", &native_argument_5);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {

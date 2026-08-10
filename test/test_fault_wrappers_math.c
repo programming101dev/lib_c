@@ -6034,7 +6034,7 @@ static void test_p101_fmod(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            double native_result = p101_fmod(native_env, native_err, 0, 0);
+            double native_result = p101_fmod(native_env, native_err, 0, 1.0);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {
@@ -6154,7 +6154,7 @@ static void test_p101_fmodf(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            float native_result = p101_fmodf(native_env, native_err, 0, 0);
+            float native_result = p101_fmodf(native_env, native_err, 0, 1.0);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {
@@ -6274,7 +6274,7 @@ static void test_p101_fmodl(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            long double native_result = p101_fmodl(native_env, native_err, 0, 0);
+            long double native_result = p101_fmodl(native_env, native_err, 0, 1.0);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {
@@ -7474,7 +7474,7 @@ static void test_p101_lgamma(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            double native_result = p101_lgamma(native_env, native_err, 0);
+            double native_result = p101_lgamma(native_env, native_err, 1.0);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {
@@ -7594,7 +7594,7 @@ static void test_p101_lgammaf(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            float native_result = p101_lgammaf(native_env, native_err, 0);
+            float native_result = p101_lgammaf(native_env, native_err, 1.0);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {
@@ -7714,7 +7714,7 @@ static void test_p101_lgammal(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            long double native_result = p101_lgammal(native_env, native_err, 0);
+            long double native_result = p101_lgammal(native_env, native_err, 1.0);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {
