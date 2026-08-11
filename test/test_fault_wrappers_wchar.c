@@ -2451,26 +2451,19 @@ static void test_p101_ungetwc(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            wint_t native_result = p101_ungetwc(native_env, native_err, 0, native_stream);
+            wint_t native_result = p101_ungetwc(native_env, native_err, WEOF, native_stream);
             (void)native_result;
-            if(p101_error_has_error(native_err))
+            if(!p101_error_is_errno(native_err, EIO))
             {
-                bool native_error_declared = false;
-
-                for(size_t native_error_index = 0U; native_error_index < sizeof(errors) / sizeof(errors[0]); native_error_index++)
-                {
-                    if(p101_error_is_errno(native_err, errors[native_error_index]))
-                    {
-                        native_error_declared = true;
-                    }
-                }
-                if(!native_error_declared)
-                {
-                    fprintf(stderr, "native smoke produced an undeclared platform failure: p101_ungetwc: %s\n", p101_error_get_message(native_err));
-                    native_passed = false;
-                }
-                p101_error_reset(native_err);
+                fprintf(stderr, "native smoke did not produce the declared failure: p101_ungetwc: %s\n", p101_error_get_message(native_err));
+                native_passed = false;
             }
+            if(native_result != WEOF)
+            {
+                fprintf(stderr, "native smoke returned an undeclared result: p101_ungetwc\n");
+                native_passed = false;
+            }
+            p101_error_reset(native_err);
             P101_NATIVE_CLEANUP_ERRNO(fclose(native_stream));
             native_child_status = native_passed ? EXIT_SUCCESS : EXIT_FAILURE;
         native_child_done_:

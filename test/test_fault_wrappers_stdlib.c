@@ -798,7 +798,7 @@ static void test_p101_calloc(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            void *native_result = p101_calloc(native_env, native_err, 0, 0);
+            void *native_result = p101_calloc(native_env, native_err, 1U, 1U);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {
@@ -818,6 +818,7 @@ static void test_p101_calloc(struct p101_env *env, struct p101_error *err)
                 }
                 p101_error_reset(native_err);
             }
+            free(native_result);
             native_child_status = native_passed ? EXIT_SUCCESS : EXIT_FAILURE;
         native_child_done_:
             p101_env_destroy(native_env);
@@ -1700,7 +1701,7 @@ static void test_p101_malloc(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            void *native_result = p101_malloc(native_env, native_err, 0);
+            void *native_result = p101_malloc(native_env, native_err, 1U);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {
@@ -1720,6 +1721,7 @@ static void test_p101_malloc(struct p101_env *env, struct p101_error *err)
                 }
                 p101_error_reset(native_err);
             }
+            free(native_result);
             native_child_status = native_passed ? EXIT_SUCCESS : EXIT_FAILURE;
         native_child_done_:
             p101_env_destroy(native_env);
@@ -2229,8 +2231,7 @@ static void test_p101_realloc(struct p101_env *env, struct p101_error *err)
                 native_child_status = 77;
                 goto native_child_done_;
             }
-            unsigned char native_argument_2[4096] = {0};
-            void         *native_result           = p101_realloc(native_env, native_err, native_argument_2, 0);
+            void *native_result = p101_realloc(native_env, native_err, NULL, 1U);
             (void)native_result;
             if(p101_error_has_error(native_err))
             {
@@ -2250,6 +2251,7 @@ static void test_p101_realloc(struct p101_env *env, struct p101_error *err)
                 }
                 p101_error_reset(native_err);
             }
+            free(native_result);
             native_child_status = native_passed ? EXIT_SUCCESS : EXIT_FAILURE;
         native_child_done_:
             p101_env_destroy(native_env);

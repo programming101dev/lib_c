@@ -430,6 +430,7 @@ static void test_p101_strerror(struct p101_env *env, struct p101_error *err)
                 }
                 p101_error_reset(native_err);
             }
+            free(native_result);
             native_child_status = native_passed ? EXIT_SUCCESS : EXIT_FAILURE;
         native_child_done_:
             p101_env_destroy(native_env);
