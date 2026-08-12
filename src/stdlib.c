@@ -82,8 +82,10 @@ int p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)
 }
 
 #ifdef __apple_build_version__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wallocator-wrappers"
+    #if __has_warning("-Wallocator-wrappers")
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wallocator-wrappers"
+    #endif
 #endif
 void *p101_aligned_alloc(const struct p101_env *env, struct p101_error *err, size_t alignment, size_t size)
 {
@@ -123,7 +125,9 @@ p101_single_exit_:
     return p101_single_result_;
 }
 #ifdef __apple_build_version__
-    #pragma clang diagnostic pop
+    #if __has_warning("-Wallocator-wrappers")
+        #pragma clang diagnostic pop
+    #endif
 #endif
 
 int p101_at_quick_exit(const struct p101_env *env, struct p101_error *err, void (*func)(void))
@@ -160,8 +164,10 @@ const void *p101_bsearch(const struct p101_env *env, const void *key, const void
 }
 
 #ifdef __apple_build_version__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wallocator-wrappers"
+    #if __has_warning("-Wallocator-wrappers")
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wallocator-wrappers"
+    #endif
 #endif
 void *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nelem, size_t elsize)
 {
@@ -212,7 +218,9 @@ p101_single_exit_:
     return p101_single_result_;
 }
 #ifdef __apple_build_version__
-    #pragma clang diagnostic pop
+    #if __has_warning("-Wallocator-wrappers")
+        #pragma clang diagnostic pop
+    #endif
 #endif
 
 #pragma GCC diagnostic push
@@ -430,8 +438,10 @@ p101_single_exit_:
 #pragma GCC diagnostic pop
 
 #ifdef __apple_build_version__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wallocator-wrappers"
+    #if __has_warning("-Wallocator-wrappers")
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wallocator-wrappers"
+    #endif
 #endif
 void *p101_malloc(const struct p101_env *env, struct p101_error *err, size_t size)
 {
@@ -471,7 +481,9 @@ p101_single_exit_:
     return p101_single_result_;
 }
 #ifdef __apple_build_version__
-    #pragma clang diagnostic pop
+    #if __has_warning("-Wallocator-wrappers")
+        #pragma clang diagnostic pop
+    #endif
 #endif
 
 int p101_mblen(const struct p101_env *env, struct p101_error *err, const char *s, size_t n)
@@ -539,8 +551,10 @@ void p101_qsort(const struct p101_env *env, void *base, size_t nel, size_t width
 }
 
 #ifdef __apple_build_version__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wallocator-wrappers"
+    #if __has_warning("-Wallocator-wrappers")
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wallocator-wrappers"
+    #endif
 #endif
 void *p101_realloc(const struct p101_env *env, struct p101_error *err, void *ptr, size_t size)
 {
@@ -582,7 +596,9 @@ p101_single_exit_:
     return p101_single_result_;
 }
 #ifdef __apple_build_version__
-    #pragma clang diagnostic pop
+    #if __has_warning("-Wallocator-wrappers")
+        #pragma clang diagnostic pop
+    #endif
 #endif
 
 double p101_strtod(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr)
