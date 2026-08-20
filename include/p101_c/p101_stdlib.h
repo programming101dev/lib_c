@@ -26,25 +26,26 @@ extern "C"
 {
 #endif
 
-    int                p101_abs(const struct p101_env *env, struct p101_error *err, int i);
-    void              *p101_aligned_alloc(const struct p101_env *env, struct p101_error *err, size_t alignment, size_t size) P101_ATTR_MALLOC P101_ATTR_ALLOC_SIZE(4) P101_ATTR_WARN_UNUSED_RESULT;
-    int                p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)(void));
-    int                p101_at_quick_exit(const struct p101_env *env, struct p101_error *err, void (*func)(void));
-    const void        *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
-    void              *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nelem, size_t elsize) P101_ATTR_MALLOC P101_ATTR_ALLOC_SIZE(3, 4) P101_ATTR_WARN_UNUSED_RESULT;
+    int         p101_abs(const struct p101_env *env, struct p101_error *err, int i);
+    void       *p101_aligned_alloc(const struct p101_env *env, struct p101_error *err, size_t alignment, size_t size) P101_ATTR_MALLOC P101_ATTR_ALLOC_SIZE(4) P101_ATTR_WARN_UNUSED_RESULT P101_ATTR_SEMANTIC_ROLE("p101:allocation");
+    int         p101_atexit(const struct p101_env *env, struct p101_error *err, void (*func)(void));
+    int         p101_at_quick_exit(const struct p101_env *env, struct p101_error *err, void (*func)(void));
+    const void *p101_bsearch(const struct p101_env *env, const void *key, const void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
+    void       *p101_calloc(const struct p101_env *env, struct p101_error *err, size_t nelem, size_t elsize) P101_ATTR_MALLOC P101_ATTR_ALLOC_SIZE(3, 4) P101_ATTR_WARN_UNUSED_RESULT P101_ATTR_SEMANTIC_ROLE("p101:allocation")
+        P101_ATTR_SEMANTIC_ROLE("p101:allocation:product-size");
     div_t              p101_div(const struct p101_env *env, struct p101_error *err, int numer, int denom);
     void               p101_free(const struct p101_env *env, void *ptr);
-    char              *p101_getenv(const struct p101_env *env, struct p101_error *err, const char *name);
+    char              *p101_getenv(const struct p101_env *env, struct p101_error *err, const char *name) P101_ATTR_SEMANTIC_ROLE("p101:environment:borrowed-result");
     long               p101_labs(const struct p101_env *env, struct p101_error *err, long i);
     ldiv_t             p101_ldiv(const struct p101_env *env, struct p101_error *err, long numer, long denom);
     long long          p101_llabs(const struct p101_env *env, struct p101_error *err, long long i);
     lldiv_t            p101_lldiv(const struct p101_env *env, struct p101_error *err, long long numer, long long denom);
-    void              *p101_malloc(const struct p101_env *env, struct p101_error *err, size_t size) P101_ATTR_MALLOC P101_ATTR_ALLOC_SIZE(3) P101_ATTR_WARN_UNUSED_RESULT;
+    void              *p101_malloc(const struct p101_env *env, struct p101_error *err, size_t size) P101_ATTR_MALLOC P101_ATTR_ALLOC_SIZE(3) P101_ATTR_WARN_UNUSED_RESULT P101_ATTR_SEMANTIC_ROLE("p101:allocation");
     int                p101_mblen(const struct p101_env *env, struct p101_error *err, const char *s, size_t n);
     size_t             p101_mbstowcs(const struct p101_env *env, struct p101_error *err, wchar_t *restrict pwcs, const char *restrict s, size_t n);
     int                p101_mbtowc(const struct p101_env *env, struct p101_error *err, wchar_t *restrict pwc, const char *restrict s, size_t n);
     void               p101_qsort(const struct p101_env *env, void *base, size_t nel, size_t width, int (*compar)(const void *, const void *));
-    void              *p101_realloc(const struct p101_env *env, struct p101_error *err, void *ptr, size_t size) P101_ATTR_ALLOC_SIZE(4) P101_ATTR_WARN_UNUSED_RESULT;
+    void              *p101_realloc(const struct p101_env *env, struct p101_error *err, void *ptr, size_t size) P101_ATTR_ALLOC_SIZE(4) P101_ATTR_WARN_UNUSED_RESULT P101_ATTR_SEMANTIC_ROLE("p101:allocation");
     double             p101_strtod(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr);
     float              p101_strtof(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr);
     long               p101_strtol(const struct p101_env *env, struct p101_error *err, const char *restrict nptr, char **restrict endptr, int base);

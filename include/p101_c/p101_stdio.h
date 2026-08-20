@@ -35,7 +35,7 @@ extern "C"
     int    p101_fgetc(const struct p101_env *env, struct p101_error *err, FILE *stream);
     int    p101_fgetpos(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, fpos_t *restrict pos);
     char  *p101_fgets(const struct p101_env *env, struct p101_error *err, char *restrict s, int n, FILE *restrict stream);
-    FILE  *p101_fopen(const struct p101_env *env, struct p101_error *err, const char *restrict pathname, const char *restrict mode) P101_ATTR_WARN_UNUSED_RESULT;
+    FILE  *p101_fopen(const struct p101_env *env, struct p101_error *err, const char *restrict pathname, const char *restrict mode) P101_ATTR_WARN_UNUSED_RESULT P101_ATTR_SEMANTIC_ROLE("p101:filesystem:path-use");
     int    p101_fprintf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, const char *restrict format, ...) P101_ATTR_PRINTF(4, 5);
     int    p101_fputc(const struct p101_env *env, struct p101_error *err, int c, FILE *stream);
     int    p101_fputs(const struct p101_env *env, struct p101_error *err, const char *restrict s, FILE *restrict stream);
@@ -54,7 +54,7 @@ extern "C"
     int    p101_putchar(const struct p101_env *env, struct p101_error *err, int c);
     int    p101_puts(const struct p101_env *env, struct p101_error *err, const char *s);
     int    p101_remove(const struct p101_env *env, struct p101_error *err, const char *path);
-    int    p101_rename(const struct p101_env *env, struct p101_error *err, const char *old_name, const char *new_name);
+    int    p101_rename(const struct p101_env *env, struct p101_error *err, const char *old_name, const char *new_name) P101_ATTR_SEMANTIC_ROLE("p101:filesystem:path-use");
     int    p101_scanf(const struct p101_env *env, struct p101_error *err, const char *restrict format, ...) P101_ATTR_SCANF(3, 4);
     int    p101_setvbuf(const struct p101_env *env, struct p101_error *err, FILE *restrict stream, char *restrict buf, int type, size_t size);
     int    p101_snprintf(const struct p101_env *env, struct p101_error *err, char *restrict s, size_t n, const char *restrict format, ...) P101_ATTR_PRINTF(5, 6);

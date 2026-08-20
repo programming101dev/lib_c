@@ -19,14 +19,15 @@
 
 #include <locale.h>
 #include <p101_env/env.h>
+#include <p101_error/attributes.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-    struct lconv *p101_localeconv(const struct p101_env *env);
-    char         *p101_setlocale(const struct p101_env *env, struct p101_error *err, int category, const char *locale);
+    struct lconv *p101_localeconv(const struct p101_env *env) P101_ATTR_SEMANTIC_ROLE("p101:environment:borrowed-result") P101_ATTR_SEMANTIC_ROLE("p101:environment:invalidates-borrowed");
+    char         *p101_setlocale(const struct p101_env *env, struct p101_error *err, int category, const char *locale) P101_ATTR_SEMANTIC_ROLE("p101:environment:borrowed-result") P101_ATTR_SEMANTIC_ROLE("p101:environment:invalidates-borrowed");
 
 #ifdef __cplusplus
 }
